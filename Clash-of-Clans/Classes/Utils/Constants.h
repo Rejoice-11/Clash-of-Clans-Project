@@ -1,0 +1,1 @@
+//全局常量（BUILDING_TYPE_TOWN_HALL = 0）
