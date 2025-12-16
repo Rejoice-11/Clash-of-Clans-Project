@@ -19,5 +19,6 @@
 
 ### 2025-12-16
 
-*改用Cocos2d-x 3.17.2，重新进行项目配置
-*明确项目要求，整合了需要实现的功能(见Clash-of-Clans.docx文件)
+* 改用Cocos2d-x 3.17.2
+* 学习使用visual studio 进行git管理
+* 第一次方案制定(Clash-of-Clans.docx文件)
