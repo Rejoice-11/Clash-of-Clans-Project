@@ -24,12 +24,10 @@
     <ClCompile Include="..\Classes\HelloWorldScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\AppDelegate\AppDelegate.cpp">
-      <Filter>src\AppDelegate</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Core\GameDirector.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate\AppDelegate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -37,9 +35,6 @@
     </ClInclude>
     <ClInclude Include="..\Classes\HelloWorldScene.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\AppDelegate\AppDelegate.h">
-      <Filter>src\AppDelegate</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Core\ConfigManager.h">
       <Filter>src\Core</Filter>
@@ -50,6 +45,36 @@
     <ClInclude Include="..\Classes\Core\GameDirector.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate\AppDelegate.h" />
+    <ClInclude Include="..\Classes\Data\BuildingData.h" />
+    <ClInclude Include="..\Classes\Data\MapData.h" />
+    <ClInclude Include="..\Classes\Data\UnitData.h" />
+    <ClInclude Include="..\Classes\Entity\Building\Building.h" />
+    <ClInclude Include="..\Classes\Entity\Building\DefenseBuilding.h" />
+    <ClInclude Include="..\Classes\Entity\Building\MilitaryBuilding.h" />
+    <ClInclude Include="..\Classes\Entity\Building\ResourceBuilding.h" />
+    <ClInclude Include="..\Classes\Entity\Building\StorageBuilding.h" />
+    <ClInclude Include="..\Classes\Entity\Building\TownHall.h" />
+    <ClInclude Include="..\Classes\Entity\Unit\MeleeUnit.h" />
+    <ClInclude Include="..\Classes\Entity\Unit\RangedUnit.h" />
+    <ClInclude Include="..\Classes\Entity\Unit\TankUnit.h" />
+    <ClInclude Include="..\Classes\Entity\Unit\Unit.h" />
+    <ClInclude Include="..\Classes\Entity\Unit\WallBreaker.h" />
+    <ClInclude Include="..\Classes\Entity\GameObject.h" />
+    <ClInclude Include="..\Classes\Scene\BattleScene.h" />
+    <ClInclude Include="..\Classes\Scene\MenuScene.h" />
+    <ClInclude Include="..\Classes\Scene\VillageScene.h" />
+    <ClInclude Include="..\Classes\System\ArmyManager.h" />
+    <ClInclude Include="..\Classes\System\BuilderManager.h" />
+    <ClInclude Include="..\Classes\System\CombatSystem.h" />
+    <ClInclude Include="..\Classes\System\PathfindingSystem.h" />
+    <ClInclude Include="..\Classes\System\ResourceManager.h" />
+    <ClInclude Include="..\Classes\UI\BuildingPanel.h" />
+    <ClInclude Include="..\Classes\UI\HUDLayer.h" />
+    <ClInclude Include="..\Classes\UI\StoreWindow.h" />
+    <ClInclude Include="..\Classes\Utils\Constants.h" />
+    <ClInclude Include="..\Classes\Utils\GridUtils.h" />
+    <ClInclude Include="..\Classes\Utils\TimerUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
