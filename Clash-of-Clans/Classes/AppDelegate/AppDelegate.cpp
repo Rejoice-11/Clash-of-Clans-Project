@@ -36,7 +36,7 @@
 #include "audio/include/AudioEngine.h"
 using namespace cocos2d::experimental;
 #elif USE_SIMPLE_AUDIO_ENGINE
-#include "audio/include/SimpleAudioEngine.h"//特赦天
+#include "audio/include/SimpleAudioEngine.h"//特赦天111
 using namespace CocosDenshion;
 #endif
 

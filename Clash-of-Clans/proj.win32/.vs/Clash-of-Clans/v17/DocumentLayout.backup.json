@@ -1,7 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Clash of Clans\\Clash-of-Clans-Project\\Clash-of-Clans\\proj.win32\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\proj.win32\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\.cocos-project.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Core\\ConfigManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +16,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".cocos-project.json",
+              "DocumentMoniker": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\.cocos-project.json",
+              "RelativeDocumentMoniker": "..\\.cocos-project.json",
+              "ToolTip": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\.cocos-project.json",
+              "RelativeToolTip": "..\\.cocos-project.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-19T16:07:54.041Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ConfigManager.h",
+              "DocumentMoniker": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Core\\ConfigManager.h",
+              "RelativeDocumentMoniker": "..\\Classes\\Core\\ConfigManager.h",
+              "ToolTip": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Core\\ConfigManager.h",
+              "RelativeToolTip": "..\\Classes\\Core\\ConfigManager.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwEAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-19T15:56:50.235Z",
+              "EditorCaption": ""
             }
           ]
         }
