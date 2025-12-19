@@ -24,6 +24,9 @@
 
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#include "Classes/Scene/MenuScene.h"
+#include "Classes/Scene/VillageScene.h"
+#include "Classes/Scene/BattleScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -40,7 +43,7 @@ using namespace cocos2d::experimental;
 using namespace CocosDenshion;
 #endif
 
-USING_NS_CC;
+using namespace cocos2d;
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
