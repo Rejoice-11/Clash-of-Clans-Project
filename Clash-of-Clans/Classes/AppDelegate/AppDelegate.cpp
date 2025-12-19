@@ -22,10 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "AppDelegate.h"
-#include "HelloWorldScene.h"
 #include "Classes/Scene/MenuScene.h"
-#include "Classes/Scene/VillageScene.h"
+#include "Classes/AppDelegate/AppDelegate.h"
+#include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
 
 // #define USE_AUDIO_ENGINE 1
@@ -81,74 +80,40 @@ static int register_all_packages()
 }
 
 bool AppDelegate::applicationDidFinishLaunching() {
-    // initialize director
+    // 初始化导演和OpenGL视图（Cocos2d-x标准流程）
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
-    if(!glview) {
+    if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("Clash-of-Clans", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = GLViewImpl::createWithRect("ClashOfTaffy", cocos2d::Rect(0, 0, 960, 640));
 #else
-        glview = GLViewImpl::create("Clash-of-Clans");
+        glview = GLViewImpl::create("ClashOfTaffy");
 #endif
         director->setOpenGLView(glview);
     }
 
-    // turn on display FPS
-    director->setDisplayStats(true);
+    // 设置设计分辨率（根据你的美术资源改）
+    glview->setDesignResolutionSize(960, 640, ResolutionPolicy::SHOW_ALL);
 
-    // set FPS. the default value is 1.0/60 if you don't call this
+    // FPS显示（调试用，正式版可以关）
+    director->setDisplayStats(true);
     director->setAnimationInterval(1.0f / 60);
 
-    // Set the design resolution
-    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
-    auto frameSize = glview->getFrameSize();
-    // if the frame's height is larger than the height of medium size.
-    if (frameSize.height > mediumResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is larger than the height of small size.
-    else if (frameSize.height > smallResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
-    }
-    // if the frame's height is smaller than the height of medium size.
-    else
-    {        
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
-    }
+    // ===== Taffy王牌级初始化开始 =====
+    // 创建并初始化GameDirector单例
+    GameDirector::getInstance()->init();
 
-    register_all_packages();
-
-    // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
-
-    // run
-    director->runWithScene(scene);
+    // 直接进入主菜单场景
+    GameDirector::getInstance()->runWithScene(MenuScene::createScene());
 
     return true;
 }
 
-// This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
+// AppDelegate.cpp 底部加这些
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
-
-#if USE_AUDIO_ENGINE
-    AudioEngine::pauseAll();
-#elif USE_SIMPLE_AUDIO_ENGINE
-    SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-    SimpleAudioEngine::getInstance()->pauseAllEffects();
-#endif
 }
 
-// this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
-
-#if USE_AUDIO_ENGINE
-    AudioEngine::resumeAll();
-#elif USE_SIMPLE_AUDIO_ENGINE
-    SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
-    SimpleAudioEngine::getInstance()->resumeAllEffects();
-#endif
 }
