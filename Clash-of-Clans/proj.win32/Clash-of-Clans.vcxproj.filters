@@ -28,6 +28,8 @@
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\Scene\VillageScene.cpp" />
+    <ClCompile Include="..\Classes\Scene\BattleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

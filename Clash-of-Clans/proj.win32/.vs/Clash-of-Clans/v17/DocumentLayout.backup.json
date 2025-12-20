@@ -3,16 +3,19 @@
   "WorkspaceRootPath": "D:\\Clash of Clans\\Clash-of-Clans\\proj.win32\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\BattleScene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Core\\EventDispatcher.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\AppDelegate\\AppDelegate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\AppDelegate\\AppDelegate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Core\\EventDispatcher.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Core\\ConfigManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -28,7 +31,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -40,7 +43,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "BattleScene.h",
+              "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\BattleScene.h",
+              "RelativeDocumentMoniker": "..\\Classes\\Scene\\BattleScene.h",
+              "ToolTip": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\BattleScene.h",
+              "RelativeToolTip": "..\\Classes\\Scene\\BattleScene.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-12-20T13:48:44.363Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "EventDispatcher.h",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Core\\EventDispatcher.h",
               "RelativeDocumentMoniker": "..\\Classes\\Core\\EventDispatcher.h",
@@ -48,25 +64,23 @@
               "RelativeToolTip": "..\\Classes\\Core\\EventDispatcher.h",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-20T08:26:42.366Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-20T08:26:42.366Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "VillageScene.h",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.h",
               "RelativeDocumentMoniker": "..\\Classes\\Scene\\VillageScene.h",
               "ToolTip": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.h",
               "RelativeToolTip": "..\\Classes\\Scene\\VillageScene.h",
-              "ViewState": "AgIAAD4BAAAAAAAAAAAAAHoAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD0AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-20T06:10:50.728Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-20T06:10:50.728Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "AppDelegate.h",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\AppDelegate\\AppDelegate.h",
               "RelativeDocumentMoniker": "..\\Classes\\AppDelegate\\AppDelegate.h",
@@ -74,25 +88,23 @@
               "RelativeToolTip": "..\\Classes\\AppDelegate\\AppDelegate.h",
               "ViewState": "AgIAAC0AAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-20T06:02:48.02Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-20T06:02:48.02Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "AppDelegate.cpp",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\AppDelegate\\AppDelegate.cpp",
               "RelativeDocumentMoniker": "..\\Classes\\AppDelegate\\AppDelegate.cpp",
               "ToolTip": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\AppDelegate\\AppDelegate.cpp",
               "RelativeToolTip": "..\\Classes\\AppDelegate\\AppDelegate.cpp",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAAwGAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAwGAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-20T05:54:35.579Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-20T05:54:35.579Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": ".cocos-project.json",
               "DocumentMoniker": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\.cocos-project.json",
               "ToolTip": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\.cocos-project.json",
@@ -102,7 +114,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ConfigManager.h",
               "DocumentMoniker": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Core\\ConfigManager.h",
               "ToolTip": "C:\\Users\\rjc\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Core\\ConfigManager.h",
