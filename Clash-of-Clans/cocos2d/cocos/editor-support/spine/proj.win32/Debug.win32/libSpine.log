@@ -30,12 +30,6 @@
   SkeletonData.c
   SkeletonJson.c
   Skin.c
-C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonJson.c(97,12): warning C4018: “>=”: 有符号/无符号不匹配
-C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(310,24): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(372,24): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(484,26): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(649,2): warning C4018: “<”: 有符号/无符号不匹配
-C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(652,2): warning C4018: “<”: 有符号/无符号不匹配
   Slot.c
   SlotData.c
   TransformConstraint.c
@@ -43,6 +37,12 @@ C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\
   Triangulator.c
   VertexAttachment.c
   VertexEffect.c
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonJson.c(97,12): warning C4018: “>=”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(310,24): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(372,24): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(484,26): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(649,2): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(652,2): warning C4018: “<”: 有符号/无符号不匹配
   AttachmentVertices.cpp
   Cocos2dAttachmentLoader.cpp
   SkeletonAnimation.cpp
