@@ -139,32 +139,48 @@ void VillageScene::onMouseScroll(EventMouse* event)
 }
 
 // 鼠标按下实现
+// onMouseDown 改成这样
 void VillageScene::onMouseDown(EventMouse* event)
 {
-    // 只响应左键
+    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT)
+    {
+        if (_isPlacementMode) cancelPlacementMode();  // 右键取消
+        return;
+    }
+
     if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) return;
 
+    Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
+    Vec2 worldPos = this->convertToNodeSpace(mousePos);
+
+    if (_isPlacementMode)
+    {
+        confirmPlacement(worldPos);  // 左键确认放置
+        return;
+    }
+
     _isDragging = true;
-    // 记录按下时的鼠标位置（世界坐标系）
-    _lastTouchPos = _scrollNode->getParent()->convertToNodeSpace(Vec2(event->getCursorX(), event->getCursorY()));
+    _lastTouchPos = worldPos;
 }
 
 // 鼠标移动实现
 void VillageScene::onMouseMove(EventMouse* event)
 {
+    Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
+    Vec2 worldPos = this->convertToNodeSpace(mousePos);  // 屏幕→世界坐标
+
+    if (_isPlacementMode)
+    {
+        updateGhostPosition(worldPos);
+        return;  // 放置模式下不拖动地图
+    }
+
     if (!_isDragging || !_backgroundSprite) return;
 
-    // 获取当前鼠标位置
-    Vec2 currentTouchPos = _scrollNode->getParent()->convertToNodeSpace(Vec2(event->getCursorX(), event->getCursorY()));
-    // 计算偏移量
+    Vec2 currentTouchPos = this->convertToNodeSpace(mousePos);
     Vec2 delta = currentTouchPos - _lastTouchPos;
-
-    // 移动scrollNode
     _scrollNode->setPosition(_scrollNode->getPosition() + delta);
-    // 更新上次触摸位置
     _lastTouchPos = currentTouchPos;
-
-    // 限制位置，防止黑边
     clampScrollNodePosition();
 }
 
@@ -254,17 +270,93 @@ void VillageScene::closeAttackPanel(Ref*)
 
 void VillageScene::onMarketButtonClicked(Ref* sender)
 {
-    // 防止重复打开或攻击面板打开时打开商店
-    if (_attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
+    if (_attackPanel || _isPlacementMode) return;  // 放置中不能开商店
 
-    // 首次创建商店弹窗（懒加载）
     if (!_storeWindow)
     {
-        _storeWindow = StoreWindow::create(CC_CALLBACK_0(VillageScene::onStoreWindowClosed, this));
-        this->addChild(_storeWindow, 30); // 层级高于攻击面板
+        // 关键！回调带建筑类型
+        _storeWindow = StoreWindow::create([this](StoreWindow::BuildingType type) {
+            this->enterPlacementMode(type);
+            });
+        this->addChild(_storeWindow, 30);
     }
-    // 显示商店弹窗
     _storeWindow->show();
+}
+
+// 获取幽灵建筑精灵名称（根据类型）
+void VillageScene::enterPlacementMode(StoreWindow::BuildingType type)
+{
+    _isPlacementMode = true;
+    _pendingBuildingType = type;
+
+    // 创建幽灵建筑（半透明）
+    std::string spriteName = getGhostSpriteName(type);
+    _ghostBuilding = Sprite::create(spriteName);
+    if (_ghostBuilding)
+    {
+        _ghostBuilding->setOpacity(150);  // 半透明
+        _ghostBuilding->setColor(Color3B::GREEN);  // 先绿表示可建（后面加网格判断改红/绿）
+        this->addChild(_ghostBuilding, 50);  // 最上层
+    }
+
+    // 隐藏商店遮罩（StoreWindow自己hide了，但保险起见）
+    _grayMask->setVisible(false);
+}
+
+//加取消和确认函数
+void VillageScene::cancelPlacementMode()
+{
+    if (_ghostBuilding)
+    {
+        _ghostBuilding->removeFromParent();
+        _ghostBuilding = nullptr;
+    }
+    _isPlacementMode = false;
+    _pendingBuildingType = StoreWindow::BuildingType::MAX_TYPES;
+}
+
+void VillageScene::confirmPlacement(const Vec2& worldPos)
+{
+    // 这里以后真正创建Building实例 + 扣资源 + 分配工人
+    // 先用假建筑占位（和存档那套一样）
+    std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+    auto realBuilding = Sprite::create(spriteName);
+    if (realBuilding)
+    {
+        realBuilding->setPosition(worldPos);
+        _scrollNode->addChild(realBuilding, 5);  // 建筑放在scrollNode里，随地图移动
+        // 计数+1（以TownHall为例）
+        if (_pendingBuildingType == StoreWindow::BuildingType::TOWN_HALL)
+            countofTownHallsInVillage++;
+    }
+
+    cancelPlacementMode();  // 放置完自动退出模式
+}
+
+
+
+// 新增：更新幽灵位置（对齐到scrollNode坐标系）
+void VillageScene::updateGhostPosition(const Vec2& mouseWorldPos)
+{
+    if (!_ghostBuilding) return;
+
+    // 将鼠标世界坐标转换为scrollNode本地坐标
+    Vec2 localPos = _scrollNode->convertToNodeSpace(mouseWorldPos);
+    // 以后可以加网格对齐：localPos = GridUtils::snapToGrid(localPos);
+    Vec2 ghostWorldPos = _scrollNode->convertToWorldSpace(localPos);
+
+    _ghostBuilding->setPosition(ghostWorldPos);
+}
+
+// 新增：根据类型拿图
+std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
+{
+    switch (type) {
+    case StoreWindow::BuildingType::TOWN_HALL: return "town_hall_lv1.png";
+    case StoreWindow::BuildingType::GOLD_MINE: return "gold_mine_lv1.png";
+        // ... 其他同理 ...
+    default: return "town_hall_lv1.png";
+    }
 }
 // 商店窗口关闭后的回调
 void VillageScene::onStoreWindowClosed()

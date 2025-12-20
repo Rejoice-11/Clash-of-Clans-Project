@@ -56,4 +56,15 @@ private:
     void onMouseUp(EventMouse* event);
     void clampScrollNodePosition();
     void clampScrollNodeScale(float targetScale);
+
+	// 新增：建筑放置相关变量和函数
+    StoreWindow::BuildingType _pendingBuildingType = StoreWindow::BuildingType::MAX_TYPES;  // 当前待放置类型
+    Sprite* _ghostBuilding = nullptr;              // 幽灵建筑（半透明跟随鼠标）
+    bool _isPlacementMode = false;                 // 是否在放置模式
+
+    void enterPlacementMode(StoreWindow::BuildingType type);   // 进入放置
+    void cancelPlacementMode();                                // 取消放置
+    void confirmPlacement(const Vec2& worldPos);               // 确认放置
+    void updateGhostPosition(const Vec2& mousePos);            // 更新幽灵位置
+    std::string getGhostSpriteName(StoreWindow::BuildingType type);  // 根据类型拿图
 };

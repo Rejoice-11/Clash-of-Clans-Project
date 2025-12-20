@@ -32,6 +32,7 @@
     <ClCompile Include="..\Classes\Scene\BattleScene.cpp" />
     <ClCompile Include="..\Classes\UI\StoreWindow.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\TownHall.cpp" />
+    <ClCompile Include="..\Classes\Entity\Building\Building.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

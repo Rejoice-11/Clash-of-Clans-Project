@@ -1,5 +1,5 @@
 //大本营（特殊胜利条件）
-#pragma once
+#pragma
 
 #include "Classes/Entity/Building/Building.h"
 #include "cocos2d.h"
@@ -11,8 +11,9 @@
  *   - 希望"不同等级使用不同精灵帧（town_hall_lv1.png ~ lv3.png）"但现在先全部用同一个
  *   - 非防御建筑（巨人不会优先攻击它）
  */
-int countofTownHallsInVillage = 0; //function definition
-int getCountTownHallsInVillage(); //function declaration
+ // 声明全局变量（不定义！）
+extern int countofTownHallsInVillage; // 全局计数器
+extern BuildingData TownHallBuildingData; // 配置数据
 
 class TownHall : public Building 
 {
@@ -53,15 +54,4 @@ private:
     // 禁止拷贝（资源管理安全）
     TownHall(const TownHall&) = delete;
     TownHall& operator=(const TownHall&) = delete;
-};
-
-BuildingData TownHallBuildingData = {
-    0, // id
-    BuildingType::TOWN_HALL, // type
-    0, // level
-	{1, 1, 1, 1, 1}, // maxBuildCount all = 1 ,for only one Town Hall allowed
-    {1000, 2000, 4000, 6000, 9000}, // goldCost
-    {0, 0, 0, 0, 0}, // elixirCost
-    {60, 120, 240, 300, 400}, // buildTime (seconds)
-    {2000, 3000, 5000, 7000, 10000} // hitPoints
 };
