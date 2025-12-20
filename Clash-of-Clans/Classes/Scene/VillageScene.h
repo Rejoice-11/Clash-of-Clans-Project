@@ -279,7 +279,8 @@ void VillageScene::onAttackButtonClicked(Ref* sender)
         closeBtn->setPosition(Vec2(panel->getContentSize().width - 40,
             panel->getContentSize().height - 40));
 
-        fightBtn->setPosition(panel->getContentSize() / 2);
+        fightBtn->setPosition(Vec2(panel->getContentSize().width - 190,
+            panel->getContentSize().height - 330));
 
         auto menu = Menu::create(fightBtn, closeBtn, nullptr);
         menu->setPosition(Vec2::ZERO);
@@ -323,8 +324,8 @@ void VillageScene::onMarketButtonClicked(Ref* sender)
                 _grayMask->setVisible(false);
             });
 
-        closeBtn->setPosition(Vec2(market->getContentSize().width - 60,
-            market->getContentSize().height - 60));
+        closeBtn->setPosition(Vec2(market->getContentSize().width - 30,
+            market->getContentSize().height - 30));
 
         auto menu = Menu::create(closeBtn, nullptr);
         menu->setPosition(Vec2::ZERO);
