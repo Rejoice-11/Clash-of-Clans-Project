@@ -1,23 +1,28 @@
 //struct { id, cost, level, ... }
 #pragma once
-#include <vector>
+#define MAX_LEVELS 5
 
-enum class BuildingType {
+enum class BuildingType
+{
 	TOWN_HALL = 0,
 	CANNON = 1,
 	ARCHER_TOWER = 2,
-	MINITARY_CAMP = 3,
+	MILITARY_CAMP = 3,//a mix of soldier housing and training
 	ELIXIR_COLLECTOR = 4,
 	GOLD_MINE = 5,
 	WORKER_HOME = 6,
-
-
+	GOLD_STORAGE = 7,
+	ELIXIR_STORAGE = 8,
 };
-struct BuildingLevelData {
-	int id;
-	int goldCost;
-	int elixirCost;
-	int buildTime; // in seconds
-	int hitPoints;
-	// Add other level-specific attributes as needed
+
+struct BuildingData 
+{
+	int id;// unique building identifier
+	BuildingType type;
+	int level;
+	int maxBuildCount[MAX_LEVELS];// max number of this building type allowed at each level
+	int goldCost[MAX_LEVELS];
+	int elixirCost[MAX_LEVELS];
+	int buildTime[MAX_LEVELS]; // in seconds
+	int hitPoints[MAX_LEVELS]; // AKA health points
 };

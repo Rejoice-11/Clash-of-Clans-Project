@@ -22,13 +22,19 @@ public:
     // 获取建筑类型ID（对应配置表）
     int getBuildingTypeId() const { return _data.id; }
 
+    // 获取建筑类型TYPE（对应配置表）
+	int getBuildingType() const { return static_cast<int>(_data.type); }
+
+    // 获取建筑类型在此等级最大可建造数
+	int getBuildingMaxCount() const { return _data.maxBuildCount[_currentLevel]; }
+
     // 等级系统
-    int getCurrentLevel() const { return _currentLevel; }
+    int getCurrentLevel() const { return _currentLevel ; }
     virtual void upgrade(); // 升级逻辑由子类或Manager处理
 
     // 资源消耗（建造/升级）
-    int getBuildCostGold() const { return _data.levels[_currentLevel].goldCost; }
-    int getBuildCostElixir() const { return _data.levels[_currentLevel].elixirCost; }
+    int getBuildCostGold() const { return _data.goldCost[_currentLevel]; }
+    int getBuildCostElixir() const { return _data.elixirCost[_currentLevel]; }
 
     // 是否可被攻击（城墙通常不可被选为目标）
     virtual bool isAttackable() const { return true; }

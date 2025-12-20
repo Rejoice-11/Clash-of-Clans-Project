@@ -1,4 +1,7 @@
 #include "StoreWindow.h"
+#include "cocos2d.h"
+#include "Classes/Entity/Building/TownHall.h"
+USING_NS_CC;
 
 StoreWindow* StoreWindow::create(const std::function<void()>& closeCallback)
 {
