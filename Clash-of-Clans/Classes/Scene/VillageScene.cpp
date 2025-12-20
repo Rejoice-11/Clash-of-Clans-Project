@@ -40,7 +40,7 @@ bool VillageScene::init()
 
     auto menu = Menu::create(attackBtn, marketBtn, nullptr);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 10); // UI层级高于背景
+    this->addChild(menu, 10);
 
     // 预先创建遮罩层
     _grayMask = LayerColor::create(Color4B(0, 0, 0, 180), _visibleSize.width, _visibleSize.height);
@@ -50,6 +50,19 @@ bool VillageScene::init()
 
     // 注册鼠标事件
     registerMouseEvents();
+
+    // 监听商店选择事件（与 StoreWindow 协议：StoreWindow 会 new 一个 Value 并把指针放到 event.userData）
+    auto customListener = EventListenerCustom::create("building_selected", [this](EventCustom* event) {
+        Value* v = static_cast<Value*>(event->getUserData());
+        if (v) {
+            int type = v->asInt();
+            // 处理放置模式
+            this->enterPlacementMode(type);
+            // 释放发送端分配的内存（与 StoreWindow 的实现约定）
+            delete v;
+        }
+    });
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(customListener, this);
 
     return true;
 }
@@ -250,6 +263,10 @@ void VillageScene::closeAttackPanel(Ref*)
         _attackPanel = nullptr;
     }
     _grayMask->setVisible(false);
+}
+
+void VillageScene::enterPlacementMode(int buildingType)
+{
 }
 
 // 商店按钮点击回调实现

@@ -3,32 +3,32 @@
 #include "cocos2d.h"
 #include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
+#include "Classes/UI/StoreWindow.h"
 
-// 命名空间声明
+// 场景命名空间
 USING_NS_CC;
 
 class VillageScene : public Scene
 {
 public:
-    // 场景创建函数
+    // 场景创建
     static Scene* createScene();
 
-    // 初始化函数
+    // 初始化
     virtual bool init() override;
 
-    // 帧更新函数
+    // 每帧更新
     virtual void update(float dt) override;
 
-    // 按钮回调声明
+    // 按钮回调
     void onAttackButtonClicked(Ref* sender);
     void onShopButtonClicked(Ref* sender);
     void onBuilderButtonClicked(Ref* sender);
 
-    // Cocos2d-x 宏，用于创建实例
     CREATE_FUNC(VillageScene);
 
 private:
-    // 原有成员变量
+    // UI 层与面板
     Layer* _backgroundLayer;
     Layer* _buildingLayer;
     Layer* _uiLayer;
@@ -36,27 +36,33 @@ private:
     Node* _attackPanel = nullptr;
     Node* _marketPanel = nullptr;
 
-    // 内部回调函数声明
+    // 与商店相关：StoreWindow 实例（分离出来的部分）
+    StoreWindow* _storeWindow = nullptr;
+
+    // 内部回调
     void onMarketButtonClicked(Ref* sender);
     void closeAttackPanel(Ref* sender);
 
-    // 缩放拖动相关变量（新增）
-    Node* _scrollNode;          // 承载背景的可缩放/拖动节点
-    Sprite* _backgroundSprite;  // 背景精灵
-    Vec2 _lastTouchPos;         // 上次触摸位置（用于拖动）
-    bool _isDragging;           // 是否正在拖动
-    float _scaleMin;            // 最小缩放比例
-    float _scaleMax;            // 最大缩放比例
-    Size _backgroundSize;       // 背景原始尺寸
-    Size _visibleSize;          // 可视区域尺寸
+    // 放置模式（当从商店选择建筑）
+    void enterPlacementMode(int buildingType);
 
-    // 缩放拖动相关函数声明（新增）
-    void initScrollNode();                      // 初始化缩放拖动节点
-    void registerMouseEvents();                 // 注册鼠标事件
-    void onMouseScroll(EventMouse* event);      // 鼠标滚轮缩放
-    void onMouseDown(EventMouse* event);        // 鼠标按下
-    void onMouseMove(EventMouse* event);        // 鼠标移动
-    void onMouseUp(EventMouse* event);          // 鼠标松开
-    void clampScrollNodePosition();             // 限制节点位置（无黑边）
-    void clampScrollNodeScale(float targetScale); // 限制缩放比例（无黑边）
+    // 缩放/拖动节点相关
+    Node* _scrollNode;
+    Sprite* _backgroundSprite;
+    Vec2 _lastTouchPos;
+    bool _isDragging;
+    float _scaleMin;
+    float _scaleMax;
+    Size _backgroundSize;
+    Size _visibleSize;
+
+    // 功能函数
+    void initScrollNode();
+    void registerMouseEvents();
+    void onMouseScroll(EventMouse* event);
+    void onMouseDown(EventMouse* event);
+    void onMouseMove(EventMouse* event);
+    void onMouseUp(EventMouse* event);
+    void clampScrollNodePosition();
+    void clampScrollNodeScale(float targetScale);
 };
