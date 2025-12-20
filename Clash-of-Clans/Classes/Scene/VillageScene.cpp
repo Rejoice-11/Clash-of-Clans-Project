@@ -40,7 +40,7 @@ bool VillageScene::init()
 
     auto menu = Menu::create(attackBtn, marketBtn, nullptr);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 10);
+    this->addChild(menu, 10); // UI层级高于背景
 
     // 预先创建遮罩层
     _grayMask = LayerColor::create(Color4B(0, 0, 0, 180), _visibleSize.width, _visibleSize.height);
@@ -50,19 +50,6 @@ bool VillageScene::init()
 
     // 注册鼠标事件
     registerMouseEvents();
-
-    // 监听商店选择事件（与 StoreWindow 协议：StoreWindow 会 new 一个 Value 并把指针放到 event.userData）
-    auto customListener = EventListenerCustom::create("building_selected", [this](EventCustom* event) {
-        Value* v = static_cast<Value*>(event->getUserData());
-        if (v) {
-            int type = v->asInt();
-            // 处理放置模式
-            this->enterPlacementMode(type);
-            // 释放发送端分配的内存（与 StoreWindow 的实现约定）
-            delete v;
-        }
-    });
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(customListener, this);
 
     return true;
 }
@@ -218,7 +205,7 @@ void VillageScene::clampScrollNodeScale(float targetScale)
 // 攻击按钮点击回调实现
 void VillageScene::onAttackButtonClicked(Ref* sender)
 {
-    if (_attackPanel || _marketPanel) return;
+    if (_attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
 
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -265,45 +252,26 @@ void VillageScene::closeAttackPanel(Ref*)
     _grayMask->setVisible(false);
 }
 
-void VillageScene::enterPlacementMode(int buildingType)
-{
-}
-
-// 商店按钮点击回调实现
 void VillageScene::onMarketButtonClicked(Ref* sender)
 {
-    if (_attackPanel || _marketPanel) return;
+    // 防止重复打开或攻击面板打开时打开商店
+    if (_attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
 
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    _grayMask->setVisible(true);
-
-    auto market = Sprite::create("basic_market_bar.png");
-    if (market) {
-        auto centerPos = Vec2(_visibleSize.width / 2 + origin.x, _visibleSize.height / 2 + origin.y);
-        market->setPosition(centerPos);
-        this->addChild(market, 30);
-        _marketPanel = market;
-
-        auto closeBtn = MenuItemImage::create(
-            "out_of_now.png", "out_of_now.png",
-            [this](Ref*) {
-                if (_marketPanel) {
-                    _marketPanel->removeFromParent();
-                    _marketPanel = nullptr;
-                }
-                _grayMask->setVisible(false);
-            });
-
-        closeBtn->setPosition(Vec2(market->getContentSize().width - 30,
-            market->getContentSize().height - 30));
-
-        auto menu = Menu::create(closeBtn, nullptr);
-        menu->setPosition(Vec2::ZERO);
-        market->addChild(menu, 1);
+    // 首次创建商店弹窗（懒加载）
+    if (!_storeWindow)
+    {
+        _storeWindow = StoreWindow::create(CC_CALLBACK_0(VillageScene::onStoreWindowClosed, this));
+        this->addChild(_storeWindow, 30); // 层级高于攻击面板
     }
+    // 显示商店弹窗
+    _storeWindow->show();
 }
-
+// 商店窗口关闭后的回调
+void VillageScene::onStoreWindowClosed()
+{
+    // 清理商店窗口状态（如需可在此添加逻辑）
+    _grayMask->setVisible(false);
+}
 // 帧更新函数实现
 void VillageScene::update(float dt)
 {

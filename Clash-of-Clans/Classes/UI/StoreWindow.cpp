@@ -1,104 +1,86 @@
-// Classes/UI/StoreWindow.cpp
 #include "StoreWindow.h"
-#include "platform/CCFileUtils.h"
-#include "base/CCDirector.h"
-#include "2d/CCLabel.h"
 
-bool StoreWindow::init()
+StoreWindow* StoreWindow::create(const std::function<void()>& closeCallback)
 {
-    if (!Layer::init()) return false;
+    auto window = new (std::nothrow) StoreWindow();
+    // 先调用基类无参的init()，再调用自定义的带参初始化函数
+    if (window && window->init() && window->initWithCloseCallback(closeCallback))
+    {
+        window->autorelease();
+        return window;
+    }
+    CC_SAFE_DELETE(window);
+    return nullptr;
+}
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+// 自定义带参初始化函数（原来的init逻辑移到这里）
+bool StoreWindow::initWithCloseCallback(const std::function<void()>& closeCallback)
+{
+    _closeCallback = closeCallback;
+    _visibleSize = Director::getInstance()->getVisibleSize();
+    _origin = Director::getInstance()->getVisibleOrigin();
 
-    // 半透明遮罩
-    _backgroundMask = LayerColor::create(Color4B(0, 0, 0, 180), visibleSize.width, visibleSize.height);
-    _backgroundMask->setPosition(origin);
-    _backgroundMask->setVisible(false);
-    this->addChild(_backgroundMask, 20);
+    // 1. 遮罩层
+    _grayMask = LayerColor::create(Color4B(0, 0, 0, 180), _visibleSize.width, _visibleSize.height);
+    _grayMask->setPosition(_origin);
+    _grayMask->setVisible(false);
+    this->addChild(_grayMask, 10);
 
-    // 商店面板背景
-    _panel = Sprite::create("basic_market_bar.png");
-    if (!_panel) return false;
+    // 2. 商店主面板
+    _storePanel = Sprite::create("basic_market_bar.png");
+    if (_storePanel)
+    {
+        auto centerPos = Vec2(_visibleSize.width / 2 + _origin.x, _visibleSize.height / 2 + _origin.y);
+        _storePanel->setPosition(centerPos);
+        _storePanel->setVisible(false);
+        this->addChild(_storePanel, 20);
 
-    _panel->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-    _panel->setVisible(false);
-    this->addChild(_panel, 30);
+        // 关闭按钮
+        auto closeBtn = MenuItemImage::create(
+            "out_of_now.png", "out_of_now.png",
+            CC_CALLBACK_1(StoreWindow::onCloseButtonClicked, this));
+        closeBtn->setPosition(Vec2(
+            _storePanel->getContentSize().width - 30,
+            _storePanel->getContentSize().height - 30));
 
-    // 关闭按钮
-    auto closeBtn = MenuItemImage::create(
-        "out_of_now.png", "out_of_now.png",
-        CC_CALLBACK_1(StoreWindow::onCloseButtonClicked, this)
-    );
-    closeBtn->setPosition(Vec2(_panel->getContentSize().width - 30, _panel->getContentSize().height - 30));
-    auto menu = Menu::create(closeBtn, nullptr);
-    menu->setPosition(Vec2::ZERO);
-    _panel->addChild(menu, 1);
-
-    // 可建造建筑列表：简单示例（真实项目可从 ConfigManager 读取）
-    _availableBuildings = { 0, 1, 2 };
-
-    // 创建建筑卡片（水平排列）
-    /*float startX = 100;
-    for (size_t i = 0; i < _availableBuildings.size(); ++i) {
-        int type = _availableBuildings[i];
-        const BuildingData& data = ConfigManager::getInstance()->getBuildingData(type);
-
-        bool canAfford = ResourceManager::getInstance()->canAfford(data.cost_gold, data.cost_elixir);
-
-        std::string iconNormal = canAfford ?
-            StringUtils::format("building_icon_%d.png", type) :
-            "building_icon_locked.png";
-
-        auto card = MenuItemImage::create(
-            iconNormal.c_str(), iconNormal.c_str(),
-            CC_CALLBACK_1(StoreWindow::onBuildingCardClicked, this)
-        );
-        card->setTag(type); // 用 tag 存建筑类型
-        card->setPosition(Vec2(startX + i * 120, _panel->getContentSize().height - 150));
-
-        auto cardMenu = Menu::create(card, nullptr);
-        cardMenu->setPosition(Vec2::ZERO);
-        _panel->addChild(cardMenu, 2);
-
-        // 可选：显示名字或价格
-        std::string labelStr = StringUtils::format("%d G / %d E", data.cost_gold, data.cost_elixir);
-        auto lbl = Label::createWithSystemFont(labelStr, "Arial", 18);
-        lbl->setPosition(Vec2(card->getPositionX(), card->getPositionY() - 40));
-        _panel->addChild(lbl, 2);
-    }*/
+        auto menu = Menu::create(closeBtn, nullptr);
+        menu->setPosition(Vec2::ZERO);
+        _storePanel->addChild(menu, 1);
+    }
 
     return true;
 }
 
+// 显示商店弹窗（同步修改自身visible状态）
 void StoreWindow::show()
 {
-    _backgroundMask->setVisible(true);
-    _panel->setVisible(true);
+    // 1. 显示自身（Layer）
+    this->setVisible(true);
+    // 2. 显示内部面板/遮罩
+    if (_grayMask) _grayMask->setVisible(true);
+    if (_storePanel) _storePanel->setVisible(true);
+    // 3. 开启触控吞掉
+    this->setTouchEnabled(true);
+    this->setSwallowsTouches(true);
 }
 
+// 隐藏商店弹窗（同步修改自身visible状态）
 void StoreWindow::hide()
 {
-    _backgroundMask->setVisible(false);
-    _panel->setVisible(false);
-    this->removeFromParent();
+    // 1. 隐藏自身（Layer）
+    this->setVisible(false);
+    // 2. 隐藏内部面板/遮罩
+    if (_grayMask) _grayMask->setVisible(false);
+    if (_storePanel) _storePanel->setVisible(false);
+    // 3. 关闭触控
+    this->setTouchEnabled(false);
+    this->setSwallowsTouches(false);
 }
-
-void StoreWindow::onBuildingCardClicked(Ref* sender)
-{
-    auto item = static_cast<MenuItem*>(sender);
-    int buildingType = item->getTag();
-
-    // 使用堆分配的 Value 传递事件数据，接收方负责 delete
-    Value* data = new Value(buildingType);
-    auto event = EventCustom("building_selected");
-    event.setUserData(data);
-    Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-
-    hide();
-}
-
 void StoreWindow::onCloseButtonClicked(Ref* sender)
 {
-    hide();
+    this->hide();
+    if (_closeCallback)
+    {
+        _closeCallback();
+    }
 }
