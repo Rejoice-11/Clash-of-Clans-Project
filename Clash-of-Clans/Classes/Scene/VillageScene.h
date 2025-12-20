@@ -3,24 +3,19 @@
 #include "cocos2d.h"
 #include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
+// 引入商店弹窗头文件
 #include "Classes/UI/StoreWindow.h"
 
-// 场景命名空间
 USING_NS_CC;
 
 class VillageScene : public Scene
 {
 public:
-    // 场景创建
     static Scene* createScene();
-
-    // 初始化
     virtual bool init() override;
-
-    // 每帧更新
     virtual void update(float dt) override;
 
-    // 按钮回调
+    // 按钮回调声明
     void onAttackButtonClicked(Ref* sender);
     void onShopButtonClicked(Ref* sender);
     void onBuilderButtonClicked(Ref* sender);
@@ -28,25 +23,21 @@ public:
     CREATE_FUNC(VillageScene);
 
 private:
-    // UI 层与面板
     Layer* _backgroundLayer;
     Layer* _buildingLayer;
     Layer* _uiLayer;
     LayerColor* _grayMask = nullptr;
     Node* _attackPanel = nullptr;
-    Node* _marketPanel = nullptr;
 
-    // 与商店相关：StoreWindow 实例（分离出来的部分）
+    // 新增：商店弹窗实例（替代原_marketPanel）
     StoreWindow* _storeWindow = nullptr;
 
     // 内部回调
-    void onMarketButtonClicked(Ref* sender);
     void closeAttackPanel(Ref* sender);
+    void onMarketButtonClicked(Ref* sender); // 仅保留按钮点击入口
+    void onStoreWindowClosed(); // 商店窗口关闭后的回调
 
-    // 放置模式（当从商店选择建筑）
-    void enterPlacementMode(int buildingType);
-
-    // 缩放/拖动节点相关
+    // 缩放拖动相关变量（无变更）
     Node* _scrollNode;
     Sprite* _backgroundSprite;
     Vec2 _lastTouchPos;
@@ -56,7 +47,7 @@ private:
     Size _backgroundSize;
     Size _visibleSize;
 
-    // 功能函数
+    // 缩放拖动相关函数（无变更）
     void initScrollNode();
     void registerMouseEvents();
     void onMouseScroll(EventMouse* event);
