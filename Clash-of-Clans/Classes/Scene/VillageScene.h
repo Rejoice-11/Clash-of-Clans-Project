@@ -1,10 +1,8 @@
-//村庄编辑（主场景）
-// scene/VillageScene.h
 #pragma once
 
 #include "cocos2d.h"
 #include "Classes/Core/GameDirector.h"
-#include "Classes/Scene/BattleScene.h"        // 以后换成敌方村庄或直接BattleScene
+#include "Classes/Scene/BattleScene.h"
 USING_NS_CC;
 
 class VillageScene : public Scene
@@ -12,36 +10,45 @@ class VillageScene : public Scene
 public:
     static Scene* createScene();
     virtual bool init() override;
-    virtual void update(float dt) override;  // 资源生产、建造倒计时用
+    virtual void update(float dt) override;
 
     // 按钮回调
-    void onAttackButtonClicked(Ref* sender);   // 找敌人打仗
-    void onShopButtonClicked(Ref* sender);     // 打开商店
-    void onBuilderButtonClicked(Ref* sender);  // 查看工人
+    void onAttackButtonClicked(Ref* sender);
+    void onShopButtonClicked(Ref* sender);
+    void onBuilderButtonClicked(Ref* sender);
 
     CREATE_FUNC(VillageScene);
 
 private:
-    Layer* _backgroundLayer;   // 草地背景 + 装饰
-    Layer* _buildingLayer;     // 所有建筑放在这里
-    Layer* _uiLayer;           // HUD、按钮等
-    LayerColor* _grayMask = nullptr;   // 变灰+吞触控遮罩
-    Node* _attackPanel = nullptr;      // 攻击弹窗
-    Node* _marketPanel = nullptr;      // 商店全屏
+    Layer* _backgroundLayer;
+    Layer* _buildingLayer;
+    Layer* _uiLayer;
+    LayerColor* _grayMask = nullptr;
+    Node* _attackPanel = nullptr;
+    Node* _marketPanel = nullptr;
     void onMarketButtonClicked(Ref* sender);
     void closeAttackPanel(Ref* sender);
 
-    // 你需要准备的png
-    // "village_background.png"     // 村庄大底图（草地+路径）
-    // "button_attack_normal.png"   // 攻击按钮
-    // "button_attack_pressed.png"
-    // "button_shop_normal.png"
-    // "button_builder_normal.png"
-    // "hud_top_bar.png"            // 顶部资源栏背景（后面HUDLayer用）
+    // 新增：缩放拖动相关变量
+    Node* _scrollNode;          // 承载背景的可缩放/拖动节点
+    Sprite* _backgroundSprite;  // 背景精灵
+    Vec2 _lastTouchPos;         // 上次触摸位置（用于拖动）
+    bool _isDragging;           // 是否正在拖动
+    float _scaleMin;            // 最小缩放比例
+    float _scaleMax;            // 最大缩放比例
+    Size _backgroundSize;       // 背景原始尺寸
+    Size _visibleSize;          // 可视区域尺寸
+
+    // 新增：事件处理函数
+    void initScrollNode();                      // 初始化缩放拖动节点
+    void registerMouseEvents();                 // 注册鼠标事件
+    void onMouseScroll(EventMouse* event);      // 鼠标滚轮缩放
+    void onMouseDown(EventMouse* event);        // 鼠标按下
+    void onMouseMove(EventMouse* event);        // 鼠标移动
+    void onMouseUp(EventMouse* event);          // 鼠标松开
+    void clampScrollNodePosition();             // 限制节点位置（无黑边）
+    void clampScrollNodeScale(float targetScale); // 限制缩放比例（无黑边）
 };
-
-// scene/VillageScene.cpp
-
 Scene* VillageScene::createScene()
 {
     auto scene = Scene::create();
@@ -58,62 +65,205 @@ bool VillageScene::init()
         return false;
     }
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
+    _visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // 1. 村庄背景
-    auto bg = Sprite::create("village_background.png");
-    if (bg) {
-        auto centerPos = Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
-        bg->setPosition(centerPos);
-        this->addChild(bg, -1);
-    }
+    // 初始化缩放拖动节点（核心）
+    initScrollNode();
 
-    // 2. 左下角 攻击按钮
+    // 2. UI按钮（固定在屏幕角落，不随背景变化）
+    // 左下角 攻击按钮
     auto attackBtn = MenuItemImage::create(
         "attack_button.png", "attack_button.png",
         CC_CALLBACK_1(VillageScene::onAttackButtonClicked, this));
-    attackBtn->setPosition(Vec2(100 + origin.x, 100 + origin.y));  // 左下角
+    attackBtn->setPosition(Vec2(100 + origin.x, 100 + origin.y));
 
-    // 3. 右下角 商店按钮
+    // 右下角 商店按钮
     auto marketBtn = MenuItemImage::create(
         "market_button.png", "market_button.png",
         CC_CALLBACK_1(VillageScene::onMarketButtonClicked, this));
-    marketBtn->setPosition(Vec2(visibleSize.width - 100 + origin.x, 100 + origin.y));  // 右下角
+    marketBtn->setPosition(Vec2(_visibleSize.width - 100 + origin.x, 100 + origin.y));
 
     auto menu = Menu::create(attackBtn, marketBtn, nullptr);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 10);
+    this->addChild(menu, 10); // UI层级高于背景
 
-    // 预先创建遮罩层（变灰+吞触控）
-    _grayMask = LayerColor::create(Color4B(0, 0, 0, 180), visibleSize.width, visibleSize.height);
+    // 预先创建遮罩层
+    _grayMask = LayerColor::create(Color4B(0, 0, 0, 180), _visibleSize.width, _visibleSize.height);
     _grayMask->setPosition(origin);
     _grayMask->setVisible(false);
     this->addChild(_grayMask, 20);
 
+    // 注册鼠标事件
+    registerMouseEvents();
+
     return true;
+}
+
+// 初始化缩放拖动节点
+void VillageScene::initScrollNode()
+{
+    // 创建承载背景的可交互节点
+    _scrollNode = Node::create();
+    _scrollNode->setPosition(_visibleSize.width / 2, _visibleSize.height / 2);
+    this->addChild(_scrollNode, -1);
+
+    // 加载背景精灵
+    _backgroundSprite = Sprite::create("village_background.jpg");
+    if (_backgroundSprite) {
+        _backgroundSize = _backgroundSprite->getContentSize();
+        _backgroundSprite->setPosition(Vec2::ZERO); // 相对于scrollNode居中
+        _scrollNode->addChild(_backgroundSprite);
+
+        // 计算最小/最大缩放比例（保证无黑边）
+        // 最小缩放：背景刚好覆盖屏幕
+        _scaleMin = std::max(_visibleSize.width / _backgroundSize.width,
+            _visibleSize.height / _backgroundSize.height);
+        // 最大缩放：限制放大倍数（可根据需求调整，比如2倍最小缩放）
+        _scaleMax = _scaleMin * 3.0f;
+
+        // 初始缩放为最小缩放（刚好覆盖屏幕）
+        _scrollNode->setScale(_scaleMin);
+    }
+
+    _isDragging = false;
+}
+
+// 注册鼠标事件
+void VillageScene::registerMouseEvents()
+{
+    // 鼠标滚轮事件
+    auto mouseScrollListener = EventListenerMouse::create();
+    mouseScrollListener->onMouseScroll = CC_CALLBACK_1(VillageScene::onMouseScroll, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseScrollListener, this);
+
+    // 鼠标按下事件
+    auto mouseDownListener = EventListenerMouse::create();
+    mouseDownListener->onMouseDown = CC_CALLBACK_1(VillageScene::onMouseDown, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseDownListener, this);
+
+    // 鼠标移动事件
+    auto mouseMoveListener = EventListenerMouse::create();
+    mouseMoveListener->onMouseMove = CC_CALLBACK_1(VillageScene::onMouseMove, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseMoveListener, this);
+
+    // 鼠标松开事件
+    auto mouseUpListener = EventListenerMouse::create();
+    mouseUpListener->onMouseUp = CC_CALLBACK_1(VillageScene::onMouseUp, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseUpListener, this);
+}
+
+// 鼠标滚轮缩放（上滚缩小，下滚放大）
+void VillageScene::onMouseScroll(EventMouse* event)
+{
+    if (!_backgroundSprite) return;
+
+    // 获取滚轮偏移（y轴：上滚为正，下滚为负）
+    float scrollY = event->getScrollY();
+    if (scrollY == 0) return;
+
+    // 计算目标缩放比例（上滚缩小，下滚放大）
+    float currentScale = _scrollNode->getScale();
+    float scaleStep = 0.1f; // 每次滚轮的缩放步长（可调整）
+    float targetScale = scrollY > 0 ? currentScale - scaleStep : currentScale + scaleStep;
+
+    // 限制缩放范围（无黑边）
+    clampScrollNodeScale(targetScale);
+
+    // 获取鼠标在世界坐标系的位置
+    Vec2 mouseWorldPos = _scrollNode->getParent()->convertToNodeSpace(Vec2(event->getCursorX(), event->getCursorY()));
+    // 计算缩放中心（鼠标位置相对于scrollNode的偏移）
+    Vec2 offset = mouseWorldPos - _scrollNode->getPosition();
+    offset = offset / currentScale; // 转换为缩放前的偏移
+
+    // 缩放后调整位置，保证鼠标指向的位置不变（放大镜效果）
+    _scrollNode->setScale(_scrollNode->getScale());
+    _scrollNode->setPosition(mouseWorldPos - offset * _scrollNode->getScale());
+
+    // 限制位置，防止黑边
+    clampScrollNodePosition();
+}
+
+// 鼠标按下（左键开始拖动）
+void VillageScene::onMouseDown(EventMouse* event)
+{
+    // 只响应左键
+    if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) return;
+
+    _isDragging = true;
+    // 记录按下时的鼠标位置（世界坐标系）
+    _lastTouchPos = _scrollNode->getParent()->convertToNodeSpace(Vec2(event->getCursorX(), event->getCursorY()));
+}
+
+// 鼠标移动（拖动背景）
+void VillageScene::onMouseMove(EventMouse* event)
+{
+    if (!_isDragging || !_backgroundSprite) return;
+
+    // 获取当前鼠标位置
+    Vec2 currentTouchPos = _scrollNode->getParent()->convertToNodeSpace(Vec2(event->getCursorX(), event->getCursorY()));
+    // 计算偏移量
+    Vec2 delta = currentTouchPos - _lastTouchPos;
+
+    // 移动scrollNode
+    _scrollNode->setPosition(_scrollNode->getPosition() + delta);
+    // 更新上次触摸位置
+    _lastTouchPos = currentTouchPos;
+
+    // 限制位置，防止黑边
+    clampScrollNodePosition();
+}
+
+// 鼠标松开（结束拖动）
+void VillageScene::onMouseUp(EventMouse* event)
+{
+    if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) return;
+    _isDragging = false;
+}
+
+// 限制scrollNode的位置，保证无黑边
+void VillageScene::clampScrollNodePosition()
+{
+    if (!_backgroundSprite) return;
+
+    float currentScale = _scrollNode->getScale();
+    // 计算scrollNode的有效移动范围
+    float maxX = _visibleSize.width / 2 + (_backgroundSize.width * currentScale - _visibleSize.width) / 2;
+    float minX = _visibleSize.width / 2 - (_backgroundSize.width * currentScale - _visibleSize.width) / 2;
+    float maxY = _visibleSize.height / 2 + (_backgroundSize.height * currentScale - _visibleSize.height) / 2;
+    float minY = _visibleSize.height / 2 - (_backgroundSize.height * currentScale - _visibleSize.height) / 2;
+
+    // 限制x、y轴位置
+    Vec2 newPos = _scrollNode->getPosition();
+    newPos.x = clampf(newPos.x, minX, maxX);
+    newPos.y = clampf(newPos.y, minY, maxY);
+    _scrollNode->setPosition(newPos);
+}
+
+// 限制缩放比例，保证无黑边
+void VillageScene::clampScrollNodeScale(float targetScale)
+{
+    // 限制在最小/最大缩放之间
+    float newScale = clampf(targetScale, _scaleMin, _scaleMax);
+    _scrollNode->setScale(newScale);
 }
 
 // 攻击按钮点击 → 弹出左侧攻击面板
 void VillageScene::onAttackButtonClicked(Ref* sender)
 {
-    if (_attackPanel || _marketPanel) return;  // 防止重复打开
+    if (_attackPanel || _marketPanel) return;
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // 变灰遮罩
     _grayMask->setVisible(true);
 
-    // 攻击弹窗背景（左侧）
     auto panel = Sprite::create("attack_out_when_point_the_attack_button_in_village_scene.png");
     if (panel) {
         panel->setAnchorPoint(Vec2(0, 0.5f));
-        panel->setPosition(Vec2(origin.x, visibleSize.height / 2 + origin.y));
+        panel->setPosition(Vec2(origin.x, _visibleSize.height / 2 + origin.y));
         this->addChild(panel, 30);
         _attackPanel = panel;
 
-        // 去战斗按钮（中间）
         auto fightBtn = MenuItemImage::create(
             "attack_button_to_reverse_to_battle_scene.png",
             "attack_button_to_reverse_to_battle_scene.png",
@@ -122,7 +272,6 @@ void VillageScene::onAttackButtonClicked(Ref* sender)
                 GameDirector::getInstance()->replaceScene(BattleScene::createScene());
             });
 
-        // 关闭按钮（右上角）
         auto closeBtn = MenuItemImage::create(
             "out_of_now.png", "out_of_now.png",
             CC_CALLBACK_1(VillageScene::closeAttackPanel, this));
@@ -153,19 +302,17 @@ void VillageScene::onMarketButtonClicked(Ref* sender)
 {
     if (_attackPanel || _marketPanel) return;
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     _grayMask->setVisible(true);
 
     auto market = Sprite::create("basic_market_bar.png");
     if (market) {
-        auto centerPos = Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y);
+        auto centerPos = Vec2(_visibleSize.width / 2 + origin.x, _visibleSize.height / 2 + origin.y);
         market->setPosition(centerPos);
         this->addChild(market, 30);
         _marketPanel = market;
 
-        // 右上角关闭按钮
         auto closeBtn = MenuItemImage::create(
             "out_of_now.png", "out_of_now.png",
             [this](Ref*) {
@@ -187,5 +334,9 @@ void VillageScene::onMarketButtonClicked(Ref* sender)
 
 void VillageScene::update(float dt)
 {
-    //waiting for implementation: 资源生产、建造倒计时等逻辑
+    // 资源生产、建造倒计时等逻辑
 }
+
+// 以下为未实现的空函数（保持代码完整性）
+void VillageScene::onShopButtonClicked(Ref* sender) {}
+void VillageScene::onBuilderButtonClicked(Ref* sender) {}

@@ -85,7 +85,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if (!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("ClashOfTaffy", cocos2d::Rect(0, 0, 960, 640));
+		glview = GLViewImpl::createWithRect("ClashOfTaffy", cocos2d::Rect(0, 0, 1280, 720));//初始化窗口大小1280x720
 #else
         glview = GLViewImpl::create("ClashOfTaffy");
 #endif
@@ -93,7 +93,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // 设置设计分辨率（根据你的美术资源改）
-    glview->setDesignResolutionSize(960, 640, ResolutionPolicy::SHOW_ALL);
+    glview->setDesignResolutionSize(1280, 720, ResolutionPolicy::SHOW_ALL);
 
     // FPS显示（调试用，正式版可以关）
     director->setDisplayStats(true);
