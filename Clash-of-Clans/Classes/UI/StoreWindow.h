@@ -3,6 +3,8 @@
 #include "Classes/Entity/Building/TownHall.h"  // 暂时先包含TownHall，其他建筑后续加
 #include "Classes/Entity/Building/ResourceBuilding.h"
 #include "Classes/Entity/Building/StorageBuilding.h"
+#include "Classes/Entity/Building/MilitaryBuilding.h"
+#include "Classes/Entity/Building/DefenseBuilding.h"
 #include <functional>
 
 USING_NS_CC;

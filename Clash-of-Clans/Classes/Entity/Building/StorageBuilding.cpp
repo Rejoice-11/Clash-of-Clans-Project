@@ -17,7 +17,9 @@ BuildingData GoldStorageBuildingData = {
     {30, 60, 120, 180, 240},     // buildTime (seconds)
     {800, 1200, 1800, 2500, 3500}, // hitPoints
     {}, // productionPerHour (留空，存储建筑不产出)
-    {5000, 10000, 20000, 30000, 50000} // capacity (新增字段！)
+    {5000, 10000, 20000, 30000, 50000}, // capacity (新增字段！)
+    {},
+    {}
 };
 
 BuildingData ElixirStorageBuildingData = {
@@ -30,7 +32,9 @@ BuildingData ElixirStorageBuildingData = {
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500},
     {},
-    {5000, 10000, 20000, 30000, 50000} // capacity
+    {5000, 10000, 20000, 30000, 50000}, // capacity
+    {},
+    {}
 };
 
 // 构造函数

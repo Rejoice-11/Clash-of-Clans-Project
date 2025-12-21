@@ -37,6 +37,7 @@
     <ClCompile Include="..\Classes\Entity\Building\ResourceBuilding.cpp" />
     <ClCompile Include="..\Classes\Utils\GridUtils.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\StorageBuilding.cpp" />
+    <ClCompile Include="..\Classes\Entity\Building\DefenseBuilding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

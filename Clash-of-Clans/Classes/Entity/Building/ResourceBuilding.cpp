@@ -17,6 +17,8 @@ BuildingData GoldMineBuildingData =
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500}, // hitPoints
     {200, 400, 700, 1200, 2000},    // productionPerHour ¡û ÐÂÔö×Ö¶Î£¡
+    {},
+    {},
     {}
 };
 
@@ -31,6 +33,8 @@ BuildingData ElixirCollectorBuildingData =
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500},
     {200, 400, 700, 1200, 2000},    // productionPerHour
+    {},
+    {},
     {}
 };
 

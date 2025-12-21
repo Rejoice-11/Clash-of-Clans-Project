@@ -16,6 +16,8 @@ BuildingData TownHallBuildingData = {
     {60, 120, 240, 300, 400}, // buildTime (seconds)
     {2000, 3000, 5000, 7000, 10000}, // hitPoints
     {},
+    {},
+    {},
     {}
 };
 

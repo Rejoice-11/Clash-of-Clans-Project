@@ -161,8 +161,8 @@ int StoreWindow::getCurrentCount(BuildingType type)
     if (type == BuildingType::GOLD_STORAGE) return countofGoldStoragesInVillage;
     if (type == BuildingType::ELIXIR_STORAGE) return countofElixirStoragesInVillage;
     //if (type == BuildingType::MILITARY_CAMP) return countofMilitaryCampsInVillage;
-    //if (type == BuildingType::ARCHER_TOWER) return countofArcherTowersInVillage;
-    //if (type == BuildingType::CANNON) return countofCannonsInVillage;
+    if (type == BuildingType::ARCHER_TOWER) return countofArcherTowersInVillage;
+    if (type == BuildingType::CANNON) return countofCanonsInVillage;
     //if (type == BuildingType::WORKER_HOME) return countofWorkerHomesInVillage;
 
     return 0;  // 其他暂时0
@@ -197,22 +197,18 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel)
         return TownHallBuildingData.maxBuildCount[thLevel - 1];
     }
     */
-    /*
     else if (type == BuildingType::ARCHER_TOWER)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];
     }
-    */
-    /*
     else if (type == BuildingType::CANNON)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];
     }
-    */
     else if (type == BuildingType::WORKER_HOME)
     {
         return 3;
     }
     
-    return 1;  // 其他建筑默认5个
+    return 5;  // 其他建筑默认5个
 }

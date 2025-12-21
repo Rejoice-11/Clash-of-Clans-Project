@@ -27,4 +27,6 @@ struct BuildingData
 	int hitPoints[MAX_LEVELS]; // AKA health points
 	int productionPerHour[MAX_LEVELS]; // for resource buildings
 	int capacity[MAX_LEVELS]; // for storage buildings
+	int attackRange[MAX_LEVELS]; // for defense buildings
+	float damagePerSecond[MAX_LEVELS]; // for defense buildings
 };
