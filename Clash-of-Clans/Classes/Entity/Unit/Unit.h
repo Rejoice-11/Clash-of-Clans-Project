@@ -1,4 +1,4 @@
-//基类（HP、攻击、寻路）//test test
+//基类（HP、攻击、寻路）
 #pragma once
 
 #include "Classes/Entity/GameObject.h"
