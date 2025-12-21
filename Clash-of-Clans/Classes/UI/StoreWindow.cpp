@@ -73,7 +73,7 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
             case BuildingType::ARCHER_TOWER: iconName = "archer_tower_lv1.png"; break;
             case BuildingType::CANNON: iconName = "canon_lv1.png"; break;
             case BuildingType::WORKER_HOME: iconName = "worker_home.png"; break;
-            default: iconName = "town_hall_lv1.png";
+
             }
 
             // 判断可用
@@ -129,7 +129,8 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
     return true;
 }
 
-void StoreWindow::show() {
+void StoreWindow::show()
+{
     this->setVisible(true);
     if (_grayMask) _grayMask->setVisible(true);
     if (_storePanel) _storePanel->setVisible(true);
@@ -137,28 +138,86 @@ void StoreWindow::show() {
     this->setSwallowsTouches(true);
 }
 
-void StoreWindow::hide() {
+void StoreWindow::hide()
+{
     this->setVisible(false);
     if (_grayMask) _grayMask->setVisible(false);
     if (_storePanel) _storePanel->setVisible(false);
     this->setTouchEnabled(false);
 }
 
-void StoreWindow::onCloseButtonClicked(Ref* sender) {
+void StoreWindow::onCloseButtonClicked(Ref* sender)
+{
     this->hide();
     // 不触发放置
 }
 
 // 当前数量（以TownHall为例，其他建筑后续加全局计数）
-int StoreWindow::getCurrentCount(BuildingType type) {
+int StoreWindow::getCurrentCount(BuildingType type)
+{
     if (type == BuildingType::TOWN_HALL) return countofTownHallsInVillage;
+    if (type == BuildingType::GOLD_MINE) return countofGoldMinesInVillage;
+    if (type == BuildingType::ELIXIR_COLLECTOR) return countofElixirCollectorsInVillage;
+    //if (type == BuildingType::GOLD_STORAGE) return countofGoldStoragesInVillage;
+    //if (type == BuildingType::ELIXIR_STORAGE) return countofElixirStoragesInVillage;
+    //if (type == BuildingType::MILITARY_CAMP) return countofMilitaryCampsInVillage;
+    //if (type == BuildingType::ARCHER_TOWER) return countofArcherTowersInVillage;
+    //if (type == BuildingType::CANNON) return countofCannonsInVillage;
+    //if (type == BuildingType::WORKER_HOME) return countofWorkerHomesInVillage;
+
     return 0;  // 其他暂时0
 }
 
 // 最大数量（从BuildingData拿，以TownHall为例）
-int StoreWindow::getMaxCount(BuildingType type, int thLevel) {
-    if (type == BuildingType::TOWN_HALL) {
+int StoreWindow::getMaxCount(BuildingType type, int thLevel)
+{
+    if (type == BuildingType::TOWN_HALL)
+    {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];  // 假设等级从1开始
     }
+    if (type == BuildingType::GOLD_MINE)
+    {
+        return GoldMineBuildingData.maxBuildCount[thLevel - 1];
+    }
+    if (type == BuildingType::ELIXIR_COLLECTOR)
+    {
+        return ElixirCollectorBuildingData.maxBuildCount[thLevel - 1];
+    }
+    /*
+    if (type == BuildingType::GOLD_STORAGE)
+    {
+        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+    }
+    */
+    /*
+    if (type == BuildingType::ELIXIR_STORAGE)
+    {
+        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+    }
+    */
+    /*
+    if (type == BuildingType::MILITARY_CAMP)
+    {
+        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+    }
+    */
+    /*
+    if (type == BuildingType::ARCHER_TOWER)
+    {
+        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+    }
+    */
+    /*
+    if (type == BuildingType::CANNON)
+    {
+        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+    }
+    */
+    /*
+    if (type == BuildingType::WORKER_HOME)
+    {
+        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+    }
+    */
     return 1;  // 其他建筑默认5个
 }

@@ -356,11 +356,18 @@ void VillageScene::updateGhostPosition(const Vec2& mouseWorldPos)
 // 新增：根据类型拿图
 std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
 {
-    switch (type) {
+    switch (type) 
+    {
     case StoreWindow::BuildingType::TOWN_HALL: return "town_hall_lv1.png";
     case StoreWindow::BuildingType::GOLD_MINE: return "gold_mine_lv1.png";
-        // ... 其他同理 ...
-    default: return "town_hall_lv1.png";
+    case StoreWindow::BuildingType::ELIXIR_COLLECTOR: return "elixir_collector_lv1.png";
+    case StoreWindow::BuildingType::GOLD_STORAGE: return "gold_storage_lv1.png";
+    case StoreWindow::BuildingType::ELIXIR_STORAGE: return "elixir_storage_lv1.png";
+    case StoreWindow::BuildingType::MILITARY_CAMP: return "military_camp_lv1.png";
+    case StoreWindow::BuildingType::ARCHER_TOWER: return "archer_tower_lv1.png";
+    case StoreWindow::BuildingType::CANNON: return "canon_lv1.png";
+    case StoreWindow::BuildingType::WORKER_HOME: return "worker_home.png";
+
     }
 }
 

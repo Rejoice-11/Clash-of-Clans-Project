@@ -3,25 +3,30 @@
 #include "cocos2d.h"
 
 // Constants.h 或 ConfigManager 加载的 JSON
-BuildingData goldMineData = {
+int countofGoldMinesInVillage = 0;
+int countofElixirCollectorsInVillage = 0;
+
+BuildingData GoldMineBuildingData =
+{
     2, // id
     BuildingType::GOLD_MINE,
     1,
-    {5, 5, 5, 5, 5}, // maxBuildCount
-    {150, 400, 800, 1500, 2500}, // goldCost
-    {0, 0, 0, 0, 0},
+    {2, 3, 4, 5, 5}, // maxBuildCount
+    {0, 0, 0, 0, 0}, // goldCost
+    {150, 400, 800, 1500, 2500},
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500}, // hitPoints
     {200, 400, 700, 1200, 2000}    // productionPerHour ← 新增字段！
 };
 
-BuildingData elixirCollectorData = {
+BuildingData ElixirCollectorBuildingData =
+{
     3, // id
     BuildingType::ELIXIR_COLLECTOR,
     1,
-    {5, 5, 5, 5, 5},
-    {0, 0, 0, 0, 0},
+    {2, 3, 4, 5, 5},
     {150, 400, 800, 1500, 2500},
+    {0, 0, 0, 0, 0},
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500},
     {200, 400, 700, 1200, 2000}    // productionPerHour
@@ -31,18 +36,18 @@ BuildingData elixirCollectorData = {
 ResourceBuilding::ResourceBuilding(const BuildingData& data, int instanceId, ResourceType type)
     : Building(data, instanceId)
     , _resourceType(type)
-    , _accumulatedTime(0.0f) 
+    , _accumulatedTime(0.0f)
 {
     // 可在此初始化其他成员
 }
 
 // ———————— 重写基类虚函数 ————————
 
-cocos2d::Sprite* ResourceBuilding::createSprite() 
+cocos2d::Sprite* ResourceBuilding::createSprite()
 {
     std::string frameName = getSpriteFrameName();
     auto sprite = cocos2d::Sprite::create(frameName + ".png");
-    if (!sprite) 
+    if (!sprite)
     {
         // 若找不到具体等级图，回退到通用图
         std::string fallback = (_resourceType == ResourceType::GOLD) ? "gold_mine_lv1.png" : "elixir_collector_lv1.png";
@@ -51,16 +56,16 @@ cocos2d::Sprite* ResourceBuilding::createSprite()
     return sprite;
 }
 
-void ResourceBuilding::upgrade() 
+void ResourceBuilding::upgrade()
 {
-    if (_currentLevel < MAX_LEVELS) 
+    if (_currentLevel < MAX_LEVELS)
     {
         _currentLevel++;
         // 可在此触发UI更新、播放音效等
     }
 }
 
-std::string ResourceBuilding::getSpriteFrameName() const 
+std::string ResourceBuilding::getSpriteFrameName() const
 {
     std::string baseName = (_resourceType == ResourceType::GOLD) ? "gold_mine_lv" : "elixir_collector_lv";
     return baseName + std::to_string(_currentLevel + 1);
@@ -68,10 +73,10 @@ std::string ResourceBuilding::getSpriteFrameName() const
 
 // ———————— 资源产出逻辑 ————————
 
-int ResourceBuilding::produce(float deltaTime) 
+int ResourceBuilding::produce(float deltaTime)
 {
     // 安全校验：等级有效？
-    if (_currentLevel < 0 || _currentLevel >= MAX_LEVELS )
+    if (_currentLevel < 0 || _currentLevel >= MAX_LEVELS)
     {
         return 0;
     }
@@ -85,28 +90,28 @@ int ResourceBuilding::produce(float deltaTime)
     int produced = 0;
 
     // 每积累1秒就尝试产出一次（避免浮点误差累积）
-    while (_accumulatedTime >= 1.0f) 
+    while (_accumulatedTime >= 1.0f)
     {
         _accumulatedTime -= 1.0f;
 
         bool success = false;
 
-        if (_resourceType == ResourceType::GOLD) 
+        if (_resourceType == ResourceType::GOLD)
         {
             success = ResourceManager::getInstance()->addGold(int(productionRate));
         }
 
-        else 
+        else
         {
             success = ResourceManager::getInstance()->addElixir(int(productionRate));
         }
 
-        if (success) 
+        if (success)
         {
             produced++;
         }
 
-        else 
+        else
         {
             // 储罐已满，停止本次产出循环
             break;

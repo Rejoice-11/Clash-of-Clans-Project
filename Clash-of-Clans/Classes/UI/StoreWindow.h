@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
-#include "entity/building/TownHall.h"  // 暂时先包含TownHall，其他建筑后续加
+#include "Classes/Entity/Building/TownHall.h"  // 暂时先包含TownHall，其他建筑后续加
+#include "Classes/Entity/Building/ResourceBuilding.h"
 #include <functional>
 
 USING_NS_CC;
@@ -9,17 +10,18 @@ class StoreWindow : public Layer
 {
 public:
     // 建筑类型枚举（方便扩展）
-    enum class BuildingType {
-        TOWN_HALL,
-        GOLD_MINE,
-        ELIXIR_COLLECTOR,
-        GOLD_STORAGE,
-        ELIXIR_STORAGE,
-        MILITARY_CAMP,
-        ARCHER_TOWER,
-        CANNON,
-        WORKER_HOME,
-        MAX_TYPES  // 计数用
+    enum class BuildingType
+    {
+        TOWN_HALL = 0,
+        GOLD_MINE = 1,
+        ELIXIR_COLLECTOR = 2,
+        GOLD_STORAGE = 3,
+        ELIXIR_STORAGE = 4,
+        MILITARY_CAMP = 5,
+        ARCHER_TOWER = 6,
+        CANNON = 7,
+        WORKER_HOME = 8,
+        MAX_TYPES = 9  // 计数用
     };
 
     static StoreWindow* create(const std::function<void(BuildingType)>& placeCallback);  // 改！回调带类型

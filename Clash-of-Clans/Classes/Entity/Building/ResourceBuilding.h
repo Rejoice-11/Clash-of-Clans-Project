@@ -4,14 +4,18 @@
 #include "Classes/Data/BuildingData.h"
 #include "cocos2d.h"
 
+extern int countofGoldMinesInVillage; // 全局计数器
+extern int countofElixirCollectorsInVillage; // 全局计数器1
+extern BuildingData GoldMineBuildingData; // 配置数据
+extern BuildingData ElixirCollectorBuildingData; // 配置数据
 /**
  * @brief 资源生产建筑基类（金矿、圣水收集器）
  * @note 自动周期性产出资源到对应储罐
  */
-class ResourceBuilding : public Building 
+class ResourceBuilding : public Building
 {
 public:
-    enum class ResourceType 
+    enum class ResourceType
     {
         GOLD,
         ELIXIR
