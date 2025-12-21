@@ -25,7 +25,7 @@ bool VillageScene::init()
     // 初始化缩放拖动节点（核心）
     initScrollNode();
      // 绘制网格
-    GridUtils::drawGrid(this);
+    GridUtils::drawGrid(_scrollNode);
     // 2. UI按钮（固定在屏幕角落，不随背景变化）
     // 左下角 攻击按钮
     auto attackBtn = MenuItemImage::create(

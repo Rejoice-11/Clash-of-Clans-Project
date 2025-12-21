@@ -80,30 +80,42 @@ void GridUtils::drawGrid(Node* parent)
     auto drawNode = DrawNode::create();
     parent->addChild(drawNode, 4);  // 确保在背景之上，建筑之下
 
-    // 绘制大菱形边框
-    drawNode->drawLine(LEFT_VERTEX, TOP_VERTEX, Color4F::GRAY);
-    drawNode->drawLine(TOP_VERTEX, RIGHT_VERTEX, Color4F::GRAY);
-    drawNode->drawLine(RIGHT_VERTEX, BOTTOM_VERTEX, Color4F::GRAY);
-    drawNode->drawLine(BOTTOM_VERTEX, LEFT_VERTEX, Color4F::GRAY);
+    // 关键修改：将世界坐标转换为父节点（_scrollNode）的本地坐标
+    Vec2 left = parent->convertToNodeSpace(LEFT_VERTEX);
+    Vec2 right = parent->convertToNodeSpace(RIGHT_VERTEX);
+    Vec2 top = parent->convertToNodeSpace(TOP_VERTEX);
+    Vec2 bottom = parent->convertToNodeSpace(BOTTOM_VERTEX);
 
-    // 绘制小菱形网格
-    Color4F gridColor(0.5f, 0.5f, 0.5f, 0.5f);  // 灰色半透明
+    // 绘制大菱形边框（使用转换后的本地坐标）
+    drawNode->drawLine(left, top, Color4F::GRAY);
+    drawNode->drawLine(top, right, Color4F::GRAY);
+    drawNode->drawLine(right, bottom, Color4F::GRAY);
+    drawNode->drawLine(bottom, left, Color4F::GRAY);
 
-    // 绘制水平线
+    // 绘制小网格线（同样需要转换坐标）
+    Color4F gridColor(0.5f, 0.5f, 0.5f, 0.5f);
+
+    // 水平网格线
     for (int i = 0; i <= GRID_ROWS; ++i)
     {
         float ratio = (float)i / GRID_ROWS;
         Vec2 leftPoint = LEFT_VERTEX.lerp(BOTTOM_VERTEX, ratio);
         Vec2 rightPoint = TOP_VERTEX.lerp(RIGHT_VERTEX, ratio);
+        // 转换为父节点本地坐标
+        leftPoint = parent->convertToNodeSpace(leftPoint);
+        rightPoint = parent->convertToNodeSpace(rightPoint);
         drawNode->drawLine(leftPoint, rightPoint, gridColor);
     }
 
-    // 绘制垂直线
+    // 垂直网格线
     for (int i = 0; i <= GRID_COLS; ++i)
     {
         float ratio = (float)i / GRID_COLS;
         Vec2 topPoint = LEFT_VERTEX.lerp(TOP_VERTEX, ratio);
         Vec2 bottomPoint = BOTTOM_VERTEX.lerp(RIGHT_VERTEX, ratio);
+        // 转换为父节点本地坐标
+        topPoint = parent->convertToNodeSpace(topPoint);
+        bottomPoint = parent->convertToNodeSpace(bottomPoint);
         drawNode->drawLine(topPoint, bottomPoint, gridColor);
     }
 }
