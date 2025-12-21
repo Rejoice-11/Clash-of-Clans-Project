@@ -5,7 +5,7 @@
 #include "Classes/Scene/BattleScene.h"
 // 引入商店弹窗头文件
 #include "Classes/UI/StoreWindow.h"
-
+#include "Classes/Utils/GridUtils.h"
 USING_NS_CC;
 
 class VillageScene : public Scene

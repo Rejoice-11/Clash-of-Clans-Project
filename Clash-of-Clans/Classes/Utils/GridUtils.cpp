@@ -1,0 +1,198 @@
+#include "GridUtils.h"
+
+// 初始化静态成员
+const Vec2 GridUtils::LEFT_VERTEX = Vec2(256, 392);
+const Vec2 GridUtils::RIGHT_VERTEX = Vec2(1056, 392);  // 计算得出的右顶点
+const Vec2 GridUtils::TOP_VERTEX = Vec2(656, 712);
+const Vec2 GridUtils::BOTTOM_VERTEX = Vec2(656, 72);
+
+float GridUtils::_gridWidth = 0;
+float GridUtils::_gridHeight = 0;
+Vec2 GridUtils::_gridOrigin = Vec2::ZERO;
+bool GridUtils::_parametersInitialized = false;
+
+void GridUtils::initGridParameters()
+{
+    if (_parametersInitialized) return;
+
+    // 计算大菱形的宽度和高度
+    float diamondWidth = distance(LEFT_VERTEX, RIGHT_VERTEX);
+    float diamondHeight = distance(TOP_VERTEX, BOTTOM_VERTEX);
+
+    // 计算每个小菱形的尺寸
+    _gridWidth = diamondWidth / GRID_COLS;
+    _gridHeight = diamondHeight / GRID_ROWS;
+
+    // 计算网格原点(左上角第一个格子的中心)
+    _gridOrigin = Vec2(LEFT_VERTEX.x, TOP_VERTEX.y);
+
+    _parametersInitialized = true;
+}
+
+float GridUtils::distance(const Vec2& a, const Vec2& b)
+{
+    return sqrtf(powf(a.x - b.x, 2) + powf(a.y - b.y, 2));
+}
+
+float GridUtils::pointToLineDistance(const Vec2& point, const Vec2& lineStart, const Vec2& lineEnd)
+{
+    float A = point.x - lineStart.x;
+    float B = point.y - lineStart.y;
+    float C = lineEnd.x - lineStart.x;
+    float D = lineEnd.y - lineStart.y;
+
+    float dot = A * C + B * D;
+    float lenSq = C * C + D * D;
+    float param = -1;
+
+    if (lenSq != 0)
+        param = dot / lenSq;
+
+    float xx, yy;
+
+    if (param < 0)
+    {
+        xx = lineStart.x;
+        yy = lineStart.y;
+    }
+    else if (param > 1)
+    {
+        xx = lineEnd.x;
+        yy = lineEnd.y;
+    }
+    else
+    {
+        xx = lineStart.x + param * C;
+        yy = lineStart.y + param * D;
+    }
+
+    float dx = point.x - xx;
+    float dy = point.y - yy;
+
+    return sqrtf(dx * dx + dy * dy);
+}
+
+void GridUtils::drawGrid(Node* parent)
+{
+    initGridParameters();
+
+    // 创建绘制命令
+    auto drawNode = DrawNode::create();
+    parent->addChild(drawNode, 4);  // 确保在背景之上，建筑之下
+
+    // 绘制大菱形边框
+    drawNode->drawLine(LEFT_VERTEX, TOP_VERTEX, Color4F::GRAY);
+    drawNode->drawLine(TOP_VERTEX, RIGHT_VERTEX, Color4F::GRAY);
+    drawNode->drawLine(RIGHT_VERTEX, BOTTOM_VERTEX, Color4F::GRAY);
+    drawNode->drawLine(BOTTOM_VERTEX, LEFT_VERTEX, Color4F::GRAY);
+
+    // 绘制小菱形网格
+    Color4F gridColor(0.5f, 0.5f, 0.5f, 0.5f);  // 灰色半透明
+
+    // 绘制水平线
+    for (int i = 0; i <= GRID_ROWS; ++i)
+    {
+        float ratio = (float)i / GRID_ROWS;
+        Vec2 leftPoint = LEFT_VERTEX.lerp(BOTTOM_VERTEX, ratio);
+        Vec2 rightPoint = TOP_VERTEX.lerp(RIGHT_VERTEX, ratio);
+        drawNode->drawLine(leftPoint, rightPoint, gridColor);
+    }
+
+    // 绘制垂直线
+    for (int i = 0; i <= GRID_COLS; ++i)
+    {
+        float ratio = (float)i / GRID_COLS;
+        Vec2 topPoint = LEFT_VERTEX.lerp(TOP_VERTEX, ratio);
+        Vec2 bottomPoint = BOTTOM_VERTEX.lerp(RIGHT_VERTEX, ratio);
+        drawNode->drawLine(topPoint, bottomPoint, gridColor);
+    }
+}
+
+bool GridUtils::isPointInDiamond(const Vec2& point)
+{
+    // 计算点到四条边的距离之和是否小于等于大菱形的半周长
+    float distanceToLeftEdge = pointToLineDistance(point, LEFT_VERTEX, TOP_VERTEX);
+    float distanceToTopEdge = pointToLineDistance(point, TOP_VERTEX, RIGHT_VERTEX);
+    float distanceToRightEdge = pointToLineDistance(point, RIGHT_VERTEX, BOTTOM_VERTEX);
+    float distanceToBottomEdge = pointToLineDistance(point, BOTTOM_VERTEX, LEFT_VERTEX);
+
+    // 计算大菱形的半高和半宽
+    float halfHeight = distance(TOP_VERTEX, BOTTOM_VERTEX) / 2;
+    float halfWidth = distance(LEFT_VERTEX, RIGHT_VERTEX) / 2;
+
+    // 点在菱形内的判定
+    return (distanceToLeftEdge + distanceToRightEdge <= halfWidth * 1.05f &&
+        distanceToTopEdge + distanceToBottomEdge <= halfHeight * 1.05f);
+}
+
+Vec2 GridUtils::snapToGrid(const Vec2& point)
+{
+    initGridParameters();
+
+    // 先转换为网格坐标
+    Vec2 gridPos = worldToGrid(point);
+
+    // 取整
+    gridPos.x = roundf(gridPos.x);
+    gridPos.y = roundf(gridPos.y);
+
+    // 限制在网格范围内
+    gridPos.x = clampf(gridPos.x, 0, GRID_COLS - 1);
+    gridPos.y = clampf(gridPos.y, 0, GRID_ROWS - 1);
+
+    // 转换回世界坐标
+    return gridToWorld(gridPos);
+}
+
+bool GridUtils::isBuildingInDiamond(const Vec2& gridPos)
+{
+    // 检查3x3建筑的所有格子是否都在大菱形内
+    for (int i = 0; i < BUILDING_SIZE; ++i)
+    {
+        for (int j = 0; j < BUILDING_SIZE; ++j)
+        {
+            int x = gridPos.x + i - BUILDING_SIZE / 2;
+            int y = gridPos.y + j - BUILDING_SIZE / 2;
+
+            // 检查是否超出网格范围
+            if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS)
+                return false;
+
+            // 检查该点是否在大菱形内
+            if (!isPointInDiamond(gridToWorld(Vec2(x, y))))
+                return false;
+        }
+    }
+    return true;
+}
+
+Vec2 GridUtils::gridToWorld(const Vec2& gridPos)
+{
+    initGridParameters();
+
+    // 将网格坐标转换为世界坐标
+    float x = LEFT_VERTEX.x + (gridPos.x / (GRID_COLS - 1)) * distance(LEFT_VERTEX, RIGHT_VERTEX) * 0.5f;
+    x += (gridPos.y / (GRID_ROWS - 1)) * distance(LEFT_VERTEX, RIGHT_VERTEX) * 0.5f;
+
+    float y = TOP_VERTEX.y - (gridPos.x / (GRID_COLS - 1)) * distance(TOP_VERTEX, BOTTOM_VERTEX) * 0.5f;
+    y -= (gridPos.y / (GRID_ROWS - 1)) * distance(TOP_VERTEX, BOTTOM_VERTEX) * 0.5f;
+
+    return Vec2(x, y);
+}
+
+Vec2 GridUtils::worldToGrid(const Vec2& worldPos)
+{
+    initGridParameters();
+
+    // 将世界坐标转换为网格坐标
+    float dx = worldPos.x - LEFT_VERTEX.x;
+    float dy = TOP_VERTEX.y - worldPos.y;
+
+    float width = distance(LEFT_VERTEX, RIGHT_VERTEX);
+    float height = distance(TOP_VERTEX, BOTTOM_VERTEX);
+
+    float col = (dx / (width * 0.5f) - dy / (height * 0.5f)) / 2 * (GRID_COLS - 1);
+    float row = (dx / (width * 0.5f) + dy / (height * 0.5f)) / 2 * (GRID_ROWS - 1);
+
+    return Vec2(col, row);
+}

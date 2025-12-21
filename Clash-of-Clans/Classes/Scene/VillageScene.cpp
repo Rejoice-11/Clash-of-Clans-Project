@@ -24,7 +24,8 @@ bool VillageScene::init()
 
     // 初始化缩放拖动节点（核心）
     initScrollNode();
-
+     // 绘制网格
+    GridUtils::drawGrid(this);
     // 2. UI按钮（固定在屏幕角落，不随背景变化）
     // 左下角 攻击按钮
     auto attackBtn = MenuItemImage::create(
@@ -63,7 +64,7 @@ void VillageScene::initScrollNode()
     this->addChild(_scrollNode, -1);
 
     // 加载背景精灵
-    _backgroundSprite = Sprite::create("village_background.jpg");
+    _backgroundSprite = Sprite::create("2village_background.jpg");
     if (_backgroundSprite) {
         _backgroundSize = _backgroundSprite->getContentSize();
         _backgroundSprite->setPosition(Vec2::ZERO); // 相对于scrollNode居中
