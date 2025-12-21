@@ -14,7 +14,9 @@ BuildingData TownHallBuildingData = {
     {1000, 2000, 4000, 6000, 9000}, // goldCost
     {0, 0, 0, 0, 0}, // elixirCost
     {60, 120, 240, 300, 400}, // buildTime (seconds)
-    {2000, 3000, 5000, 7000, 10000} // hitPoints
+    {2000, 3000, 5000, 7000, 10000}, // hitPoints
+    {},
+    {}
 };
 
 // 构造函数实现

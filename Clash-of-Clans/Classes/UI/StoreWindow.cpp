@@ -158,8 +158,8 @@ int StoreWindow::getCurrentCount(BuildingType type)
     if (type == BuildingType::TOWN_HALL) return countofTownHallsInVillage;
     if (type == BuildingType::GOLD_MINE) return countofGoldMinesInVillage;
     if (type == BuildingType::ELIXIR_COLLECTOR) return countofElixirCollectorsInVillage;
-    //if (type == BuildingType::GOLD_STORAGE) return countofGoldStoragesInVillage;
-    //if (type == BuildingType::ELIXIR_STORAGE) return countofElixirStoragesInVillage;
+    if (type == BuildingType::GOLD_STORAGE) return countofGoldStoragesInVillage;
+    if (type == BuildingType::ELIXIR_STORAGE) return countofElixirStoragesInVillage;
     //if (type == BuildingType::MILITARY_CAMP) return countofMilitaryCampsInVillage;
     //if (type == BuildingType::ARCHER_TOWER) return countofArcherTowersInVillage;
     //if (type == BuildingType::CANNON) return countofCannonsInVillage;
@@ -175,49 +175,44 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];  // 假设等级从1开始
     }
-    if (type == BuildingType::GOLD_MINE)
+    else if (type == BuildingType::GOLD_MINE)
     {
         return GoldMineBuildingData.maxBuildCount[thLevel - 1];
     }
-    if (type == BuildingType::ELIXIR_COLLECTOR)
+    else if (type == BuildingType::ELIXIR_COLLECTOR)
     {
         return ElixirCollectorBuildingData.maxBuildCount[thLevel - 1];
     }
+    else if (type == BuildingType::GOLD_STORAGE)
+    {
+        return GoldStorageBuildingData.maxBuildCount[thLevel - 1];
+    }
+    else if (type == BuildingType::ELIXIR_STORAGE)
+    {
+        return ElixirStorageBuildingData.maxBuildCount[thLevel - 1];
+    }
     /*
-    if (type == BuildingType::GOLD_STORAGE)
+    else if (type == BuildingType::MILITARY_CAMP)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];
     }
     */
     /*
-    if (type == BuildingType::ELIXIR_STORAGE)
+    else if (type == BuildingType::ARCHER_TOWER)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];
     }
     */
     /*
-    if (type == BuildingType::MILITARY_CAMP)
+    else if (type == BuildingType::CANNON)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];
     }
     */
-    /*
-    if (type == BuildingType::ARCHER_TOWER)
+    else if (type == BuildingType::WORKER_HOME)
     {
-        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+        return 3;
     }
-    */
-    /*
-    if (type == BuildingType::CANNON)
-    {
-        return TownHallBuildingData.maxBuildCount[thLevel - 1];
-    }
-    */
-    /*
-    if (type == BuildingType::WORKER_HOME)
-    {
-        return TownHallBuildingData.maxBuildCount[thLevel - 1];
-    }
-    */
+    
     return 1;  // 其他建筑默认5个
 }
