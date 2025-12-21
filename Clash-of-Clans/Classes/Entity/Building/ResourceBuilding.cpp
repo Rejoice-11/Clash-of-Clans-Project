@@ -2,6 +2,31 @@
 #include "Classes/System/ResourceManager.h"
 #include "cocos2d.h"
 
+// Constants.h 或 ConfigManager 加载的 JSON
+BuildingData goldMineData = {
+    2, // id
+    BuildingType::GOLD_MINE,
+    1,
+    {5, 5, 5, 5, 5}, // maxBuildCount
+    {150, 400, 800, 1500, 2500}, // goldCost
+    {0, 0, 0, 0, 0},
+    {30, 60, 120, 180, 240},
+    {800, 1200, 1800, 2500, 3500}, // hitPoints
+    {200, 400, 700, 1200, 2000}    // productionPerHour ← 新增字段！
+};
+
+BuildingData elixirCollectorData = {
+    3, // id
+    BuildingType::ELIXIR_COLLECTOR,
+    1,
+    {5, 5, 5, 5, 5},
+    {0, 0, 0, 0, 0},
+    {150, 400, 800, 1500, 2500},
+    {30, 60, 120, 180, 240},
+    {800, 1200, 1800, 2500, 3500},
+    {200, 400, 700, 1200, 2000}    // productionPerHour
+};
+
 // 构造函数
 ResourceBuilding::ResourceBuilding(const BuildingData& data, int instanceId, ResourceType type)
     : Building(data, instanceId)

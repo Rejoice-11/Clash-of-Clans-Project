@@ -11,7 +11,8 @@
 class ResourceBuilding : public Building 
 {
 public:
-    enum class ResourceType {
+    enum class ResourceType 
+    {
         GOLD,
         ELIXIR
     };
