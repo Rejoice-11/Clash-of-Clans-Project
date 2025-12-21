@@ -61,6 +61,8 @@ private:
     StoreWindow::BuildingType _pendingBuildingType = StoreWindow::BuildingType::MAX_TYPES;  // 当前待放置类型
     Sprite* _ghostBuilding = nullptr;              // 幽灵建筑（半透明跟随鼠标）
     bool _isPlacementMode = false;                 // 是否在放置模式
+	bool _isInMarketPanel = false;                     // 是否在商店界面
+	bool _isInAttackPanel = false;                // 是否在攻击面板
 
     void enterPlacementMode(StoreWindow::BuildingType type);   // 进入放置
     void cancelPlacementMode();                                // 取消放置

@@ -31,7 +31,6 @@ public:
 
 private:
     void onCloseButtonClicked(Ref* sender);
-    void onBuildingButtonClicked(BuildingType type);  // µã»÷½¨Öþ°´Å¥
 
     Size _visibleSize;
     Vec2 _origin;

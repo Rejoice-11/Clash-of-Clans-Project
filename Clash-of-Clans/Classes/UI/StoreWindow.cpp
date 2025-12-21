@@ -160,5 +160,5 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel) {
     if (type == BuildingType::TOWN_HALL) {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];  // 假设等级从1开始
     }
-    return 5;  // 其他建筑默认5个
+    return 1;  // 其他建筑默认5个
 }

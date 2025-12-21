@@ -25,4 +25,5 @@ struct BuildingData
 	int elixirCost[MAX_LEVELS];
 	int buildTime[MAX_LEVELS]; // in seconds
 	int hitPoints[MAX_LEVELS]; // AKA health points
+	int productionPerHour[MAX_LEVELS]; // for resource buildings
 };

@@ -112,6 +112,11 @@ void VillageScene::onMouseScroll(EventMouse* event)
 {
     if (!_backgroundSprite) return;
 
+    if (_attackPanel)
+    {
+        return;  // 攻击模式下不缩放地图
+    }
+
     // 获取滚轮偏移（y轴：上滚为正，下滚为负）
     float scrollY = event->getScrollY();
     if (scrollY == 0) return;
@@ -139,7 +144,6 @@ void VillageScene::onMouseScroll(EventMouse* event)
 }
 
 // 鼠标按下实现
-// onMouseDown 改成这样
 void VillageScene::onMouseDown(EventMouse* event)
 {
     if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT)
@@ -169,10 +173,10 @@ void VillageScene::onMouseMove(EventMouse* event)
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);  // 屏幕→世界坐标
 
-    if (_isPlacementMode)
+    if (_isPlacementMode ||_attackPanel )
     {
         updateGhostPosition(worldPos);
-        return;  // 放置模式下不拖动地图
+        return;  // 放置,商店，攻击模式下不拖动地图
     }
 
     if (!_isDragging || !_backgroundSprite) return;
@@ -270,7 +274,7 @@ void VillageScene::closeAttackPanel(Ref*)
 
 void VillageScene::onMarketButtonClicked(Ref* sender)
 {
-    if (_attackPanel || _isPlacementMode) return;  // 放置中不能开商店
+    if (_attackPanel || _isPlacementMode) return;  // 放置,攻击中不能开商店
 
     if (!_storeWindow)
     {
@@ -358,12 +362,7 @@ std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
     default: return "town_hall_lv1.png";
     }
 }
-// 商店窗口关闭后的回调
-void VillageScene::onStoreWindowClosed()
-{
-    // 清理商店窗口状态（如需可在此添加逻辑）
-    _grayMask->setVisible(false);
-}
+
 // 帧更新函数实现
 void VillageScene::update(float dt)
 {

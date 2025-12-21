@@ -1,48 +1,111 @@
 // Classes/System/ResourceManager.cpp
-#include "ResourceManager.h"
+#include "Classes/System/ResourceManager.h"
+#include "cocos2d.h"
 
-ResourceManager* ResourceManager::s_instance = nullptr;
+// 静态成员定义
+ResourceManager* ResourceManager::_instance = nullptr;
 
-ResourceManager* ResourceManager::getInstance()
+// ———————— 单例实现 ———————— //
+
+ResourceManager* ResourceManager::getInstance() 
 {
-    if (!s_instance)
+    if (!_instance) 
     {
-        s_instance = new (std::nothrow) ResourceManager();
+        _instance = new ResourceManager();
     }
-    return s_instance;
+    return _instance;
 }
 
-void ResourceManager::destroyInstance()
+void ResourceManager::destroyInstance() 
 {
-    CC_SAFE_DELETE(s_instance);
+    delete _instance;
+    _instance = nullptr;
 }
 
-ResourceManager::ResourceManager()
+ResourceManager::ResourceManager() 
 {
-    // 默认初始资源，可根据需要从存档或配置加载
-    _gold = 1000;
-    _elixir = 500;
+    // 可从存档加载初始值
+    cocos2d::log("ResourceManager initialized: Gold=%d, Elixir=%d", _gold, _elixir);
 }
 
-ResourceManager::~ResourceManager()
-{
-}
+// ———————— 资源操作实现 ———————— //
 
-bool ResourceManager::canAfford(int gold, int elixir) const
+bool ResourceManager::addGold(int amount) 
 {
-    return (_gold >= gold) && (_elixir >= elixir);
-}
+    if (amount <= 0) 
+        return false;
 
-bool ResourceManager::spend(int gold, int elixir)
-{
-    if (!canAfford(gold, elixir)) return false;
-    _gold -= gold;
-    _elixir -= elixir;
+    std::lock_guard<std::mutex> lock(_mutex);
+
+    if (_gold + amount > _maxGoldStorage) 
+    {
+        return false; // 超出上限
+    }
+
+    _gold += amount;
+    notifyResourceChange();
     return true;
 }
 
-void ResourceManager::addResources(int gold, int elixir)
+bool ResourceManager::addElixir(int amount) 
 {
-    _gold += gold;
-    _elixir += elixir;
+    if (amount <= 0) 
+        return false;
+
+    std::lock_guard<std::mutex> lock(_mutex);
+
+    if (_elixir + amount > _maxElixirStorage) 
+    {
+        return false;
+    }
+
+    _elixir += amount;
+    notifyResourceChange();
+    return true;
+}
+
+bool ResourceManager::spendGold(int amount) 
+{
+    if (amount <= 0) 
+        return false;
+
+    std::lock_guard<std::mutex> lock(_mutex);
+
+    if (_gold < amount) 
+    {
+        return false; // 资源不足
+    }
+
+    _gold -= amount;
+    notifyResourceChange();
+
+    return true;
+}
+
+bool ResourceManager::spendElixir(int amount) 
+{
+    if (amount <= 0)
+        return false;
+
+    std::lock_guard<std::mutex> lock(_mutex);
+
+    if (_elixir < amount) 
+    {
+        return false;
+    }
+
+    _elixir -= amount;
+    notifyResourceChange();
+
+    return true;
+}
+
+// ———————— 事件通知 ———————— //
+
+void ResourceManager::notifyResourceChange() 
+{
+    if (_onResourceChange) 
+    {
+        _onResourceChange();
+    }
 }
