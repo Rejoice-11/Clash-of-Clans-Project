@@ -24,10 +24,9 @@ bool VillageScene::init()
 
     // 初始化缩放拖动节点（核心）
     initScrollNode();
-     // 绘制网格
+    // 绘制网格
     GridUtils::drawGrid(_scrollNode);
     // 2. UI按钮（固定在屏幕角落，不随背景变化）
-    // 
     auto hud = HUDLayer::create();
     this->addChild(hud, 5); // 高层级，确保在最上层
     // 左下角 攻击按钮
@@ -114,11 +113,11 @@ void VillageScene::registerMouseEvents()
 // 鼠标滚轮缩放实现
 void VillageScene::onMouseScroll(EventMouse* event)
 {
-    if (!_backgroundSprite) return;
+    /*if (!_backgroundSprite) return;
 
-    if (_attackPanel)
+    if (_attackPanel || _isPlacementMode)
     {
-        return;  // 攻击模式下不缩放地图
+        return;  // 攻击模式和放置模式下不缩放地图
     }
 
     // 获取滚轮偏移（y轴：上滚为正，下滚为负）
@@ -142,9 +141,8 @@ void VillageScene::onMouseScroll(EventMouse* event)
     // 缩放后调整位置，保证鼠标指向的位置不变（放大镜效果）
     _scrollNode->setScale(_scrollNode->getScale());
     _scrollNode->setPosition(mouseWorldPos - offset * _scrollNode->getScale());
-
     // 限制位置，防止黑边
-    clampScrollNodePosition();
+    clampScrollNodePosition();    */
 }
 
 // 鼠标按下实现
@@ -176,8 +174,7 @@ void VillageScene::onMouseMove(EventMouse* event)
 {
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);  // 屏幕→世界坐标
-
-    if (_isPlacementMode ||_attackPanel )
+    if (_isPlacementMode || _attackPanel)
     {
         updateGhostPosition(worldPos);
         return;  // 放置,商店，攻击模式下不拖动地图
@@ -297,18 +294,41 @@ void VillageScene::enterPlacementMode(StoreWindow::BuildingType type)
     _isPlacementMode = true;
     _pendingBuildingType = type;
 
-    // 创建幽灵建筑（半透明）
+    // 强制缩放到初始大小（原来的样子）
+    _scrollNode->setScale(_scaleMin);
+    // 重置位置到屏幕中心（避免缩放后位置偏移）
+    _scrollNode->setPosition(_visibleSize.width / 2, _visibleSize.height / 2);
+    // 确保位置在有效范围内
+    clampScrollNodePosition();
+
+    // 获取幽灵建筑图片名称
     std::string spriteName = getGhostSpriteName(type);
-    _ghostBuilding = Sprite::create(spriteName);
-    if (_ghostBuilding)
-    {
-        _ghostBuilding->setOpacity(150);  // 半透明
-        _ghostBuilding->setColor(Color3B::GREEN);  // 先绿表示可建（后面加网格判断改红/绿）
-        this->addChild(_ghostBuilding, 50);  // 最上层
+    if (spriteName.empty()) {
+        CCLOG("Error: 找不到建筑对应的精灵图片");
+        return;
     }
 
-    // 隐藏商店遮罩（StoreWindow自己hide了，但保险起见）
+    // 创建幽灵建筑（带透明度的半透明效果）
+    _ghostBuilding = Sprite::create(spriteName);
+    if (!_ghostBuilding) {
+        CCLOG("Error: 无法创建幽灵建筑，图片路径可能错误: %s", spriteName.c_str());
+        return;
+    }
+
+    // 设置幽灵建筑属性
+    _ghostBuilding->setOpacity(150);  // 半透明
+    _ghostBuilding->setColor(Color3B::GREEN);  // 默认绿色（可放置状态）
+    this->addChild(_ghostBuilding, 50);  // 确保层级在最上层
+
+    // 隐藏商店窗口和灰色遮罩
+    if (_storeWindow) {
+        _storeWindow->hide();
+    }
     _grayMask->setVisible(false);
+
+    // 初始化位置（防止首次创建时位置错误）
+    Vec2 initPos = Director::getInstance()->getVisibleSize() / 2;
+    updateGhostPosition(initPos);
 }
 
 //加取消和确认函数
@@ -325,41 +345,57 @@ void VillageScene::cancelPlacementMode()
 
 void VillageScene::confirmPlacement(const Vec2& worldPos)
 {
-    // 这里以后真正创建Building实例 + 扣资源 + 分配工人
-    // 先用假建筑占位（和存档那套一样）
+    if (!_ghostBuilding || !_isPlacementMode) return;
+    //获取当前位置
+    Vec2 gridPos = GridUtils::worldToGrid(worldPos);
+    gridPos.x = floorf(gridPos.x);  // 取整到最近格子
+    gridPos.y = floorf(gridPos.y);
+    // 获取幽灵建筑当前位置（已吸附网格）
+     // 检查是否在菱形范围内
+    if (!GridUtils::isBuildingInDiamond(gridPos)) {
+        CCLOG("无法放置：超出菱形范围");
+        return;
+    }
+    // 5. 转换回世界坐标并设置位置
+    Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+    // 创建实际建筑
     std::string spriteName = getGhostSpriteName(_pendingBuildingType);
     auto realBuilding = Sprite::create(spriteName);
-    if (realBuilding)
-    {
-        realBuilding->setPosition(worldPos);
-        _scrollNode->addChild(realBuilding, 5);  // 建筑放在scrollNode里，随地图移动
-        // 计数+1（以TownHall为例）
-        if (_pendingBuildingType == StoreWindow::BuildingType::TOWN_HALL)
-            countofTownHallsInVillage++;
-    }
+    if (realBuilding) {
+        realBuilding->setPosition(finalPos); 
+        _scrollNode->addChild(realBuilding, 5);
 
-    cancelPlacementMode();  // 放置完自动退出模式
+        // 更新建筑计数（示例： TownHall）
+        if (_pendingBuildingType == StoreWindow::BuildingType::TOWN_HALL) {
+            // 注意：需要在VillageScene.h中声明countofTownHallsInVillage
+            countofTownHallsInVillage++;
+        }
+    }
+    cancelPlacementMode();
 }
 
-
-
-// 新增：更新幽灵位置（对齐到scrollNode坐标系）
+// 新增：更新幽灵位置suo
 void VillageScene::updateGhostPosition(const Vec2& mouseWorldPos)
 {
-    if (!_ghostBuilding) return;
-
-    // 将鼠标世界坐标转换为scrollNode本地坐标
-    Vec2 localPos = _scrollNode->convertToNodeSpace(mouseWorldPos);
-    // 以后可以加网格对齐：localPos = GridUtils::snapToGrid(localPos);
-    Vec2 ghostWorldPos = _scrollNode->convertToWorldSpace(localPos);
-
-    _ghostBuilding->setPosition(ghostWorldPos);
+    // 2. 网格吸附处理（确保3x3建筑中心对齐网格）
+    Vec2 gridPos = GridUtils::worldToGrid(mouseWorldPos);
+    gridPos.x = floorf(gridPos.x);  // 取整到最近格子
+    gridPos.y = floorf(gridPos.y);
+    // 4. 检查是否在菱形范围内
+    bool isInDiamond = GridUtils::isBuildingInDiamond(gridPos);
+    _ghostBuilding->setColor(isInDiamond ? Color3B::GREEN : Color3B::RED);
+    // 6. 同步缩放（与背景保持一致）
+    _ghostBuilding->setScale(_scrollNode->getScale());
+    // 5. 转换回世界坐标并设置位置
+    Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+    _ghostBuilding->setAnchorPoint(Vec2(0.5, 0.5));
+    _ghostBuilding->setPosition(finalPos);
 }
 
 // 新增：根据类型拿图
 std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
 {
-    switch (type) 
+    switch (type)
     {
     case StoreWindow::BuildingType::TOWN_HALL: return "town_hall_lv1.png";
     case StoreWindow::BuildingType::GOLD_MINE: return "gold_mine_lv1.png";
@@ -373,12 +409,11 @@ std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
 
     }
 }
-
-void VillageScene::recalculateMaxStorage() 
+void VillageScene::recalculateMaxStorage()
 {
     int totalGold = 0, totalElixir = 0;
 
-    for (auto storage : _goldStorages) 
+    for (auto storage : _goldStorages)
     {
         totalGold += storage->getCapacity();
     }
@@ -392,7 +427,7 @@ void VillageScene::recalculateMaxStorage()
 }
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）
-void VillageScene::onStorageUpgraded(StorageBuilding* storage) 
+void VillageScene::onStorageUpgraded(StorageBuilding* storage)
 {
     recalculateMaxStorage();
 }

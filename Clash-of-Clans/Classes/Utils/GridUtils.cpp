@@ -85,13 +85,11 @@ void GridUtils::drawGrid(Node* parent)
     Vec2 right = parent->convertToNodeSpace(RIGHT_VERTEX);
     Vec2 top = parent->convertToNodeSpace(TOP_VERTEX);
     Vec2 bottom = parent->convertToNodeSpace(BOTTOM_VERTEX);
-
     // 绘制大菱形边框（使用转换后的本地坐标）
     drawNode->drawLine(left, top, Color4F::GRAY);
     drawNode->drawLine(top, right, Color4F::GRAY);
     drawNode->drawLine(right, bottom, Color4F::GRAY);
     drawNode->drawLine(bottom, left, Color4F::GRAY);
-
     // 绘制小网格线（同样需要转换坐标）
     Color4F gridColor(0.5f, 0.5f, 0.5f, 0.5f);
 
@@ -167,11 +165,7 @@ bool GridUtils::isBuildingInDiamond(const Vec2& gridPos)
             int y = gridPos.y + j - BUILDING_SIZE / 2;
 
             // 检查是否超出网格范围
-            if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS)
-                return false;
-
-            // 检查该点是否在大菱形内
-            if (!isPointInDiamond(gridToWorld(Vec2(x, y))))
+            if (x < 1 || x >= GRID_COLS + 1 || y < 1 || y >= GRID_ROWS + 1)
                 return false;
         }
     }
@@ -182,12 +176,9 @@ Vec2 GridUtils::gridToWorld(const Vec2& gridPos)
 {
     initGridParameters();
 
-    // 将网格坐标转换为世界坐标
-    float x = LEFT_VERTEX.x + (gridPos.x / (GRID_COLS - 1)) * distance(LEFT_VERTEX, RIGHT_VERTEX) * 0.5f;
-    x += (gridPos.y / (GRID_ROWS - 1)) * distance(LEFT_VERTEX, RIGHT_VERTEX) * 0.5f;
+    float x = (gridPos.x + gridPos.y - 1.0f) * (0.5f * _gridWidth) + LEFT_VERTEX.x;
 
-    float y = TOP_VERTEX.y - (gridPos.x / (GRID_COLS - 1)) * distance(TOP_VERTEX, BOTTOM_VERTEX) * 0.5f;
-    y -= (gridPos.y / (GRID_ROWS - 1)) * distance(TOP_VERTEX, BOTTOM_VERTEX) * 0.5f;
+    float y = (gridPos.y - gridPos.x) * (0.5f * _gridHeight) + LEFT_VERTEX.y;
 
     return Vec2(x, y);
 }
@@ -196,15 +187,11 @@ Vec2 GridUtils::worldToGrid(const Vec2& worldPos)
 {
     initGridParameters();
 
-    // 将世界坐标转换为网格坐标
-    float dx = worldPos.x - LEFT_VERTEX.x;
-    float dy = TOP_VERTEX.y - worldPos.y;
+    float dx = worldPos.x;
+    float dy = worldPos.y;
 
-    float width = distance(LEFT_VERTEX, RIGHT_VERTEX);
-    float height = distance(TOP_VERTEX, BOTTOM_VERTEX);
 
-    float col = (dx / (width * 0.5f) - dy / (height * 0.5f)) / 2 * (GRID_COLS - 1);
-    float row = (dx / (width * 0.5f) + dy / (height * 0.5f)) / 2 * (GRID_ROWS - 1);
-
+    float col = (dx * 0.5f - dy * 0.625f + 373.0f - LEFT_VERTEX.x) / (_gridWidth * 0.5) + 1.0f;
+    float row = (dx * 0.4f + dy * 0.5f + 93.6f - LEFT_VERTEX.y) / (_gridHeight * 0.5) + 1.0f;
     return Vec2(col, row);
 }
