@@ -11,9 +11,9 @@ BuildingData GoldStorageBuildingData = {
     4, // id
     BuildingType::GOLD_STORAGE,
     1, // 初始等级
-    {150, 400, 800, 1500, 2500}, // maxBuildCount (最多5个)
-    {2, 3, 4, 5, 5}, // goldCost
-    {0, 0, 0, 0, 0},             // elixirCost
+    {2, 3, 4, 5, 5}, // maxBuildCount (最多5个)
+    {0, 0, 0, 0, 0}, // goldCost
+    {150, 400, 800, 1500, 2500},    // elixirCost
     {30, 60, 120, 180, 240},     // buildTime (seconds)
     {800, 1200, 1800, 2500, 3500}, // hitPoints
     {}, // productionPerHour (留空，存储建筑不产出)
@@ -27,7 +27,7 @@ BuildingData ElixirStorageBuildingData = {
     BuildingType::ELIXIR_STORAGE,
     1,
     {2, 3, 4, 5, 5},
-    { 150, 400, 800, 1500, 2500 },             // goldCost
+    {150, 400, 800, 1500, 2500 },             // goldCost
     {0, 0, 0, 0, 0} , // elixirCost
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500},
