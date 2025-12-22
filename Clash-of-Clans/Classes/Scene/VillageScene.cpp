@@ -174,7 +174,11 @@ void VillageScene::onMouseMove(EventMouse* event)
 {
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);  // ÆÁÄ»¡úÊÀ½ç×ø±ê
-
+    if (_isPlacementMode )
+    {
+        updateGhostPosition(worldPos);
+        return; 
+    }
 
     if (!_isDragging || !_backgroundSprite) return;
 

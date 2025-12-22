@@ -3,7 +3,13 @@
   "WorkspaceRootPath": "D:\\Clash of Clans\\Clash-of-Clans\\proj.win32\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\rjc\\Desktop\\Classes\\Scene\\VillageScene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\BattleScene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{76A39BB2-9B84-4C65-98A5-654D86B86F2A}|Clash-of-Clans.vcxproj|D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -22,7 +28,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,7 +40,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "VillageScene.cpp",
+              "DocumentMoniker": "C:\\Users\\rjc\\Desktop\\Classes\\Scene\\VillageScene.cpp",
+              "ToolTip": "C:\\Users\\rjc\\Desktop\\Classes\\Scene\\VillageScene.cpp*",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAK4AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-22T15:35:45.382Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BattleScene.cpp",
+              "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\BattleScene.cpp",
+              "RelativeDocumentMoniker": "..\\Classes\\Scene\\BattleScene.cpp",
+              "ToolTip": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\BattleScene.cpp",
+              "RelativeToolTip": "..\\Classes\\Scene\\BattleScene.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-12-22T15:34:14.967Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "VillageScene.h",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.h",
               "RelativeDocumentMoniker": "..\\Classes\\Scene\\VillageScene.h",
@@ -42,25 +72,24 @@
               "RelativeToolTip": "..\\Classes\\Scene\\VillageScene.h",
               "ViewState": "AgIAADYAAAAAAAAAAAAAAAkAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-12-22T14:32:43.323Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-22T14:32:43.323Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "VillageScene.cpp",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.cpp",
               "RelativeDocumentMoniker": "..\\Classes\\Scene\\VillageScene.cpp",
-              "ToolTip": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.cpp*",
-              "RelativeToolTip": "..\\Classes\\Scene\\VillageScene.cpp*",
-              "ViewState": "AgIAAF0BAAAAAAAAAAAAAGIBAAABAAAAAAAAAA==",
+              "ToolTip": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Scene\\VillageScene.cpp",
+              "RelativeToolTip": "..\\Classes\\Scene\\VillageScene.cpp",
+              "ViewState": "AgIAAE4BAAAAAAAAAAAAAG4BAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-12-22T14:16:49.514Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "GridUtils.cpp",
               "DocumentMoniker": "D:\\Clash of Clans\\Clash-of-Clans\\Classes\\Utils\\GridUtils.cpp",
               "RelativeDocumentMoniker": "..\\Classes\\Utils\\GridUtils.cpp",
@@ -68,12 +97,11 @@
               "RelativeToolTip": "..\\Classes\\Utils\\GridUtils.cpp",
               "ViewState": "AgIAAL8AAAAAAAAAAAAAAMQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-22T14:16:11.035Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-22T14:16:11.035Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "Unit.h",
               "DocumentMoniker": "C:\\Users\\1\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Entity\\Unit\\Unit.h",
               "ToolTip": "C:\\Users\\1\\source\\repos\\Clash-of-Clans-Project\\Clash-of-Clans\\Classes\\Entity\\Unit\\Unit.h",
