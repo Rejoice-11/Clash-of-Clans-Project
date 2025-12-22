@@ -3,6 +3,8 @@
 #include "cocos2d.h"
 #include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
+#include "Classes/System/ResourceManager.h"
+#include "Classes/UI/HUDLayer.h"
 // 引入商店弹窗头文件
 #include "Classes/UI/StoreWindow.h"
 #include "Classes/Utils/GridUtils.h"
@@ -69,4 +71,12 @@ private:
     void confirmPlacement(const Vec2& worldPos);               // 确认放置
     void updateGhostPosition(const Vec2& mousePos);            // 更新幽灵位置
     std::string getGhostSpriteName(StoreWindow::BuildingType type);  // 根据类型拿图
+
+	// 新增: 存储与gold,elixir相关函数
+    void onStorageUpgraded(StorageBuilding * storage); // 响应升级
+    void recalculateMaxStorage();                    // 重新计算总容量
+
+	// 新增: 存储与gold,elixir相关建筑列表
+    std::vector<StorageBuilding*> _goldStorages;
+    std::vector<StorageBuilding*> _elixirStorages;
 };

@@ -27,6 +27,9 @@ bool VillageScene::init()
      // 绘制网格
     GridUtils::drawGrid(_scrollNode);
     // 2. UI按钮（固定在屏幕角落，不随背景变化）
+    // 
+    auto hud = HUDLayer::create();
+    this->addChild(hud, 5); // 高层级，确保在最上层
     // 左下角 攻击按钮
     auto attackBtn = MenuItemImage::create(
         "attack_button.png", "attack_button.png",
@@ -369,6 +372,29 @@ std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
     case StoreWindow::BuildingType::WORKER_HOME: return "worker_home.png";
 
     }
+}
+
+void VillageScene::recalculateMaxStorage() 
+{
+    int totalGold = 0, totalElixir = 0;
+
+    for (auto storage : _goldStorages) 
+    {
+        totalGold += storage->getCapacity();
+    }
+    for (auto storage : _elixirStorages)
+    {
+        totalElixir += storage->getCapacity();
+    }
+
+    ResourceManager::getInstance()->updateMaxGoldStorage(totalGold);
+    ResourceManager::getInstance()->updateMaxElixirStorage(totalElixir);
+}
+
+// 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）
+void VillageScene::onStorageUpgraded(StorageBuilding* storage) 
+{
+    recalculateMaxStorage();
 }
 
 // 帧更新函数实现

@@ -162,6 +162,8 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Scene\BattleScene.cpp" />
     <ClCompile Include="..\Classes\Scene\VillageScene.cpp" />
     <ClCompile Include="..\Classes\System\ResourceManager.cpp" />
+    <ClCompile Include="..\Classes\UI\BuildingPanel.cpp" />
+    <ClCompile Include="..\Classes\UI\HUDLayer.cpp" />
     <ClCompile Include="..\Classes\UI\StoreWindow.cpp" />
     <ClCompile Include="..\Classes\Utils\GridUtils.cpp" />
     <ClCompile Include="main.cpp" />

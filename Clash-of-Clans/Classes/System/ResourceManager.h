@@ -42,8 +42,13 @@ public:
     int getMaxElixirStorage() const { return _maxElixirStorage; }
 
     // ———————— 事件回调（用于刷新UI） ———————— //
+    void updateMaxGoldStorage(int totalCapacity);
+    void updateMaxElixirStorage(int totalCapacity);
+
     using ResourceChangeListener = std::function<void()>;
-    void setOnResourceChange(const ResourceChangeListener& listener) {
+
+    void setOnResourceChange(const ResourceChangeListener& listener) 
+    {
         _onResourceChange = listener;
     }
 
