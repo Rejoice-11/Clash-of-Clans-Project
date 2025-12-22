@@ -174,11 +174,7 @@ void VillageScene::onMouseMove(EventMouse* event)
 {
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);  // 屏幕→世界坐标
-    if (_isPlacementMode || _attackPanel)
-    {
-        updateGhostPosition(worldPos);
-        return;  // 放置,商店，攻击模式下不拖动地图
-    }
+
 
     if (!_isDragging || !_backgroundSprite) return;
 
