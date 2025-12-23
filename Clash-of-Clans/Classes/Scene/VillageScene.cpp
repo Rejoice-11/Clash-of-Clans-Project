@@ -464,6 +464,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         return;
 
     Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+	realSprite->setAnchorPoint(Vec2(0.5, 0.5));
+	finalPos = Vec2(finalPos.x-640, finalPos.y-360);
     realSprite->setPosition(finalPos);
     _scrollNode->addChild(realSprite, 5);
 
