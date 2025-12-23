@@ -2,7 +2,9 @@
 #pragma once
 
 #include "Classes/Entity/GameObject.h"
-#include "Classes/Data/BuildingData.h" // 假设你有数据结构
+#include "Classes/Data/BuildingData.h" 
+#include "cocos2d.h"
+#include "Classes/Utils/GridUtils.h"
 
 /**
  * @brief 建筑抽象基类
@@ -13,6 +15,9 @@ class Building : public GameObject
 public:
     static constexpr Type TYPE = Type::BUILDING;
     Type getType() const override { return TYPE; }
+
+    Vec2 getGridPosition() const { return _gridPos; }
+    void setGridPosition(const Vec2 & pos) { _gridPos = pos; }
 
     // 构造时绑定配置数据
     explicit Building(const BuildingData& data, int instanceId = -1)
@@ -48,4 +53,5 @@ public:
 protected:
     const BuildingData& _data;      // 配置数据（只读）
     int _currentLevel;              // 当前等级（1~max）
+	Vec2 _gridPos = Vec2::ZERO;     // 网格坐标
 };

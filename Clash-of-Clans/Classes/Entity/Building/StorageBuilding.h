@@ -18,11 +18,11 @@ extern BuildingData ElixirStorageBuildingData;  // 建筑数据
 class StorageBuilding : public Building {
 public:
     enum class StorageType {
-        GOLD,
-        ELIXIR
+        GOLD_STORAGE,
+        ELIXIR_STORAGE
     };
 
-    explicit StorageBuilding(const BuildingData& data, int instanceId = -1, StorageType type = StorageType::GOLD);
+    explicit StorageBuilding(const BuildingData& data, int instanceId = -1, StorageType type = StorageType::GOLD_STORAGE);
 
     // ———————— 重写基类 ———————— //
     cocos2d::Sprite* createSprite() override;

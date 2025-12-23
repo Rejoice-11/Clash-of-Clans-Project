@@ -43,11 +43,11 @@ StorageBuilding::StorageBuilding(const BuildingData& data, int instanceId, Stora
     , _storageType(type) {
     // 初始化时增加全局计数
     if (instanceId == -1) {
-        static int nextId = 2001; // 从2001开始（避免和TownHall冲突）
+        static int nextId = 3001; // 从2001开始（避免和TownHall冲突）
         setId(nextId++);
     }
 
-    if (_storageType == StorageType::GOLD) {
+    if (_storageType == StorageType::GOLD_STORAGE) {
         countofGoldStoragesInVillage++;
     }
     else {
@@ -62,7 +62,7 @@ cocos2d::Sprite* StorageBuilding::createSprite() {
     auto sprite = cocos2d::Sprite::create(frameName + ".png");
     if (!sprite) {
         // 回退到默认图
-        std::string fallback = (_storageType == StorageType::GOLD) ? "gold_storage_lv1.png" : "elixir_storage_lv1.png";
+        std::string fallback = (_storageType == StorageType::GOLD_STORAGE) ? "gold_storage_lv1.png" : "elixir_storage_lv1.png";
         sprite = cocos2d::Sprite::create(fallback);
     }
     return sprite;
@@ -76,7 +76,7 @@ void StorageBuilding::upgrade() {
 }
 
 std::string StorageBuilding::getSpriteFrameName() const {
-    std::string baseName = (_storageType == StorageType::GOLD) ? "gold_storage_lv" : "elixir_storage_lv";
+    std::string baseName = (_storageType == StorageType::GOLD_STORAGE) ? "gold_storage_lv" : "elixir_storage_lv";
     return baseName + std::to_string(_currentLevel);
 }
 

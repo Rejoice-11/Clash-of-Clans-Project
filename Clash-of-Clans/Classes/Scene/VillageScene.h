@@ -8,6 +8,7 @@
 // 引入商店弹窗头文件
 #include "Classes/UI/StoreWindow.h"
 #include "Classes/Utils/GridUtils.h"
+#include "Classes/UI/BuildingPanel.h"
 USING_NS_CC;
 
 class VillageScene : public Scene
@@ -77,6 +78,35 @@ private:
     void recalculateMaxStorage();                    // 重新计算总容量
 
 	// 新增: 存储与gold,elixir相关建筑列表
-    std::vector<StorageBuilding*> _goldStorages;
-    std::vector<StorageBuilding*> _elixirStorages;
+
+    // 所有建筑的容器（按类型分类）
+    std::vector<std::unique_ptr<TownHall>> _townHalls;
+    std::vector<std::unique_ptr<ResourceBuilding>> _goldMines;
+    std::vector<std::unique_ptr<ResourceBuilding>> _elixirCollectors;
+    std::vector<std::unique_ptr<StorageBuilding>> _goldStorages;
+    std::vector<std::unique_ptr<StorageBuilding>> _elixirStorages;
+    std::vector<std::unique_ptr<DefenseBuilding>> _archerTowers;
+    std::vector<std::unique_ptr<DefenseBuilding>> _cannons;
+
+    // 当前选中的建筑
+    Sprite* _selectedBuildingSprite = nullptr;
+    GameObject* _selectedBuilding = nullptr;
+    StoreWindow::BuildingType _selectedBuildingType = StoreWindow::BuildingType::MAX_TYPES;
+
+    // 建筑操作面板
+    Node* _buildingActionPanel = nullptr;
+    bool _isInBuildingActionMode = false;
+
+    // 辅助函数
+    StoreWindow::BuildingType getBuildingTypeFromSprite(Sprite* sprite);
+    void onBuildingClicked(Sprite* sprite);
+    void showBuildingActionPanel();
+    void hideBuildingActionPanel();
+    void onInfoButtonClicked(Ref* sender);
+    void onMoveButtonClicked(Ref* sender);
+    void onBuildingPanelClosed();
+
+    // 根据类型获取建筑容器
+    std::vector<std::unique_ptr<Building>>* getBuildingContainer(StoreWindow::BuildingType type);
+    Building* findBuildingBySprite(Sprite* sprite);
 };

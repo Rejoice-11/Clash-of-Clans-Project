@@ -1,5 +1,6 @@
 //大本营（特殊胜利条件）
-#pragma
+#ifndef TOWN_HALL_H
+#define TOWN_HALL_H
 
 #include "Classes/Entity/Building/Building.h"
 #include "cocos2d.h"
@@ -55,3 +56,4 @@ private:
     TownHall(const TownHall&) = delete;
     TownHall& operator=(const TownHall&) = delete;
 };
+#endif
