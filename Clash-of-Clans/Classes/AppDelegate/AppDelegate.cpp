@@ -94,11 +94,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // 设置设计分辨率（根据你的美术资源改）
     glview->setDesignResolutionSize(1280, 720, ResolutionPolicy::SHOW_ALL);
-
+	/*注释掉FPS显示
     // FPS显示（调试用，正式版可以关）
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0f / 60);
-
+*/
     // ===== Taffy王牌级初始化开始 =====
     // 创建并初始化GameDirector单例
     GameDirector::getInstance()->init();

@@ -11,7 +11,91 @@ Scene* BattleScene::createScene()
     }
     return scene;
 }
+// 关闭战斗场景按钮点击回调实现
+void BattleScene::closeBattleScene(Ref* sender)
+{
+}
+// 关闭确认窗口按钮点击回调实现
+void BattleScene::closeReturnWindow(Ref* sender)
+{
+    // 1. 删除菜单（包含Cancel/Confirm按钮）
+    if (_returnMenu)
+    {
+        _returnMenu->removeFromParent(); // 从场景中移除
+        _returnMenu = nullptr; // 置空避免野指针
+    }
 
+    // 2. 删除弹窗面板
+    if (_returnPanel)
+    {
+        _returnPanel->removeFromParent(); // 从场景中移除
+        _returnPanel = nullptr; // 置空避免野指针
+    }
+}
+// 结束战斗按钮点击回调实现
+void BattleScene::onReturnButtonClicked(Ref* sender)
+{
+    if (_isBattleStart)
+        return;
+	// 已经存在弹窗则不重复创建
+    if (_returnPanel || _returnMenu)
+        return;
+    // 替换为成员变量：保存弹窗面板
+    _returnPanel = cocos2d::Sprite::create("1Point_Return_Button.png");
+    if (_returnPanel)
+    {
+        _returnPanel->setScale(1);
+        _returnPanel->setPosition(cocos2d::Vec2(640, 360));
+        this->addChild(_returnPanel, 30);
+
+        auto CancleBtn = cocos2d::MenuItemImage::create(
+            "Cancel_Button.png", "Cancel_Button.png",
+            CC_CALLBACK_1(BattleScene::closeReturnWindow, this)
+        );
+        auto ConfirmBtn = cocos2d::MenuItemImage::create(
+            "Confirm_Button.png", "Confirm_Button.png",
+            CC_CALLBACK_1(BattleScene::closeBattleScene, this)
+        );
+        CancleBtn->setScale(0.5);
+        ConfirmBtn->setScale(0.5);
+        CancleBtn->setPosition(cocos2d::Vec2(520, 300));
+        ConfirmBtn->setPosition(cocos2d::Vec2(760, 300));
+
+        // 替换为成员变量：保存菜单（按钮在菜单内，删除菜单会自动删除按钮）
+        _returnMenu = cocos2d::Menu::create(CancleBtn, ConfirmBtn, nullptr);
+        _returnMenu->setPosition(cocos2d::Vec2::ZERO);
+        this->addChild(_returnMenu, 31);
+    }
+}
+
+void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
+{
+    //预留，后续实现兵种选择逻辑
+}
+// 封装：创建带小图标的士兵按钮（避免重复代码）
+MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath) {
+    // 1. 创建基础按钮
+    auto soldierBtn = MenuItemImage::create(
+        "Soldier_Card.png",    // 正常状态
+        "Soldier_Card.png",   // 按下状态
+        CC_CALLBACK_1(BattleScene::onSoldierSelectButtonClicked, this)
+    );
+    soldierBtn->setPosition(btnPos);
+
+    // 2. 创建小图片精灵（作为按钮的子节点）
+    auto smallIcon = Sprite::create(smallIconPath); // 替换为你的小图片路径（如 "Small_Soldier_Icon.png"）
+    if (smallIcon) { // 判空避免资源缺失崩溃
+        // 设置小图片在按钮上的位置（示例：按钮中心，可根据需求调整偏移）
+        smallIcon->setPosition(Vec2(
+            soldierBtn->getContentSize().width / 2,   // 按钮宽度的一半（水平居中）
+            soldierBtn->getContentSize().height / 2   // 按钮高度的一半（垂直居中）
+        ));
+        // 将小图片添加为按钮的子节点
+        soldierBtn->addChild(smallIcon);
+    }
+
+    return soldierBtn;
+}
 // 实现 init 初始化函数
 bool BattleScene::init()
 {
@@ -23,32 +107,41 @@ bool BattleScene::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     // 1. 战斗背景（全屏铺开）
-    auto background = Sprite::create("village_background.png");
+    auto background = Sprite::create("2village_background.jpg");
     if (background) {
-        // 等比缩放至填满屏幕
-        float scaleX = visibleSize.width / background->getContentSize().width;
-        float scaleY = visibleSize.height / background->getContentSize().height;
-        float scale = MAX(scaleX, scaleY);
-        background->setScale(scale);
-
         background->setPosition(Vec2(visibleSize.width / 2 + origin.x,
             visibleSize.height / 2 + origin.y));
         this->addChild(background, -1);
     }
+    // 绘制网格
+    GridUtils::drawGrid(this);
+    // 左下角 结束战斗按钮
+    auto ReturnBtn = MenuItemImage::create(
+        "Return_Button.png", "Return_Button.png",
+        CC_CALLBACK_1(BattleScene::onReturnButtonClicked, this));
+    ReturnBtn->setScale(0.5);
+    ReturnBtn->setPosition(Vec2(50 + origin.x, 180 + origin.y));
+    auto menu = Menu::create(ReturnBtn,nullptr);
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu, 2); // UI层级高于背景
+	//画一条水平线表示隔开兵种选择区和战斗区
+    auto drawNode = cocos2d::DrawNode::create();
+    this->addChild(drawNode, 5);
+	Vec2 startPoint = Vec2(0, 150);
+	Vec2 endPoint = Vec2(visibleSize.width, 150);
+    drawNode->drawLine(startPoint, endPoint, Color4F::WHITE);
+	//兵种选择区预留（未实现）
+    // 创建4个带小图标的士兵按钮
+    auto Soldier1 = createSoldierButton(Vec2(200, 65),"Troop_HV_Barbarian_28.png" );
+    auto Soldier2 = createSoldierButton(Vec2(320, 65), "AQ_Japan_Neutral_Shadow_01.png");
+    auto Soldier3 = createSoldierButton(Vec2(440, 65), "Giant_lvl_14.png");
+    auto Soldier4 = createSoldierButton(Vec2(560, 65), "Troop_HV_Wall_Breaker_1.png");
+    auto menu1 = Menu::create(Soldier1, Soldier2, Soldier3, Soldier4, nullptr);
 
-    // 2. 临时提示文字（验证场景跳转）
-    auto label = Label::createWithTTF("Battle Scene!\nTaffy的屠村时间到咯~",
-        "fonts/Marker Felt.ttf", 48);
-    if (label) {
-        label->setPosition(Vec2(visibleSize.width / 2 + origin.x,
-            visibleSize.height / 2 + origin.y));
-        label->setColor(Color3B::RED);
-        this->addChild(label, 10);
-    }
-
+    menu1->setPosition(Vec2::ZERO);
+    this->addChild(menu1, 5); // UI层级高于背景
     // 开启帧更新（后续战斗逻辑靠这个）
     this->scheduleUpdate();
-
     return true;
 }
 
