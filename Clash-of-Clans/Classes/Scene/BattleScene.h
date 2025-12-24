@@ -8,6 +8,14 @@ USING_NS_CC;
 class BattleScene : public Scene
 {
 public:
+	// 鼠标事件注册及回调声明
+    void registerMouseEvents2();
+    void onMouseScroll2(EventMouse* event);
+    void onMouseDown2(EventMouse* event);
+    void onMouseMove2(EventMouse* event);
+    void onMouseUp2(EventMouse* event);
+    //士兵生成
+	void spawnSoldierAtPosition(const Vec2& position);
     // 函数声明（仅写原型，不写实现）
     static Scene* createScene();
     virtual bool init() override;

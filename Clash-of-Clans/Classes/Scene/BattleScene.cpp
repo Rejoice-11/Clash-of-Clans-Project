@@ -1,6 +1,57 @@
 // 必须包含对应的头文件
 #include "BattleScene.h"
 
+// 士兵生成实现（预留，后续完善具体逻辑）
+void BattleScene::spawnSoldierAtPosition(const Vec2& position)
+{
+    // 预留，后续实现士兵生成逻辑
+}
+
+// 鼠标事件注册实现
+void BattleScene::registerMouseEvents2()
+{
+    // 鼠标滚轮事件
+    auto mouseScrollListener = EventListenerMouse::create();
+    mouseScrollListener->onMouseScroll = CC_CALLBACK_1(BattleScene::onMouseScroll2, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseScrollListener, this);
+
+    // 鼠标按下事件
+    auto mouseDownListener = EventListenerMouse::create();
+    mouseDownListener->onMouseDown = CC_CALLBACK_1(BattleScene::onMouseDown2, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseDownListener, this);
+
+    // 鼠标移动事件
+    auto mouseMoveListener = EventListenerMouse::create();
+    mouseMoveListener->onMouseMove = CC_CALLBACK_1(BattleScene::onMouseMove2, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseMoveListener, this);
+
+    // 鼠标松开事件
+    auto mouseUpListener = EventListenerMouse::create();
+    mouseUpListener->onMouseUp = CC_CALLBACK_1(BattleScene::onMouseUp2, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseUpListener, this);
+}
+// 鼠标事件回调实现（预留，后续完善具体逻辑）
+void BattleScene::onMouseScroll2(EventMouse* event)
+{
+    // 预留，后续实现鼠标滚轮缩放逻辑
+}
+void BattleScene::onMouseDown2(EventMouse* event)
+{
+    Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
+    Vec2 worldPos = this->convertToNodeSpace(mousePos);
+	spawnSoldierAtPosition(worldPos);
+
+    // 预留，后续实现鼠标按下逻辑
+}
+void BattleScene::onMouseMove2(EventMouse* event)
+{
+    // 预留，后续实现鼠标移动逻辑
+}
+void BattleScene::onMouseUp2(EventMouse* event)
+{
+    // 预留，后续实现鼠标松开逻辑
+}
+
 // 实现 createScene 静态函数
 Scene* BattleScene::createScene()
 {
@@ -77,7 +128,8 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
     // 1. 创建基础按钮
     auto soldierBtn = MenuItemImage::create(
         "Soldier_Card.png",    // 正常状态
-        "Soldier_Card.png",   // 按下状态
+        "Soldier_Card1.png",   // 按下状态
+		"Soldier_Card1.png", // 禁用状态(当兵种数量为0时)
         CC_CALLBACK_1(BattleScene::onSoldierSelectButtonClicked, this)
     );
     soldierBtn->setPosition(btnPos);
@@ -86,6 +138,7 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
     auto smallIcon = Sprite::create(smallIconPath); // 替换为你的小图片路径（如 "Small_Soldier_Icon.png"）
     if (smallIcon) { // 判空避免资源缺失崩溃
         // 设置小图片在按钮上的位置（示例：按钮中心，可根据需求调整偏移）
+		smallIcon->setScale(1.5); // 可选：调整小图片大小以适应按钮
         smallIcon->setPosition(Vec2(
             soldierBtn->getContentSize().width / 2,   // 按钮宽度的一半（水平居中）
             soldierBtn->getContentSize().height / 2   // 按钮高度的一半（垂直居中）
