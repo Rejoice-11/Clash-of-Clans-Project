@@ -19,6 +19,9 @@ public:
         : GameObject(instanceId), _data(data), _hp(data.hp) 
     {
     }
+    // 承伤逻辑
+    virtual void takeDamage(int amount); // 新增承伤接口
+    virtual void update(float dt);      // 增加每帧更新接口
 
     // 属性访问
     int getMaxHp() const { return _data.hp; }
