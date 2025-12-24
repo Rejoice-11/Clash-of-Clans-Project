@@ -1,4 +1,4 @@
-#include "Classes/Entity/Unit/Unit.h"
+#include "Unit.h"
 #include <algorithm>
 
 
@@ -47,10 +47,8 @@ void Unit::moveTowards(const cocos2d::Vec2& target) {
 // 基础攻击：直接对目标调用受损逻辑
 void Unit::attack(GameObject* target) {
     if (!target || isDead() || target->getState() == State::DESTROYED) return;
-
-    // 这里假设 GameObject 或者派生出的 Building 也有 takeDamage 方法
-    // 如果 Building 还没写这个方法，你需要给 Building 也补一个
-    // target->takeDamage(_data.damage); 
+ 
+    target->takeDamage(_data.damage); 
 
     CCLOG("Unit %d is dealing %d damage", getId(), _data.damage);
 }

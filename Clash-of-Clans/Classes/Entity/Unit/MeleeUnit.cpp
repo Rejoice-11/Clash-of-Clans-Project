@@ -1,11 +1,9 @@
-#include "MeleeUnit.h"
+#include "Classes/Entity/Unit/MeleeUnit.h"
 
 USING_NS_CC;
 
 Sprite* MeleeUnit::createSprite() {
-    // 假设你的资源路径是 res/units/barbarian.png
-    // 实际项目中可以根据 _data.id 来区分不同等级或兵种的图
-    auto sprite = Sprite::create("units/barbarian.png");
+    auto sprite = Sprite::create("Troop_HV_Barbarian_28.png");
     if (sprite) {
         sprite->setPosition(getPosition());
     }
@@ -19,8 +17,8 @@ void MeleeUnit::attack(GameObject* target) {
 
     // 近战单位必须在攻击范围内
     if (dist <= _data.attackRange) {
-        // TODO: 播放挥剑动画
-        // target->takeDamage(_data.damage);
+        
+        target->takeDamage(_data.damage);
         CCLOG("Barbarian %d hits target for %d damage", getId(), _data.damage);
     }
     else {
