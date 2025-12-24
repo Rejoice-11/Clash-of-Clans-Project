@@ -30,7 +30,8 @@ public:
     };
     State getState() const { return _state; }
     void setState(State state) { _state = state; }
-
+    //承伤逻辑（所有实体都要）
+    virtual void takeDamage(int amount) {} // 默认不处理伤害
     // 类型标识（避免 dynamic_cast 滥用）
     enum class Type 
     {
