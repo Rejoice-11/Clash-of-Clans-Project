@@ -245,7 +245,7 @@ void VillageScene::onAttackButtonClicked(Ref* sender)
             "attack_button_to_reverse_to_battle_scene.png",
             [this](Ref*) {
                 this->closeAttackPanel(nullptr);
-                GameDirector::getInstance()->replaceScene(BattleScene::createScene());
+                GameDirector::getInstance()->pushScene(BattleScene::createScene());
             });
 
         auto closeBtn = MenuItemImage::create(
