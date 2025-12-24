@@ -40,6 +40,8 @@
     <ClCompile Include="..\Classes\Entity\Building\DefenseBuilding.cpp" />
     <ClCompile Include="..\Classes\UI\HUDLayer.cpp" />
     <ClCompile Include="..\Classes\UI\BuildingPanel.cpp" />
+    <ClCompile Include="..\Classes\Entity\Unit\Unit.cpp" />
+    <ClCompile Include="..\Classes\Entity\Unit\MeleeUnit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
