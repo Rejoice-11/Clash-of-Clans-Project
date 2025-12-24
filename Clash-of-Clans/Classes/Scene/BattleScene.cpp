@@ -1,39 +1,53 @@
-// å¿…é¡»åŒ…å«å¯¹åº”çš„å¤´æ–‡ä»¶
+// ±ØĞë°üº¬¶ÔÓ¦µÄÍ·ÎÄ¼ş
 #include "BattleScene.h"
+// ¸üĞÂ¼ıÍ·Î»ÖÃÊµÏÖ
+void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
+    if (!targetBtn || !_arrowIndicator) 
+        return;
 
-// å£«å…µç”Ÿæˆå®ç°ï¼ˆé¢„ç•™ï¼Œåç»­å®Œå–„å…·ä½“é€»è¾‘ï¼‰
+    // 1. »ñÈ¡°´Å¥µÄÊÀ½ç×ø±ê£¨×Ô¶¯ÊÊÅäMenuµÄ×ø±êÆ«ÒÆºÍËõ·Å£©
+    Vec2 btnWorldPos = targetBtn->convertToWorldSpace(Vec2(targetBtn->getContentSize().width / 2, targetBtn->getContentSize().height / 2));
+    // 2. ×ª»»Îªµ±Ç°LayerµÄ±¾µØ×ø±ê
+    Vec2 btnLocalPos = this->convertToNodeSpace(btnWorldPos);
+    // 3. ÉèÖÃ¼ıÍ·Î»ÖÃ£¨°´Å¥ÕıÉÏ·½£¬¿Éµ÷ÕûyÆ«ÒÆÁ¿£©
+    _arrowIndicator->setPosition(Vec2(btnLocalPos.x, 120));
+    // ËµÃ÷£º
+    // - targetBtn->getContentSize().height/2 * targetBtn->getScale()£º°´Å¥Ëõ·ÅºóµÄ°ë¸ß
+    // - +10£º¼ıÍ·Óë°´Å¥µÄ¼ä¾à£¬¿É¸ù¾İĞèÒªµ÷Õû
+}
+// Ê¿±øÉú³ÉÊµÏÖ£¨Ô¤Áô£¬ºóĞøÍêÉÆ¾ßÌåÂß¼­£©
 void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 {
-    // é¢„ç•™ï¼Œåç»­å®ç°å£«å…µç”Ÿæˆé€»è¾‘
+    // Ô¤Áô£¬ºóĞøÊµÏÖÊ¿±øÉú³ÉÂß¼­
 }
 
-// é¼ æ ‡äº‹ä»¶æ³¨å†Œå®ç°
+// Êó±êÊÂ¼ş×¢²áÊµÏÖ
 void BattleScene::registerMouseEvents2()
 {
-    // é¼ æ ‡æ»šè½®äº‹ä»¶
+    // Êó±ê¹öÂÖÊÂ¼ş
     auto mouseScrollListener = EventListenerMouse::create();
     mouseScrollListener->onMouseScroll = CC_CALLBACK_1(BattleScene::onMouseScroll2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseScrollListener, this);
 
-    // é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
+    // Êó±ê°´ÏÂÊÂ¼ş
     auto mouseDownListener = EventListenerMouse::create();
     mouseDownListener->onMouseDown = CC_CALLBACK_1(BattleScene::onMouseDown2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseDownListener, this);
 
-    // é¼ æ ‡ç§»åŠ¨äº‹ä»¶
+    // Êó±êÒÆ¶¯ÊÂ¼ş
     auto mouseMoveListener = EventListenerMouse::create();
     mouseMoveListener->onMouseMove = CC_CALLBACK_1(BattleScene::onMouseMove2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseMoveListener, this);
 
-    // é¼ æ ‡æ¾å¼€äº‹ä»¶
+    // Êó±êËÉ¿ªÊÂ¼ş
     auto mouseUpListener = EventListenerMouse::create();
     mouseUpListener->onMouseUp = CC_CALLBACK_1(BattleScene::onMouseUp2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseUpListener, this);
 }
-// é¼ æ ‡äº‹ä»¶å›è°ƒå®ç°ï¼ˆé¢„ç•™ï¼Œåç»­å®Œå–„å…·ä½“é€»è¾‘ï¼‰
+// Êó±êÊÂ¼ş»Øµ÷ÊµÏÖ£¨Ô¤Áô£¬ºóĞøÍêÉÆ¾ßÌåÂß¼­£©
 void BattleScene::onMouseScroll2(EventMouse* event)
 {
-    // é¢„ç•™ï¼Œåç»­å®ç°é¼ æ ‡æ»šè½®ç¼©æ”¾é€»è¾‘
+    // Ô¤Áô£¬ºóĞøÊµÏÖÊó±ê¹öÂÖËõ·ÅÂß¼­
 }
 void BattleScene::onMouseDown2(EventMouse* event)
 {
@@ -41,18 +55,18 @@ void BattleScene::onMouseDown2(EventMouse* event)
     Vec2 worldPos = this->convertToNodeSpace(mousePos);
 	spawnSoldierAtPosition(worldPos);
 
-    // é¢„ç•™ï¼Œåç»­å®ç°é¼ æ ‡æŒ‰ä¸‹é€»è¾‘
+    // Ô¤Áô£¬ºóĞøÊµÏÖÊó±ê°´ÏÂÂß¼­
 }
 void BattleScene::onMouseMove2(EventMouse* event)
 {
-    // é¢„ç•™ï¼Œåç»­å®ç°é¼ æ ‡ç§»åŠ¨é€»è¾‘
+    // Ô¤Áô£¬ºóĞøÊµÏÖÊó±êÒÆ¶¯Âß¼­
 }
 void BattleScene::onMouseUp2(EventMouse* event)
 {
-    // é¢„ç•™ï¼Œåç»­å®ç°é¼ æ ‡æ¾å¼€é€»è¾‘
+    // Ô¤Áô£¬ºóĞøÊµÏÖÊó±êËÉ¿ªÂß¼­
 }
 
-// å®ç° createScene é™æ€å‡½æ•°
+// ÊµÏÖ createScene ¾²Ì¬º¯Êı
 Scene* BattleScene::createScene()
 {
     auto scene = Scene::create();
@@ -62,42 +76,41 @@ Scene* BattleScene::createScene()
     }
     return scene;
 }
-// å…³é—­æˆ˜æ–—åœºæ™¯æŒ‰é’®ç‚¹å‡»å›è°ƒå®ç°
+// ¹Ø±ÕÕ½¶·³¡¾°°´Å¥µã»÷»Øµ÷ÊµÏÖ
 void BattleScene::closeBattleScene(Ref* sender)
 {
-    // å…ˆå…³é—­è¿”å›ç¡®è®¤çª—å£
+    // ÏÈ¹Ø±Õ·µ»ØÈ·ÈÏ´°¿Ú
     closeReturnWindow(sender);
-
-    // ä½¿ç”¨popSceneè¿”å›ä¸Šä¸€ä¸ªåœºæ™¯ï¼ˆVillageSceneï¼‰ï¼Œè€ŒéreplaceScene
-    // è¿™æ ·ä¼šä¿ç•™VillageSceneçš„å®ä¾‹åŠå…¶æ‰€æœ‰çŠ¶æ€ï¼ˆåŒ…æ‹¬å·²æ”¾ç½®çš„å»ºç­‘ï¼‰
+    // Ê¹ÓÃpopScene·µ»ØÉÏÒ»¸ö³¡¾°£¨VillageScene£©£¬¶ø·ÇreplaceScene
+    // ÕâÑù»á±£ÁôVillageSceneµÄÊµÀı¼°ÆäËùÓĞ×´Ì¬£¨°üÀ¨ÒÑ·ÅÖÃµÄ½¨Öş£©
     Director::getInstance()->popScene();
 }
-// å…³é—­ç¡®è®¤çª—å£æŒ‰é’®ç‚¹å‡»å›è°ƒå®ç°
+// ¹Ø±ÕÈ·ÈÏ´°¿Ú°´Å¥µã»÷»Øµ÷ÊµÏÖ
 void BattleScene::closeReturnWindow(Ref* sender)
 {
-    // 1. åˆ é™¤èœå•ï¼ˆåŒ…å«Cancel/ConfirmæŒ‰é’®ï¼‰
+    // 1. É¾³ı²Ëµ¥£¨°üº¬Cancel/Confirm°´Å¥£©
     if (_returnMenu)
     {
-        _returnMenu->removeFromParent(); // ä»åœºæ™¯ä¸­ç§»é™¤
-        _returnMenu = nullptr; // ç½®ç©ºé¿å…é‡æŒ‡é’ˆ
+        _returnMenu->removeFromParent(); // ´Ó³¡¾°ÖĞÒÆ³ı
+        _returnMenu = nullptr; // ÖÃ¿Õ±ÜÃâÒ°Ö¸Õë
     }
 
-    // 2. åˆ é™¤å¼¹çª—é¢æ¿
+    // 2. É¾³ıµ¯´°Ãæ°å
     if (_returnPanel)
     {
-        _returnPanel->removeFromParent(); // ä»åœºæ™¯ä¸­ç§»é™¤
-        _returnPanel = nullptr; // ç½®ç©ºé¿å…é‡æŒ‡é’ˆ
+        _returnPanel->removeFromParent(); // ´Ó³¡¾°ÖĞÒÆ³ı
+        _returnPanel = nullptr; // ÖÃ¿Õ±ÜÃâÒ°Ö¸Õë
     }
 }
-// ç»“æŸæˆ˜æ–—æŒ‰é’®ç‚¹å‡»å›è°ƒå®ç°
+// ½áÊøÕ½¶·°´Å¥µã»÷»Øµ÷ÊµÏÖ
 void BattleScene::onReturnButtonClicked(Ref* sender)
 {
     if (_isBattleStart)
         return;
-	// å·²ç»å­˜åœ¨å¼¹çª—åˆ™ä¸é‡å¤åˆ›å»º
+	// ÒÑ¾­´æÔÚµ¯´°Ôò²»ÖØ¸´´´½¨
     if (_returnPanel || _returnMenu)
         return;
-    // æ›¿æ¢ä¸ºæˆå‘˜å˜é‡ï¼šä¿å­˜å¼¹çª—é¢æ¿
+    // Ìæ»»Îª³ÉÔ±±äÁ¿£º±£´æµ¯´°Ãæ°å
     _returnPanel = cocos2d::Sprite::create("1Point_Return_Button.png");
     if (_returnPanel)
     {
@@ -118,7 +131,7 @@ void BattleScene::onReturnButtonClicked(Ref* sender)
         CancleBtn->setPosition(cocos2d::Vec2(520, 300));
         ConfirmBtn->setPosition(cocos2d::Vec2(760, 300));
 
-        // æ›¿æ¢ä¸ºæˆå‘˜å˜é‡ï¼šä¿å­˜èœå•ï¼ˆæŒ‰é’®åœ¨èœå•å†…ï¼Œåˆ é™¤èœå•ä¼šè‡ªåŠ¨åˆ é™¤æŒ‰é’®ï¼‰
+        // Ìæ»»Îª³ÉÔ±±äÁ¿£º±£´æ²Ëµ¥£¨°´Å¥ÔÚ²Ëµ¥ÄÚ£¬É¾³ı²Ëµ¥»á×Ô¶¯É¾³ı°´Å¥£©
         _returnMenu = cocos2d::Menu::create(CancleBtn, ConfirmBtn, nullptr);
         _returnMenu->setPosition(cocos2d::Vec2::ZERO);
         this->addChild(_returnMenu, 31);
@@ -127,35 +140,48 @@ void BattleScene::onReturnButtonClicked(Ref* sender)
 
 void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
 {
-    //é¢„ç•™ï¼Œåç»­å®ç°å…µç§é€‰æ‹©é€»è¾‘
+    // 1. ×ª»»µã»÷µÄ°´Å¥¶ÔÏó
+    auto clickedBtn = dynamic_cast<MenuItemImage*>(sender);
+    if (!clickedBtn) 
+        return;
+
+    // 2. ¸üĞÂÑ¡ÖĞ×´Ì¬ºÍ¼ıÍ·Î»ÖÃ
+    _selectedSoldierBtn = clickedBtn;
+    updateArrowPosition(clickedBtn);
+
+    // 3. Ô¤Áô£ººóĞø±øÖÖÑ¡ÔñÂß¼­£¨±ÈÈç¼ÇÂ¼Ñ¡ÖĞµÄ±øÖÖID/ÀàĞÍ£©
+    // Ê¾Àı£º
+    // std::string soldierType = clickedBtn->getName(); // ¿É¸ø°´Å¥ÉèÖÃname±êÊ¶±øÖÖÀàĞÍ
+    // _selectedSoldierType = soldierType;
 }
-// å°è£…ï¼šåˆ›å»ºå¸¦å°å›¾æ ‡çš„å£«å…µæŒ‰é’®ï¼ˆé¿å…é‡å¤ä»£ç ï¼‰
+// ·â×°£º´´½¨´øĞ¡Í¼±êµÄÊ¿±ø°´Å¥£¨±ÜÃâÖØ¸´´úÂë£©
 MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath) {
-    // 1. åˆ›å»ºåŸºç¡€æŒ‰é’®
+    // 1. ´´½¨»ù´¡°´Å¥
     auto soldierBtn = MenuItemImage::create(
-        "Soldier_Card.png",    // æ­£å¸¸çŠ¶æ€
-        "Soldier_Card1.png",   // æŒ‰ä¸‹çŠ¶æ€
-		"Soldier_Card1.png", // ç¦ç”¨çŠ¶æ€(å½“å…µç§æ•°é‡ä¸º0æ—¶)
+        "Soldier_Card.png",    // Õı³£×´Ì¬
+        "Soldier_Card1.png",   // °´ÏÂ×´Ì¬
+		"Soldier_Card1.png", // ½ûÓÃ×´Ì¬(µ±±øÖÖÊıÁ¿Îª0Ê±)
         CC_CALLBACK_1(BattleScene::onSoldierSelectButtonClicked, this)
     );
     soldierBtn->setPosition(btnPos);
 
-    // 2. åˆ›å»ºå°å›¾ç‰‡ç²¾çµï¼ˆä½œä¸ºæŒ‰é’®çš„å­èŠ‚ç‚¹ï¼‰
-    auto smallIcon = Sprite::create(smallIconPath); // æ›¿æ¢ä¸ºä½ çš„å°å›¾ç‰‡è·¯å¾„ï¼ˆå¦‚ "Small_Soldier_Icon.png"ï¼‰
-    if (smallIcon) { // åˆ¤ç©ºé¿å…èµ„æºç¼ºå¤±å´©æºƒ
-        // è®¾ç½®å°å›¾ç‰‡åœ¨æŒ‰é’®ä¸Šçš„ä½ç½®ï¼ˆç¤ºä¾‹ï¼šæŒ‰é’®ä¸­å¿ƒï¼Œå¯æ ¹æ®éœ€æ±‚è°ƒæ•´åç§»ï¼‰
-		smallIcon->setScale(1.5); // å¯é€‰ï¼šè°ƒæ•´å°å›¾ç‰‡å¤§å°ä»¥é€‚åº”æŒ‰é’®
+    // 2. ´´½¨Ğ¡Í¼Æ¬¾«Áé£¨×÷Îª°´Å¥µÄ×Ó½Úµã£©
+    auto smallIcon = Sprite::create(smallIconPath); // Ìæ»»ÎªÄãµÄĞ¡Í¼Æ¬Â·¾¶£¨Èç "Small_Soldier_Icon.png"£©
+    if (smallIcon) { // ÅĞ¿Õ±ÜÃâ×ÊÔ´È±Ê§±ÀÀ£
+        // ÉèÖÃĞ¡Í¼Æ¬ÔÚ°´Å¥ÉÏµÄÎ»ÖÃ£¨Ê¾Àı£º°´Å¥ÖĞĞÄ£¬¿É¸ù¾İĞèÇóµ÷ÕûÆ«ÒÆ£©
+		smallIcon->setScale(1.5); // ¿ÉÑ¡£ºµ÷ÕûĞ¡Í¼Æ¬´óĞ¡ÒÔÊÊÓ¦°´Å¥
         smallIcon->setPosition(Vec2(
-            soldierBtn->getContentSize().width / 2,   // æŒ‰é’®å®½åº¦çš„ä¸€åŠï¼ˆæ°´å¹³å±…ä¸­ï¼‰
-            soldierBtn->getContentSize().height / 2   // æŒ‰é’®é«˜åº¦çš„ä¸€åŠï¼ˆå‚ç›´å±…ä¸­ï¼‰
+            soldierBtn->getContentSize().width / 2,   // °´Å¥¿í¶ÈµÄÒ»°ë£¨Ë®Æ½¾ÓÖĞ£©
+            soldierBtn->getContentSize().height / 2   // °´Å¥¸ß¶ÈµÄÒ»°ë£¨´¹Ö±¾ÓÖĞ£©
         ));
-        // å°†å°å›¾ç‰‡æ·»åŠ ä¸ºæŒ‰é’®çš„å­èŠ‚ç‚¹
+        // ½«Ğ¡Í¼Æ¬Ìí¼ÓÎª°´Å¥µÄ×Ó½Úµã
         soldierBtn->addChild(smallIcon);
     }
 
     return soldierBtn;
 }
-// å®ç° init åˆå§‹åŒ–å‡½æ•°
+
+// ÊµÏÖ init ³õÊ¼»¯º¯Êı
 bool BattleScene::init()
 {
     if (!Scene::init()) {
@@ -165,16 +191,16 @@ bool BattleScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // 1. æˆ˜æ–—èƒŒæ™¯ï¼ˆå…¨å±é“ºå¼€ï¼‰
+    // 1. Õ½¶·±³¾°£¨È«ÆÁÆÌ¿ª£©
     auto background = Sprite::create("2village_background.jpg");
     if (background) {
         background->setPosition(Vec2(visibleSize.width / 2 + origin.x,
             visibleSize.height / 2 + origin.y));
         this->addChild(background, -1);
     }
-    // ç»˜åˆ¶ç½‘æ ¼
+    // »æÖÆÍø¸ñ
     GridUtils::drawGrid(this);
-    // å·¦ä¸‹è§’ ç»“æŸæˆ˜æ–—æŒ‰é’®
+    // ×óÏÂ½Ç ½áÊøÕ½¶·°´Å¥
     auto ReturnBtn = MenuItemImage::create(
         "Return_Button.png", "Return_Button.png",
         CC_CALLBACK_1(BattleScene::onReturnButtonClicked, this));
@@ -182,34 +208,46 @@ bool BattleScene::init()
     ReturnBtn->setPosition(Vec2(50 + origin.x, 180 + origin.y));
     auto menu = Menu::create(ReturnBtn,nullptr);
     menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 2); // UIå±‚çº§é«˜äºèƒŒæ™¯
-	//ç”»ä¸€æ¡æ°´å¹³çº¿è¡¨ç¤ºéš”å¼€å…µç§é€‰æ‹©åŒºå’Œæˆ˜æ–—åŒº
+    this->addChild(menu, 2); // UI²ã¼¶¸ßÓÚ±³¾°
+	//»­Ò»ÌõË®Æ½Ïß±íÊ¾¸ô¿ª±øÖÖÑ¡ÔñÇøºÍÕ½¶·Çø
     auto drawNode = cocos2d::DrawNode::create();
     this->addChild(drawNode, 5);
 	Vec2 startPoint = Vec2(0, 150);
 	Vec2 endPoint = Vec2(visibleSize.width, 150);
     drawNode->drawLine(startPoint, endPoint, Color4F::WHITE);
-	//å…µç§é€‰æ‹©åŒºé¢„ç•™ï¼ˆæœªå®ç°ï¼‰
-    // åˆ›å»º4ä¸ªå¸¦å°å›¾æ ‡çš„å£«å…µæŒ‰é’®
-    auto Soldier1 = createSoldierButton(Vec2(200, 65),"Troop_HV_Barbarian_28.png" );
-    auto Soldier2 = createSoldierButton(Vec2(320, 65), "AQ_Japan_Neutral_Shadow_01.png");
-    auto Soldier3 = createSoldierButton(Vec2(440, 65), "Giant_lvl_14.png");
-    auto Soldier4 = createSoldierButton(Vec2(560, 65), "Troop_HV_Wall_Breaker_1.png");
+	//±øÖÖÑ¡ÔñÇøÔ¤Áô£¨Î´ÊµÏÖ£©
+    // ´´½¨4¸ö´øĞ¡Í¼±êµÄÊ¿±ø°´Å¥
+    auto Soldier1 = createSoldierButton(Vec2(200, 60),"Troop_HV_Barbarian_28.png" );
+    auto Soldier2 = createSoldierButton(Vec2(320, 60), "AQ_Japan_Neutral_Shadow_01.png");
+    auto Soldier3 = createSoldierButton(Vec2(440, 60), "Giant_lvl_14.png");
+    auto Soldier4 = createSoldierButton(Vec2(560, 60), "Troop_HV_Wall_Breaker_1.png");
     auto menu1 = Menu::create(Soldier1, Soldier2, Soldier3, Soldier4, nullptr);
 
     menu1->setPosition(Vec2::ZERO);
-    this->addChild(menu1, 5); // UIå±‚çº§é«˜äºèƒŒæ™¯
-    // å¼€å¯å¸§æ›´æ–°ï¼ˆåç»­æˆ˜æ–—é€»è¾‘é è¿™ä¸ªï¼‰
+    this->addChild(menu1, 5); // UI²ã¼¶¸ßÓÚ±³¾°
+    // ===================== ĞÂÔö£º³õÊ¼»¯¼ıÍ·Ö¸Ê¾Æ÷ =====================
+    _arrowIndicator = Sprite::create("1arrow.png"); // Ìæ»»ÎªÄãµÄ¼ıÍ·Í¼Æ¬Â·¾¶£¨Èç "arrow_up.png"£©
+    if (_arrowIndicator) {
+        _arrowIndicator->setScale(0.8f); // ¸ù¾İÊµ¼ÊÍ¼Æ¬´óĞ¡µ÷ÕûËõ·Å
+        _arrowIndicator->setAnchorPoint(Vec2(0.5, 0)); // ¼ıÍ·ÃªµãÉèÎªµ×²¿ÖĞĞÄ£¬·½±ã¶ÔÆë°´Å¥¶¥²¿
+        _arrowIndicator->setVisible(true); // ³õÊ¼ÏÔÊ¾
+        this->addChild(_arrowIndicator, 6); // ²ã¼¶¸ßÓÚÊ¿±ø°´Å¥£¨5£©£¬È·±£¼ıÍ·ÔÚ×îÉÏ²ã
+
+        // Ä¬ÈÏÑ¡ÖĞµÚÒ»¸öÊ¿±ø°´Å¥£¬¼ıÍ·¶¨Î»µ½µÚÒ»¸ö°´Å¥ÉÏ·½
+        _selectedSoldierBtn = Soldier1;
+        updateArrowPosition(Soldier1);
+    }
+    // ¿ªÆôÖ¡¸üĞÂ£¨ºóĞøÕ½¶·Âß¼­¿¿Õâ¸ö£©
     this->scheduleUpdate();
     return true;
 }
 
-// å®ç° update å¸§æ›´æ–°å‡½æ•°
+// ÊµÏÖ update Ö¡¸üĞÂº¯Êı
 void BattleScene::update(float dt)
 {
-    // æš‚æ—¶é¢„ç•™ï¼Œåç»­æ·»åŠ ï¼šéƒ¨é˜Ÿå¯»è·¯ã€ä¼¤å®³ç»“ç®—ã€èƒœåˆ©åˆ¤å®šç­‰æˆ˜æ–—é€»è¾‘
+    // ÔİÊ±Ô¤Áô£¬ºóĞøÌí¼Ó£º²¿¶ÓÑ°Â·¡¢ÉËº¦½áËã¡¢Ê¤ÀûÅĞ¶¨µÈÕ½¶·Âß¼­
 }
 
-// æœªå®ç°çš„æŒ‰é’®å›è°ƒï¼ˆä¿æŒä»£ç å®Œæ•´æ€§ï¼‰
+// Î´ÊµÏÖµÄ°´Å¥»Øµ÷£¨±£³Ö´úÂëÍêÕûĞÔ£©
 void BattleScene::onSurrenderButtonClicked(Ref* sender) {}
 void BattleScene::onNextWaveButtonClicked(Ref* sender) {}
