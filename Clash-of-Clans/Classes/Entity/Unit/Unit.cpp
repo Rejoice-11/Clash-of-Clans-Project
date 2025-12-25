@@ -11,6 +11,13 @@ void Unit::takeDamage(int damage) {
 
     if (isDead()) {
         setState(State::DESTROYED); // 修改 GameObject 里的状态
+        if (_mySprite) {
+            // 优雅的消失逻辑：先变透明，再移除
+            auto fadeOut = cocos2d::FadeOut::create(0.5f); // 0.5秒淡出
+            auto remove = cocos2d::RemoveSelf::create();  // 自动把自己从场景移除
+            _mySprite->runAction(cocos2d::Sequence::create(fadeOut, remove, nullptr));
+        }
+
         CCLOG("Unit %d has been destroyed.", getId());
     }
 }

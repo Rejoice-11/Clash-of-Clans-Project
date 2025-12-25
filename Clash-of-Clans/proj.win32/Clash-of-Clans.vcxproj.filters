@@ -42,6 +42,8 @@
     <ClCompile Include="..\Classes\UI\BuildingPanel.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\Unit.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\MeleeUnit.cpp" />
+    <ClCompile Include="..\Classes\Entity\Unit\RangedUnit.cpp" />
+    <ClCompile Include="..\Classes\Entity\Unit\WallBreaker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
