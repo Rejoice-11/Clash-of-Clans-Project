@@ -8,7 +8,7 @@
  * @brief 所有游戏实体的最顶层基类（建筑、单位、特效等）
  * @note 不直接实例化，仅提供通用属性与接口
  */
-class GameObject 
+class GameObject : public cocos2d::Ref
 {
 public:
     virtual ~GameObject() = default;

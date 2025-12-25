@@ -54,4 +54,5 @@ protected:
     const BuildingData& _data;      // 配置数据（只读）
     int _currentLevel;              // 当前等级（1~max）
 	Vec2 _gridPos = Vec2::ZERO;     // 网格坐标
+
 };
