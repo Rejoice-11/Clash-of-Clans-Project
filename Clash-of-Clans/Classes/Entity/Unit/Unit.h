@@ -57,4 +57,5 @@ public:
 protected:
     const UnitData& _data;
     int _hp;
+    cocos2d::Sprite* _mySprite = nullptr;
 };
