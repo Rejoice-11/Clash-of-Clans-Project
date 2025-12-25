@@ -44,6 +44,16 @@ public:
     };
     virtual UnitClass getUnitClass() const = 0;
 
+
+	// 攻击计时器相关
+    bool Unit::canAttack() {
+        return _attackTimer >= _data.attackInterval;
+    }
+    
+    void Unit::resetAttackTimer() {
+        _attackTimer = 0.0f;
+    }
+
     // 攻击偏好（如巨人只打防御建筑）
     virtual bool prefersTarget(const Building* target) const;
 
@@ -57,5 +67,6 @@ public:
 protected:
     const UnitData& _data;
     int _hp;
+    float _attackTimer = 0.0f; // 累计时间
     cocos2d::Sprite* _mySprite = nullptr;
 };

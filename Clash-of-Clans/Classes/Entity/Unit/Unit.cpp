@@ -51,9 +51,16 @@ void Unit::moveTowards(const cocos2d::Vec2& target) {
     }
 }
 
+// 每帧更新：累积攻击计时器
+void Unit::update(float dt) {
+    if (isDead()) return;
+    _attackTimer += dt;
+}
+
+
 // 基础攻击：直接对目标调用受损逻辑
 void Unit::attack(GameObject* target) {
-    if (!target || isDead() || target->getState() == State::DESTROYED) return;
+	if (!target || isDead() || target->getState() == State::DESTROYED || !canAttack()) return;
  
     target->takeDamage(_data.damage); 
 

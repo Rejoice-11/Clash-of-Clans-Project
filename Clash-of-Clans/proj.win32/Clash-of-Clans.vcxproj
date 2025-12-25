@@ -160,6 +160,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Entity\Building\TownHall.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\MeleeUnit.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\RangedUnit.cpp" />
+    <ClCompile Include="..\Classes\Entity\Unit\TankUnit.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\Unit.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\WallBreaker.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
@@ -169,6 +170,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\UI\BuildingPanel.cpp" />
     <ClCompile Include="..\Classes\UI\HUDLayer.cpp" />
     <ClCompile Include="..\Classes\UI\StoreWindow.cpp" />
+    <ClCompile Include="..\Classes\Utils\CameraUtils.cpp" />
     <ClCompile Include="..\Classes\Utils\GridUtils.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -204,6 +206,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\UI\BuildingPanel.h" />
     <ClInclude Include="..\Classes\UI\HUDLayer.h" />
     <ClInclude Include="..\Classes\UI\StoreWindow.h" />
+    <ClInclude Include="..\Classes\Utils\CameraUtils.h" />
     <ClInclude Include="..\Classes\Utils\Constants.h" />
     <ClInclude Include="..\Classes\Utils\GridUtils.h" />
     <ClInclude Include="..\Classes\Utils\TimerUtils.h" />

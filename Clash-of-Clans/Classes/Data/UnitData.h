@@ -18,5 +18,6 @@ struct UnitData
 	int hp;
 	int damage;
 	float attackRange; // in pixels
+	float attackInterval; // ÀıÈç£ºÒ°ÂùÈË 1.0s, ¾ŞÈË 2.0s
 	float speed;       // in pixels per second
 };

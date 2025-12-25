@@ -6,6 +6,7 @@ Sprite* WallBreaker::createSprite() {
     auto sprite = Sprite::create("Troop_HV_Wall_Breaker_1.png");
     if (sprite) {
         sprite->setPosition(getPosition());
+        _mySprite = sprite; // 关联到基类的成员变量
     }
     return sprite;
 }
@@ -33,7 +34,7 @@ void WallBreaker::attack(GameObject* target) {
         // TODO: 如果需要 AOE（范围伤害），此处需获取游戏世界中的建筑列表，
         // 遍历 target 周围 distance <= explosionRadius 的所有建筑并调用 takeDamage。
         // 当前仅对锁定目标造成伤害。
-        target->takeDamage(_data.damage);
+        target->takeDamage(this->getDamage());
 
         // 4. 播放爆炸特效（示例）
         if (_mySprite) {

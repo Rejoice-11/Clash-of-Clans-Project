@@ -8,19 +8,20 @@ Sprite* RangedUnit::createSprite() {
     if (sprite) {
         sprite->setPosition(getPosition());
         // 我们在基类里建议过保存这个指针，方便换图
-        // _mySprite = sprite; 
+        _mySprite = sprite; 
     }
     return sprite;
 }
 
 void RangedUnit::attack(GameObject* target) {
-    if (!target || isDead() || target->getState() == State::DESTROYED) return;
+	if (!target || isDead() || target->getState() == State::DESTROYED || !canAttack()) return;
 
     float dist = getPosition().getDistance(target->getPosition());
 
     // 远程单位：只要在射程内就停止移动并开火
     if (dist <= _data.attackRange) {
         fireProjectile(target);
+		resetAttackTimer(); // 重置攻击计时器
     }
     else {
         // 够不着，向目标走
