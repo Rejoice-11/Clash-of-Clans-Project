@@ -304,14 +304,16 @@ void VillageScene::enterPlacementMode(StoreWindow::BuildingType type)
 
     // 获取幽灵建筑图片名称
     std::string spriteName = getGhostSpriteName(type);
-    if (spriteName.empty()) {
+    if (spriteName.empty()) 
+    {
         CCLOG("Error: 找不到建筑对应的精灵图片");
         return;
     }
 
     // 创建幽灵建筑（带透明度的半透明效果）
     _ghostBuilding = Sprite::create(spriteName);
-    if (!_ghostBuilding) {
+    if (!_ghostBuilding) 
+    {
         CCLOG("Error: 无法创建幽灵建筑，图片路径可能错误: %s", spriteName.c_str());
         return;
     }
@@ -322,7 +324,8 @@ void VillageScene::enterPlacementMode(StoreWindow::BuildingType type)
     this->addChild(_ghostBuilding, 50);  // 确保层级在最上层
 
     // 隐藏商店窗口和灰色遮罩
-    if (_storeWindow) {
+    if (_storeWindow) 
+    {
         _storeWindow->hide();
     }
     _grayMask->setVisible(false);
@@ -333,13 +336,34 @@ void VillageScene::enterPlacementMode(StoreWindow::BuildingType type)
 }
 
 //加取消和确认函数
-void VillageScene::cancelPlacementMode()
+void VillageScene::cancelPlacementMode() 
 {
-    if (_ghostBuilding)
+    if (_ghostBuilding) 
     {
         _ghostBuilding->removeFromParent();
         _ghostBuilding = nullptr;
     }
+
+    if (_isMovingBuilding) 
+    {
+        // 如果是取消移动，要把原精灵加回来！
+        if (_movingSprite && _movingBuilding) 
+        {
+            // 重新设置位置（用原 gridPosition）
+            Vec2 gridPos = _movingBuilding->getGridPosition();
+            Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+            _movingSprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+            _movingSprite->setPosition(finalPos);
+            _scrollNode->addChild(_movingSprite, 5);
+
+            // 重新绑定点击（可选）
+            // （如果没删监听器，可能不需要）
+        }
+        _movingBuilding = nullptr;
+        _movingSprite = nullptr;
+        _isMovingBuilding = false;
+    }
+
     _isPlacementMode = false;
     _pendingBuildingType = StoreWindow::BuildingType::MAX_TYPES;
 }
@@ -359,36 +383,112 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         return;
     }
 
-    // 创建建筑对象
-    std::unique_ptr<Building> newBuilding;
-    switch (_pendingBuildingType)
+    if (_isMovingBuilding && _movingBuilding) 
     {
-        case StoreWindow::BuildingType::TOWN_HALL: 
+        // === 移动模式 ===
+        // 1. 更新建筑的 gridPosition
+        _movingBuilding->setGridPosition(gridPos);
+
+        // 2. 重新创建真实精灵（用原图）
+        std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+        auto newSprite = Sprite::create(spriteName);
+        if (!newSprite) 
+        {
+            CCLOG("Failed to recreate sprite after move");
+            return;
+
+        }
+
+        // 3. 设置位置（注意坐标转换）
+        Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+        newSprite->setAnchorPoint(Vec2(0.5f, 0.5f));
+        newSprite->setPosition(finalPos);
+
+        // 4. 绑定建筑对象（关键！）
+        newSprite->setUserObject(_movingBuilding); // ← 指向同一个建筑！
+
+        // 5. 添加到场景
+        _scrollNode->addChild(newSprite, 5);
+
+        // 6. 重新绑定点击事件（可选，如果之前有）
+        auto listener = EventListenerTouchOneByOne::create();
+        listener->setSwallowTouches(true);
+        listener->onTouchBegan = [this, newSprite](Touch* touch, Event* event) 
+        {
+            Vec2 touchPos = touch->getLocation();
+            Vec2 nodePos = newSprite->getParent()->convertToNodeSpace(touchPos);
+            Rect bounds(newSprite->getPosition() - newSprite->getContentSize() / 2,
+                        newSprite->getContentSize());
+
+            if (bounds.containsPoint(nodePos)) 
+            {
+                this->onBuildingClicked(newSprite);
+                return true;
+            }
+            return false;
+        };
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, newSprite);
+
+        // 7. 清理移动状态
+        _movingBuilding = nullptr;
+        _movingSprite = nullptr;
+        _isMovingBuilding = false;
+    }
+
+    else 
+    {
+        cocos2d::Sprite* realSprite = nullptr;
+        // 创建建筑对象
+        std::unique_ptr<Building> newBuilding;
+        switch (_pendingBuildingType)
+        {
+        case StoreWindow::BuildingType::TOWN_HALL:
         {
             auto th = std::make_unique<TownHall>(TownHallBuildingData);
             th->setGridPosition(gridPos);
             _townHalls.push_back(std::move(th));
             newBuilding = std::move(_townHalls.back());
+
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_townHalls.back().get()); // .get() 返回裸指针
             break;
         }
 
-        case StoreWindow::BuildingType::GOLD_MINE: 
+        case StoreWindow::BuildingType::GOLD_MINE:
         {
             auto mine = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
             mine->setGridPosition(gridPos);
             _goldMines.push_back(std::move(mine));
             newBuilding = std::move(_goldMines.back());
+
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_goldMines.back().get()); // .get() 返回裸指针
             break;
         }
 
-		case StoreWindow::BuildingType::ELIXIR_COLLECTOR:
-		{
-			auto collector = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
-			collector->setGridPosition(gridPos);
-			_elixirCollectors.push_back(std::move(collector));
-			newBuilding = std::move(_elixirCollectors.back());
-			break;
-		}
+        case StoreWindow::BuildingType::ELIXIR_COLLECTOR:
+        {
+            auto collector = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
+            collector->setGridPosition(gridPos);
+            _elixirCollectors.push_back(std::move(collector));
+            newBuilding = std::move(_elixirCollectors.back());
+
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_elixirCollectors.back().get()); // .get() 返回裸指针
+            break;
+        }
 
         case StoreWindow::BuildingType::GOLD_STORAGE:
         {
@@ -396,6 +496,13 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             storage->setGridPosition(gridPos);
             _goldStorages.push_back(std::move(storage));
             newBuilding = std::move(_goldStorages.back());
+
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_goldStorages.back().get()); // .get() 返回裸指针
             break;
         }
 
@@ -409,83 +516,109 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             tower->setGridPosition(gridPos);
             _archerTowers.push_back(std::move(tower));
             newBuilding = std::move(_archerTowers.back());
+
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_archerTowers.back().get()); // .get() 返回裸指针
             break;
         }
 
-		case StoreWindow::BuildingType::ELIXIR_STORAGE:
+        case StoreWindow::BuildingType::ELIXIR_STORAGE:
         {
             auto storage = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
             storage->setGridPosition(gridPos);
             _elixirStorages.push_back(std::move(storage));
             newBuilding = std::move(_elixirStorages.back());
-			// 放置后重新计算总容量
-			//unfinishd
+            // 放置后重新计算总容量
+            //unfinishd
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_elixirStorages.back().get()); // .get() 返回裸指针
             break;
         }
-		/*unfinished
+        /*unfinished
         case StoreWindow::BuildingType::MILITARY_CAMP:
-		{
-			auto camp = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
-			camp->setGridPosition(gridPos);
-			_militaryCamps.push_back(std::move(camp));
-			newBuilding = std::move(_militaryCamps.back());
-			break;
-		}
-        */
-
-		case StoreWindow::BuildingType::CANNON:
-		{
-			auto cannon = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
-			cannon->setGridPosition(gridPos);
-			_cannons.push_back(std::move(cannon));
-			newBuilding = std::move(_cannons.back());
-			break;
-		}
-		/*unfinished
-		case StoreWindow::BuildingType::WORKER_HOME:
-		{
-			auto home = std::make_unique<WorkerHome>(WorkerHomeBuildingData);
-			home->setGridPosition(gridPos);
-
-			_workerHomes.push_back(std::move(home));    
-			newBuilding = std::move(_workerHomes.back());
-			break;
-		}
-        */
-    }
-
-    if (!newBuilding) return;
-
-    // 创建精灵
-    std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-    auto realSprite = Sprite::create(spriteName);
-
-    if (!realSprite) 
-        return;
-
-    Vec2 finalPos = GridUtils::gridToWorld(gridPos);
-	realSprite->setAnchorPoint(Vec2(0.5, 0.5));
-	finalPos = Vec2(finalPos.x-640, finalPos.y-360);
-    realSprite->setPosition(finalPos);
-    _scrollNode->addChild(realSprite, 5);
-
-    // 绑定点击事件
-    auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);
-    listener->onTouchBegan = [this, realSprite](Touch* touch, Event* event) 
-    {
-        Vec2 touchPos = touch->getLocation();
-        Vec2 nodePos = realSprite->getParent()->convertToNodeSpace(touchPos);
-        Rect bounds(realSprite->getPosition() - realSprite->getContentSize() / 2,
-            realSprite->getContentSize());
-        if (bounds.containsPoint(nodePos)) 
         {
-            this->onBuildingClicked(realSprite);
-            return true;
+            auto camp = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
+            camp->setGridPosition(gridPos);
+            _militaryCamps.push_back(std::move(camp));
+            newBuilding = std::move(_militaryCamps.back());
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_militaryCamps.back().get()); // .get() 返回裸指针
+            break;
         }
-        return false;
-    };
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, realSprite);
+        */
+
+        case StoreWindow::BuildingType::CANNON:
+        {
+            auto cannon = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
+            cannon->setGridPosition(gridPos);
+            _cannons.push_back(std::move(cannon));
+            newBuilding = std::move(_cannons.back());
+
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_cannons.back().get()); // .get() 返回裸指针
+            break;
+        }
+        /*unfinished
+        case StoreWindow::BuildingType::WORKER_HOME:
+        {
+            auto home = std::make_unique<WorkerHome>(WorkerHomeBuildingData);
+            home->setGridPosition(gridPos);
+
+            _workerHomes.push_back(std::move(home));
+            newBuilding = std::move(_workerHomes.back());
+            // 创建精灵
+            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+            realSprite = Sprite::create(spriteName);
+
+            // 直接绑定建筑指针！
+            realSprite->setUserObject(_workerHomes.back().get()); // .get() 返回裸指针
+            break;
+        }
+        */
+        }
+
+        if (!newBuilding) return;
+
+        Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+        realSprite->setAnchorPoint(Vec2(0.5, 0.5));
+        finalPos = Vec2(finalPos.x - 640, finalPos.y - 360);
+        realSprite->setPosition(finalPos);
+        _scrollNode->addChild(realSprite, 5);
+
+        // 绑定点击事件
+        auto listener = EventListenerTouchOneByOne::create();
+        listener->setSwallowTouches(true);
+        listener->onTouchBegan = [this, realSprite](Touch* touch, Event* event)
+            {
+                Vec2 touchPos = touch->getLocation();
+                Vec2 nodePos = realSprite->getParent()->convertToNodeSpace(touchPos);
+                Rect bounds(realSprite->getPosition() - realSprite->getContentSize() / 2,
+                    realSprite->getContentSize());
+                if (bounds.containsPoint(nodePos))
+                {
+                    this->onBuildingClicked(realSprite);
+                    return true;
+                }
+                return false;
+            };
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, realSprite);
+    }
 
     cancelPlacementMode();
 }
@@ -504,25 +637,43 @@ void VillageScene::onBuildingClicked(Sprite* sprite)
     showBuildingActionPanel();
 }
 
-StoreWindow::BuildingType VillageScene::getBuildingTypeFromSprite(Sprite* sprite)
+Building* VillageScene::findBuildingBySprite(Sprite* sprite) 
 {
-    // 根据sprite找到对应的建筑类型
-    // 这里需要根据实际情况实现映射逻辑
-    // 例如，可以通过sprite的名称或其他属性来判断类型
-    //unfinished
-
-    return StoreWindow::BuildingType::MAX_TYPES; // 占位返回
+    return dynamic_cast<Building*>(sprite->getUserObject());
 }
 
-Building* VillageScene::findBuildingBySprite(Sprite* sprite)
+StoreWindow::BuildingType VillageScene::getBuildingTypeFromSprite(Sprite* sprite) 
 {
-    // 遍历所有建筑列表，找到与sprite对应的建筑对象
-    // 这里需要根据实际情况实现查找逻辑
-    //unfinished
+    auto building = findBuildingBySprite(sprite);
+    if (!building) 
+        return StoreWindow::BuildingType::MAX_TYPES;
 
-	return nullptr; // 占位返回
+	int typeID = building->getBuildingType();
+
+    switch (static_cast<BuildingType>(typeID))
+    {
+    case BuildingType::TOWN_HALL:
+        return StoreWindow::BuildingType::TOWN_HALL;
+    case BuildingType::GOLD_MINE:
+        return StoreWindow::BuildingType::GOLD_MINE;
+    case BuildingType::ELIXIR_COLLECTOR:
+        return StoreWindow::BuildingType::ELIXIR_COLLECTOR;
+    case BuildingType::GOLD_STORAGE:
+        return StoreWindow::BuildingType::GOLD_STORAGE;
+    case BuildingType::ELIXIR_STORAGE:
+        return StoreWindow::BuildingType::ELIXIR_STORAGE;
+    case BuildingType::MILITARY_CAMP:
+        return StoreWindow::BuildingType::MILITARY_CAMP;
+    case BuildingType::ARCHER_TOWER:
+        return StoreWindow::BuildingType::ARCHER_TOWER;
+    case BuildingType::CANNON:
+        return StoreWindow::BuildingType::CANNON;
+    case BuildingType::WORKER_HOME:
+        return StoreWindow::BuildingType::WORKER_HOME;
+    default:
+        return StoreWindow::BuildingType::MAX_TYPES;
+    }
 }
-
 
 void VillageScene::showBuildingActionPanel() 
 {
@@ -543,7 +694,7 @@ void VillageScene::showBuildingActionPanel()
         CC_CALLBACK_1(VillageScene::onInfoButtonClicked, this)
     );
     auto moveBtn = MenuItemImage::create(
-        "move_this_building.png",//还没有去抠unfinished
+        "move_this_building.png",
         "move_this_building.png",
         CC_CALLBACK_1(VillageScene::onMoveButtonClicked, this)
     );
@@ -566,25 +717,63 @@ void VillageScene::showBuildingActionPanel()
 
 void VillageScene::hideBuildingActionPanel() 
 {
-    if (_buildingActionPanel) {
+    if (_buildingActionPanel) 
+    {
         _buildingActionPanel->removeFromParent();
         _buildingActionPanel = nullptr;
     }
+
     _grayMask->setVisible(false);
     _isInBuildingActionMode = false;
     _selectedBuildingSprite = nullptr;
     _selectedBuilding = nullptr;
 }
+
 // 实现移动建筑逻辑
 void VillageScene::onMoveButtonClicked(Ref* sender) 
 {
-    hideBuildingActionPanel();
-    enterPlacementMode(_selectedBuildingType);
+    if (!_selectedBuilding || !_selectedBuildingSprite) 
+    {
+        hideBuildingActionPanel();
+        return;
+    }
 
-    // 删除原建筑
-	//unfinshed
-    // removeBuilding(_selectedBuilding);
-    _selectedBuildingSprite->removeFromParent();
+    // 记录要移动的建筑和精灵
+    _movingBuilding = _selectedBuilding;
+    _movingSprite = _selectedBuildingSprite;
+
+    // 隐藏面板、取消选中
+    hideBuildingActionPanel();
+
+    // 进入“移动”放置模式
+    _isMovingBuilding = true;
+    _isPlacementMode = true;
+    _pendingBuildingType = _selectedBuildingType;
+
+    // 移除原精灵（等放置后再加回来）
+    _movingSprite->removeFromParent();
+    _selectedBuildingSprite = nullptr;
+    _selectedBuilding = nullptr;
+
+    // 创建幽灵精灵（半透明）
+    std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+    _ghostBuilding = Sprite::create(spriteName);
+    if (!_ghostBuilding) 
+    {
+        CCLOG("Error: Failed to create ghost for moving building");
+        cancelPlacementMode();
+        return;
+    }
+
+    _ghostBuilding->setOpacity(150);
+    _ghostBuilding->setColor(Color3B::GREEN);
+    this->addChild(_ghostBuilding, 50);
+
+    // 初始化幽灵位置（屏幕中心）
+    Vec2 initPos = Director::getInstance()->getVisibleSize() / 2;
+    updateGhostPosition(initPos);
+
+
 }
 
 
@@ -645,16 +834,18 @@ void VillageScene::recalculateMaxStorage()
 
 void VillageScene::onInfoButtonClicked(Ref* sender)
 {
-    hideBuildingActionPanel();
     auto panel = BuildingPanel::create(
         static_cast<Building*>(_selectedBuilding),
         [this]() { this->onBuildingPanelClosed(); }
-    );
+    ); 
+    hideBuildingActionPanel();
+    
     this->addChild(panel, 100);
 }
 
-void VillageScene::onBuildingPanelClosed() {
-    // 重新启用其他操作
+void VillageScene::onBuildingPanelClosed() 
+{
+    // 重新启用其他操作unfinished
 }
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）

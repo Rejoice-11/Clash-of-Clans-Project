@@ -90,7 +90,7 @@ private:
 
     // 当前选中的建筑
     Sprite* _selectedBuildingSprite = nullptr;
-    GameObject* _selectedBuilding = nullptr;
+    Building* _selectedBuilding = nullptr;
     StoreWindow::BuildingType _selectedBuildingType = StoreWindow::BuildingType::MAX_TYPES;
 
     // 建筑操作面板
@@ -109,4 +109,10 @@ private:
     // 根据类型获取建筑容器
     std::vector<std::unique_ptr<Building>>* getBuildingContainer(StoreWindow::BuildingType type);
     Building* findBuildingBySprite(Sprite* sprite);
+
+    // ... 其他成员 ...
+
+    bool _isMovingBuilding = false;          // 新增：是否在移动建筑
+    Building* _movingBuilding = nullptr;     // 要移动的建筑对象
+    cocos2d::Sprite* _movingSprite = nullptr; // 原精灵（用于后续恢复）
 };
