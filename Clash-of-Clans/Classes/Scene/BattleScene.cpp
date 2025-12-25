@@ -237,6 +237,7 @@ bool BattleScene::init()
         _selectedSoldierBtn = Soldier1;
         updateArrowPosition(Soldier1);
     }
+
     // 开启帧更新（后续战斗逻辑靠这个）
     this->scheduleUpdate();
     return true;
