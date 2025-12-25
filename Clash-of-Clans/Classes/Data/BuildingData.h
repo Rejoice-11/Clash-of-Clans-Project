@@ -2,7 +2,7 @@
 #pragma once
 #define MAX_LEVELS 5
 
-enum class BuildingType
+enum BuildingType
 {
 	TOWN_HALL = 0,
 	CANNON = 1,

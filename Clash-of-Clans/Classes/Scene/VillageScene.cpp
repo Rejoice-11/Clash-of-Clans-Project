@@ -400,7 +400,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         }
 
         // 3. 设置位置（注意坐标转换）
-        Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+        Vec2 Pos = GridUtils::gridToWorld(gridPos);
+        Vec2 finalPos = Vec2(Pos.x - 640, Pos.y - 360);
         newSprite->setAnchorPoint(Vec2(0.5f, 0.5f));
         newSprite->setPosition(finalPos);
 
@@ -439,7 +440,7 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
     {
         cocos2d::Sprite* realSprite = nullptr;
         // 创建建筑对象
-        std::unique_ptr<Building> newBuilding;
+
         switch (_pendingBuildingType)
         {
         case StoreWindow::BuildingType::TOWN_HALL:
@@ -447,7 +448,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto th = std::make_unique<TownHall>(TownHallBuildingData);
             th->setGridPosition(gridPos);
             _townHalls.push_back(std::move(th));
-            newBuilding = std::move(_townHalls.back());
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -463,7 +463,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto mine = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
             mine->setGridPosition(gridPos);
             _goldMines.push_back(std::move(mine));
-            newBuilding = std::move(_goldMines.back());
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -479,7 +478,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto collector = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
             collector->setGridPosition(gridPos);
             _elixirCollectors.push_back(std::move(collector));
-            newBuilding = std::move(_elixirCollectors.back());
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -495,7 +493,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto storage = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
             storage->setGridPosition(gridPos);
             _goldStorages.push_back(std::move(storage));
-            newBuilding = std::move(_goldStorages.back());
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -515,7 +512,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             );
             tower->setGridPosition(gridPos);
             _archerTowers.push_back(std::move(tower));
-            newBuilding = std::move(_archerTowers.back());
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -531,7 +527,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto storage = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
             storage->setGridPosition(gridPos);
             _elixirStorages.push_back(std::move(storage));
-            newBuilding = std::move(_elixirStorages.back());
             // 放置后重新计算总容量
             //unfinishd
             // 创建精灵
@@ -548,7 +543,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto camp = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
             camp->setGridPosition(gridPos);
             _militaryCamps.push_back(std::move(camp));
-            newBuilding = std::move(_militaryCamps.back());
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
             realSprite = Sprite::create(spriteName);
@@ -564,7 +558,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             auto cannon = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
             cannon->setGridPosition(gridPos);
             _cannons.push_back(std::move(cannon));
-            newBuilding = std::move(_cannons.back());
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -581,7 +574,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             home->setGridPosition(gridPos);
 
             _workerHomes.push_back(std::move(home));
-            newBuilding = std::move(_workerHomes.back());
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
             realSprite = Sprite::create(spriteName);
@@ -593,7 +585,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         */
         }
 
-        if (!newBuilding) return;
 
         Vec2 finalPos = GridUtils::gridToWorld(gridPos);
         realSprite->setAnchorPoint(Vec2(0.5, 0.5));
