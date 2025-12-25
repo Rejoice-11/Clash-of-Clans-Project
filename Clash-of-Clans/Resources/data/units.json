@@ -1,0 +1,44 @@
+{
+  "units": [
+    {
+      "id": 0,
+      "type": "MELEE",
+      "costForHavingOne": 100,
+      "hp": 100,
+      "damage": 15,
+      "attackRange": 30.0,
+      "attackInterval": 1.0,
+      "speed": 120.0
+    },
+    {
+      "id": 1,
+      "type": "RANGED",
+      "costForHavingOne": 150,
+      "hp": 60,
+      "damage": 30,
+      "attackRange": 120.0,
+      "attackInterval": 1.5,
+      "speed": 80.0
+    },
+    {
+      "id": 2,
+      "type": "TANK",
+      "costForHavingOne": 250,
+      "hp": 500,
+      "damage": 20,
+      "attackRange": 20.0,
+      "attackInterval": 4.0,
+      "speed": 50.0
+    },
+    {
+      "id": 3,
+      "type": "WALL_BREAKER",
+      "costForHavingOne": 200,
+      "hp": 80,
+      "damage": 60,
+      "attackRange": 10.0,
+      "attackInterval": 0.5,
+      "speed": 120.0
+    }
+  ]
+}
