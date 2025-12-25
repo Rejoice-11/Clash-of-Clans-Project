@@ -16,6 +16,7 @@ public:
     void onMouseUp2(EventMouse* event);
     //士兵生成
 	void spawnSoldierAtPosition(const Vec2& position);
+    void updateArrowPosition(cocos2d::MenuItemImage* targetBtn); // 新增：更新箭头位置
     // 函数声明（仅写原型，不写实现）
     static Scene* createScene();
     virtual bool init() override;
@@ -33,6 +34,8 @@ public:
     CREATE_FUNC(BattleScene);
 
 private:
+    cocos2d::Sprite* _arrowIndicator; // 新增：箭头指示器
+    cocos2d::MenuItemImage* _selectedSoldierBtn; // 新增：记录当前选中的士兵按钮
     // 成员变量声明
     Layer* _backgroundLayer;   // 敌方村庄背景
     Layer* _buildingLayer;     // 敌方建筑
