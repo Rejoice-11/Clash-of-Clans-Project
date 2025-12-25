@@ -2,7 +2,7 @@
 namespace GameConfig {
     // ‰÷»æ≤„º∂
     static const int Z_BACKGROUND = -1;
-    static const int Z_GRID = 0;
+    static const int Z_GRID = 4;
     static const int Z_BUILDING = 10;
     static const int Z_UNIT = 20;
     static const int Z_EFFECT = 30;
