@@ -4,20 +4,20 @@
 
 USING_NS_CC;
 
-ConfigManager* ConfigManager::_instance = nullptr;
+ConfigManagerUnit* ConfigManagerUnit::_instance = nullptr;
 
-ConfigManager* ConfigManager::getInstance() {
-    if (!_instance) _instance = new ConfigManager();
+ConfigManagerUnit* ConfigManagerUnit::getInstance() {
+    if (!_instance) _instance = new ConfigManagerUnit();
     return _instance;
 }
 
-bool ConfigManager::loadConfigs(const std::string& filename) {
+bool ConfigManagerUnit::loadConfigs(const std::string& filename) {
     // 1. 获取文件内容
     std::string jsonPath = FileUtils::getInstance()->fullPathForFilename(filename);
     std::string content = FileUtils::getInstance()->getStringFromFile(jsonPath);
 
     if (content.empty()) {
-        CCLOG("ConfigManager: Error reading file %s", filename.c_str());
+        CCLOG("ConfigManagerUnit: Error reading file %s", filename.c_str());
         return false;
     }
 
@@ -26,7 +26,7 @@ bool ConfigManager::loadConfigs(const std::string& filename) {
     doc.Parse(content.c_str());
 
     if (doc.HasParseError()) {
-        CCLOG("ConfigManager: JSON parse error!");
+        CCLOG("ConfigManagerUnit: JSON parse error!");
         return false;
     }
 
@@ -56,10 +56,10 @@ bool ConfigManager::loadConfigs(const std::string& filename) {
     return true;
 }
 
-const UnitData& ConfigManager::getUnitData(int id) {
+const UnitData& ConfigManagerUnit::getUnitData(int id) {
     if (_unitConfigs.find(id) != _unitConfigs.end()) {
         return _unitConfigs[id];
     }
-    CCLOG("ConfigManager: Warning! Unit ID %d not found.", id);
+    CCLOG("ConfigManagerUnit: Warning! Unit ID %d not found.", id);
     return _defaultData;
 }

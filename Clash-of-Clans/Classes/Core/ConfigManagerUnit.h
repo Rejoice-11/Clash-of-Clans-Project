@@ -4,9 +4,9 @@
 #include <string>
 #include "Classes/Data/UnitData.h"
 
-class ConfigManager {
+class ConfigManagerUnit {
 public:
-    static ConfigManager* getInstance();
+    static ConfigManagerUnit* getInstance();
 
     // 启动时调用：加载 JSON 文件
     bool loadConfigs(const std::string& filename);
@@ -15,8 +15,8 @@ public:
     const UnitData& getUnitData(int id);
 
 private:
-    ConfigManager() = default;
-    static ConfigManager* _instance;
+    ConfigManagerUnit() = default;
+    static ConfigManagerUnit* _instance;
 
     // 内存中的图纸库：ID -> 数值结构体
     std::map<int, UnitData> _unitConfigs;
