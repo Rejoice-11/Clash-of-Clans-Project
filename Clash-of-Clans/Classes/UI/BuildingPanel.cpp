@@ -68,7 +68,7 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     _buildingImage = Sprite::create(spriteName);
     if (_buildingImage) 
     {
-        _buildingImage->setPosition(Vec2(200, bg->getContentSize().height / 2));
+        _buildingImage->setPosition(Vec2(180, bg->getContentSize().height / 2 - 30));
         bg->addChild(_buildingImage);
     }
 
@@ -101,7 +101,7 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     }
 
     _levelLabel = Label::createWithSystemFont(
-        typeName + u8" 等级: " + std::to_string(_building->getCurrentLevel() + 1),
+        typeName + u8" 等级: " + std::to_string(_building->getCurrentLevel()),
         "arial", 24
     );
 	_levelLabel->setTextColor(Color4B::WHITE);
@@ -109,20 +109,20 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     bg->addChild(_levelLabel);
 
     // 属性列表（右）
-    float startY = bg->getContentSize().height - 120;
-    float spacing = 40;
+    float startY = bg->getContentSize().height - 110;
+    float spacing = 60;
     auto addStat = [&](const std::string& icon, const std::string& value, int index)
     {
         auto iconSprite = Sprite::create(icon);
         if (iconSprite) 
         {
-            iconSprite->setPosition(Vec2(400, startY - index * spacing));
+            iconSprite->setPosition(Vec2(475, startY - index * spacing));
             bg->addChild(iconSprite);
 
             auto label = Label::createWithSystemFont(value, "arial", 20);
-            label->setTextColor(Color4B::WHITE);
-            label->enableOutline(Color4B::BLACK, 2);
-            label->setPosition(Vec2(500, startY - index * spacing));
+            label->setTextColor(Color4B::BLACK);
+            label->enableOutline(Color4B::WHITE, 2);
+            label->setPosition(Vec2(500, startY - 10 - index * spacing));
             bg->addChild(label);
             _statLabels.push_back(label);
         }
@@ -134,14 +134,14 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     {
         if (rb->getResourceType() == ResourceBuilding::ResourceType::GOLD)
         {
-            addStat("gold_produce_per_hour.png", std::to_string(GoldMineBuildingData.productionPerHour[rb->getCurrentLevel() + 1]), statIndex++);
-            addStat("hit_point.png", std::to_string(GoldMineBuildingData.hitPoints[rb->getCurrentLevel() + 1]), statIndex++);
+            addStat("gold_produce_per_hour.png", std::to_string(GoldMineBuildingData.productionPerHour[rb->getCurrentLevel() - 1]), statIndex++);
+            addStat("hit_point.png", std::to_string(GoldMineBuildingData.hitPoints[rb->getCurrentLevel() - 1]), statIndex++);
         }
 
         else 
         {
-            addStat("elixir_produce_per_hour.png", std::to_string(ElixirCollectorBuildingData.productionPerHour[rb->getCurrentLevel() + 1]), statIndex++);
-            addStat("hit_point.png", std::to_string(ElixirCollectorBuildingData.hitPoints[rb->getCurrentLevel() + 1]), statIndex++);
+            addStat("elixir_produce_per_hour.png", std::to_string(ElixirCollectorBuildingData.productionPerHour[rb->getCurrentLevel() - 1]), statIndex++);
+            addStat("hit_point.png", std::to_string(ElixirCollectorBuildingData.hitPoints[rb->getCurrentLevel() - 1]), statIndex++);
         }
   
     }
@@ -151,13 +151,13 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         if (sb->getStorageType() == StorageBuilding::StorageType::GOLD_STORAGE)
         {
             addStat("gold_storage.png", std::to_string(sb->getCapacity()), statIndex++);
-            addStat("hit_point.png", std::to_string(GoldStorageBuildingData.hitPoints[sb->getCurrentLevel() + 1]), statIndex++);
+            addStat("hit_point.png", std::to_string(GoldStorageBuildingData.hitPoints[sb->getCurrentLevel() - 1]), statIndex++);
         }
 
         else 
         {
             addStat("elixir_storage.png", std::to_string(sb->getCapacity()), statIndex++);
-            addStat("hit_point.png", std::to_string(ElixirStorageBuildingData.hitPoints[sb->getCurrentLevel() + 1]), statIndex++);
+            addStat("hit_point.png", std::to_string(ElixirStorageBuildingData.hitPoints[sb->getCurrentLevel() - 1]), statIndex++);
         }
 
     }
@@ -166,22 +166,22 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     {
         if (db->getDefenseType() == DefenseBuilding::DefenseType::CANON)
         {
-            addStat("attack_range.png", std::to_string(CanonBuildingData.attackRange[db->getCurrentLevel() + 1]), statIndex++);
-            addStat("damage_per_second.png", std::to_string(CanonBuildingData.damagePerSecond[db->getCurrentLevel() + 1]), statIndex++);
-            addStat("hit_point.png", std::to_string(CanonBuildingData.hitPoints[db->getCurrentLevel() + 1]), statIndex++);
+            addStat("attack_range.png", std::to_string(CanonBuildingData.attackRange[db->getCurrentLevel() - 1]), statIndex++);
+            addStat("damage_per_second.png", std::to_string(CanonBuildingData.damagePerSecond[db->getCurrentLevel() - 1]), statIndex++);
+            addStat("hit_point.png", std::to_string(CanonBuildingData.hitPoints[db->getCurrentLevel() - 1]), statIndex++);
         }
 
         else
         {
-            addStat("attack_range.png", std::to_string(ArcherTowerBuildingData.attackRange[db->getCurrentLevel() + 1]), statIndex++);
-            addStat("damage_per_second.png", std::to_string(ArcherTowerBuildingData.damagePerSecond[db->getCurrentLevel() + 1]), statIndex++);
-            addStat("hit_point.png", std::to_string(ArcherTowerBuildingData.hitPoints[db->getCurrentLevel() + 1]), statIndex++);
+            addStat("attack_range.png", std::to_string(ArcherTowerBuildingData.attackRange[db->getCurrentLevel() - 1]), statIndex++);
+            addStat("damage_per_second.png", std::to_string(ArcherTowerBuildingData.damagePerSecond[db->getCurrentLevel() - 1]), statIndex++);
+            addStat("hit_point.png", std::to_string(ArcherTowerBuildingData.hitPoints[db->getCurrentLevel() - 1]), statIndex++);
         }
     }
 
     else if (dynamic_cast<TownHall*>(_building)) 
     {
-        addStat("hit_point.png", std::to_string(ArcherTowerBuildingData.hitPoints[_building->getCurrentLevel() + 1]), statIndex++);
+        addStat("hit_point.png", std::to_string(ArcherTowerBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
     }
 
     // 升级按钮（右下）
@@ -191,7 +191,7 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
 
     if (dynamic_cast<TownHall*>(_building)) 
     {
-        upgradeCost = TownHallBuildingData.goldCost[_building->getCurrentLevel()];
+        upgradeCost = TownHallBuildingData.goldCost[_building->getCurrentLevel() - 1];
     }
 
     else if (dynamic_cast<ResourceBuilding*>(_building)) 
@@ -199,14 +199,14 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         auto rb = static_cast<ResourceBuilding*>(_building);
         if (rb->getResourceType() == ResourceBuilding::ResourceType::GOLD) 
         {
-            upgradeCost = GoldMineBuildingData.elixirCost[_building->getCurrentLevel()];
+            upgradeCost = GoldMineBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
             costIcon = "upgrade_by_elixir.png";
         }
 
         else 
         {
-            upgradeCost = ElixirCollectorBuildingData.goldCost[_building->getCurrentLevel()];
+            upgradeCost = ElixirCollectorBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
 
@@ -215,14 +215,14 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         auto sb = static_cast<StorageBuilding*>(_building);
         if (sb->getStorageType() == StorageBuilding::StorageType::GOLD_STORAGE)
         {
-            upgradeCost = GoldStorageBuildingData.elixirCost[_building->getCurrentLevel()];
+            upgradeCost = GoldStorageBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
             costIcon = "upgrade_by_elixir.png";
         }
 
         else
         {
-            upgradeCost = ElixirStorageBuildingData.goldCost[_building->getCurrentLevel()];
+            upgradeCost = ElixirStorageBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
 
@@ -231,12 +231,12 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         auto db = static_cast<DefenseBuilding*>(_building);
         if (db->getDefenseType() == DefenseBuilding::DefenseType::CANON)
         {
-            upgradeCost = CanonBuildingData.goldCost[_building->getCurrentLevel()];
+            upgradeCost = CanonBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
 
         else
         {
-            upgradeCost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel()];
+            upgradeCost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
 	}
 
@@ -275,20 +275,20 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
     bool isGold = true;
     if (dynamic_cast<TownHall*>(_building)) 
     {
-        cost = TownHallBuildingData.goldCost[_building->getCurrentLevel()];
+        cost = TownHallBuildingData.goldCost[_building->getCurrentLevel() - 1];
     }
     else if (dynamic_cast<ResourceBuilding*>(_building)) 
     {
         auto rb = static_cast<ResourceBuilding*>(_building);
         if (rb->getResourceType() == ResourceBuilding::ResourceType::GOLD) 
         {
-            cost = GoldMineBuildingData.elixirCost[_building->getCurrentLevel()];
+            cost = GoldMineBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
         }
 
         else 
         {
-            cost = ElixirCollectorBuildingData.goldCost[_building->getCurrentLevel()];
+            cost = ElixirCollectorBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
     else if (dynamic_cast<StorageBuilding*>(_building))
@@ -296,12 +296,12 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
         auto sb = static_cast<StorageBuilding*>(_building);
         if (sb->getStorageType() == StorageBuilding::StorageType::GOLD_STORAGE)
         {
-            cost = GoldStorageBuildingData.elixirCost[_building->getCurrentLevel()];
+            cost = GoldStorageBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
         }
         else
         {
-            cost = ElixirStorageBuildingData.goldCost[_building->getCurrentLevel()];
+            cost = ElixirStorageBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
     else if (dynamic_cast<DefenseBuilding*>(_building)) 
@@ -309,11 +309,12 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
         auto db = static_cast<DefenseBuilding*>(_building);
         if (db->getDefenseType() == DefenseBuilding::DefenseType::CANON)
         {
-            cost = CanonBuildingData.goldCost[_building->getCurrentLevel()];
+            cost = CanonBuildingData.goldCost[_building->getCurrentLevel() - 1];
+            isGold = false;
         }
         else
         {
-            cost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel()];
+            cost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
     else 
@@ -325,7 +326,9 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
     // 扣除资源
     auto rm = ResourceManager::getInstance();
     bool canAfford = isGold ? rm->spendGold(cost) : rm->spendElixir(cost);
-    if (!canAfford) return;
+
+    if (!canAfford) 
+        return;
 
     // 升级建筑
     _building->upgrade();
@@ -364,38 +367,38 @@ void BuildingPanel::refreshPanel()
             // ... 其他类型 ...unfinished
         default: typeName = "Building";
     }
-    _levelLabel->setString(typeName + u8" 等级: " + std::to_string(_building->getCurrentLevel() + 1));
+    _levelLabel->setString(typeName + u8" 等级: " + std::to_string(_building->getCurrentLevel()));
 
     // 更新建筑图片
     std::string spriteName = "";
     switch (_building->getBuildingType()) 
     {
         case BuildingType::TOWN_HALL:
-            spriteName = "town_hall_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png";
+            spriteName = "town_hall_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
 
         case BuildingType::GOLD_MINE:
-			spriteName = "gold_mine_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png";
+			spriteName = "gold_mine_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
 
 		case BuildingType::ELIXIR_COLLECTOR:
-			spriteName = "elixir_collector_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png"; 
+			spriteName = "elixir_collector_lv" + std::to_string(_building->getCurrentLevel()) + ".png"; 
             break;
 
 		case BuildingType::GOLD_STORAGE:
-			spriteName = "gold_storage_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png";
+			spriteName = "gold_storage_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
 
 		case BuildingType::ELIXIR_STORAGE:
-			spriteName = "elixir_storage_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png";
+			spriteName = "elixir_storage_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
 
 		case BuildingType::ARCHER_TOWER:
-			spriteName = "archer_tower_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png";
+			spriteName = "archer_tower_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
 
 		case BuildingType::CANNON:
-            spriteName = "canon_lv" + std::to_string(_building->getCurrentLevel() + 1) + ".png";
+            spriteName = "canon_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
 
 		default: spriteName = "";

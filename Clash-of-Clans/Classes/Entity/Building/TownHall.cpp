@@ -27,7 +27,8 @@ TownHall::TownHall(const BuildingData& data, int instanceId)
     : Building(data, instanceId)
 {
     // 可以在这里做额外初始化
-    if (instanceId == -1) {
+    if (instanceId == -1) 
+    {
         // 自动生成ID
         static int nextId = 1001;
         setId(nextId++);

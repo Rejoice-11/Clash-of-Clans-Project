@@ -3,7 +3,8 @@
 #include "cocos2d.h"
 #include "Classes/Entity/Building/Building.h"
 
-class BuildingPanel : public cocos2d::Layer {
+class BuildingPanel : public cocos2d::Layer 
+{
 public:
     static BuildingPanel* create(Building* building, const std::function<void()>& onClose);
     bool init(Building* building, const std::function<void()>& onClose);
