@@ -7,14 +7,19 @@
 #include "Classes/Entity/Building/StorageBuilding.h"
 #include "Classes/Entity/Building/MilitaryBuilding.h"
 #include "Classes/Entity/Building/DefenseBuilding.h"
+#include "Classes/Entity/Building/Building.h"
+#include "Classes/Entity/Building/ResourceBuilding.h"
+#include "Classes/Entity/Building/TownHall.h"
 #include "Classes/Utils/Constants.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 using namespace CocosDenshion;
+
 class BattleScene : public Scene
 {
 public:
+    void spawnBuilding(Vec2 gridPos,int Buildingname);
 	// 鼠标事件注册及回调声明
     void registerMouseEvents2();
     void onMouseScroll2(EventMouse* event);
@@ -28,7 +33,7 @@ public:
     static Scene* createScene();
     virtual bool init() override;
     virtual void update(float dt) override;  // 战斗实时模拟核心
-
+	void initgridinfo(const int x,const int y,int buildingtype); // 初始化网格信息
     // 按钮回调声明
     void onSurrenderButtonClicked(Ref* sender);  // 投降
     void onNextWaveButtonClicked(Ref* sender);   // 预留下一波
@@ -54,6 +59,8 @@ private:
     // 新增：保存弹窗面板和菜单（用于后续删除）
     cocos2d::Sprite* _returnPanel = nullptr;
     cocos2d::Menu* _returnMenu = nullptr;
+
+    cocos2d::Sprite* realSprite = nullptr;    // 创建建筑对象便于生成建筑
     /* 所有建筑的容器（按类型分类）
     std::vector<std::unique_ptr<TownHall>> _townHalls;
     std::vector<std::unique_ptr<ResourceBuilding>> _goldMines;
