@@ -46,6 +46,9 @@
     <ClCompile Include="..\Classes\Entity\Unit\WallBreaker.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\TankUnit.cpp" />
     <ClCompile Include="..\Classes\Utils\CameraUtils.cpp" />
+    <ClCompile Include="..\Classes\Core\ConfigManager.cpp" />
+    <ClCompile Include="..\Classes\Core\ConfigManagerUnit.cpp" />
+    <ClCompile Include="..\Classes\System\ArmyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -54,7 +57,7 @@
     <ClInclude Include="..\Classes\HelloWorldScene.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Core\ConfigManager.h">
+    <ClInclude Include="..\Classes\Core\ConfigManagerUnit.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Core\EventDispatcher.h">
