@@ -168,6 +168,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
     <ClCompile Include="..\Classes\Scene\BattleScene.cpp" />
     <ClCompile Include="..\Classes\Scene\VillageScene.cpp" />
+    <ClCompile Include="..\Classes\Setting\SettingLayer.cpp" />
     <ClCompile Include="..\Classes\System\ArmyManager.cpp" />
     <ClCompile Include="..\Classes\System\ResourceManager.cpp" />
     <ClCompile Include="..\Classes\UI\BuildingPanel.cpp" />
@@ -201,6 +202,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Scene\BattleScene.h" />
     <ClInclude Include="..\Classes\Scene\MenuScene.h" />
     <ClInclude Include="..\Classes\Scene\VillageScene.h" />
+    <ClInclude Include="..\Classes\Setting\SettingLayer.h" />
     <ClInclude Include="..\Classes\System\ArmyManager.h" />
     <ClInclude Include="..\Classes\System\BuilderManager.h" />
     <ClInclude Include="..\Classes\System\CombatSystem.h" />

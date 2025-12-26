@@ -49,6 +49,7 @@
     <ClCompile Include="..\Classes\Core\ConfigManager.cpp" />
     <ClCompile Include="..\Classes\Core\ConfigManagerUnit.cpp" />
     <ClCompile Include="..\Classes\System\ArmyManager.cpp" />
+    <ClCompile Include="..\Classes\Setting\SettingLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -97,6 +98,7 @@
     <ClInclude Include="..\Classes\Utils\GridUtils.h" />
     <ClInclude Include="..\Classes\Utils\TimerUtils.h" />
     <ClInclude Include="..\Classes\Utils\CameraUtils.h" />
+    <ClInclude Include="..\Classes\Setting\SettingLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
