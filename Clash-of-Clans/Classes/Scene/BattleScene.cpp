@@ -3,6 +3,138 @@
 #include "Classes/System/ArmyManager.h"
 #include "Classes/Entity/Unit/UnitFactory.h"
 
+struct gridinfo
+{
+    //定义建筑的血量和类型(最大血量和现在的血量用于血条制作)
+    int max_health;
+    int now_health;
+    int buildingtype;//0:无建筑 1:大本营  2:普通建筑 3:防御建筑
+    void init(int type = 0, int maxH = 0, int nowH = 0) {
+        max_health = maxH;
+        now_health = nowH;
+        buildingtype = type;
+    }
+};
+gridinfo grid[41][41]; // 定义网格信息二维数组
+// 初始化网格信息二维数组
+void initializeGrid() {
+    for (int i = 0; i < 41; i++) {
+        for (int j = 0; j < 41; j++) {
+            grid[i][j].init(); // 使用默认参数
+        }
+    }
+}
+//将建筑信息存入gridinfo二维数组(还没实现血量写入)
+void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
+{
+    grid[x][y].buildingtype = buildingtype;
+    /*grid[x + 1][y].buildingtype = buildingtype;
+    grid[x + 1][y + 1].buildingtype = buildingtype;
+    grid[x + 1][y - 1].buildingtype = buildingtype;
+    grid[x][y + 1].buildingtype = buildingtype;
+    grid[x][y - 1].buildingtype = buildingtype;
+    grid[x - 1][y].buildingtype = buildingtype;
+    grid[x - 1][y + 1].buildingtype = buildingtype;
+    grid[x - 1][y - 1].buildingtype = buildingtype;*/
+    //周围8个格子也标记为有建筑(暂存),好像没必要都标记
+}
+// 建筑生成实现
+void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
+{
+    int x = static_cast<int>(gridPos.x);
+    int y = static_cast<int>(gridPos.y);
+    switch (Buildingname)
+    {
+        case 0:
+        {
+            auto th = std::make_unique<TownHall>(TownHallBuildingData);
+            th->setGridPosition(gridPos);
+            realSprite = Sprite::create("town_hall_lv3.png");
+            realSprite->setUserObject(th.get());// 绑定建筑指针
+            initgridinfo(x, y, 1); // 大本营建筑类型为1
+            break;
+        }
+        case 1:
+        {
+            auto gm = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
+            gm->setGridPosition(gridPos);
+            realSprite = Sprite::create("gold_mine_lv3.png");
+            realSprite->setUserObject(gm.get());// 绑定建筑指针
+            initgridinfo(x, y, 2); // 普通建筑类型为2
+            break;
+        }
+        case 2:
+        {
+            auto ec = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
+            ec->setGridPosition(gridPos);
+            realSprite = Sprite::create("elixir_collector_lv3.png");
+            realSprite->setUserObject(ec.get());// 绑定建筑指针
+            initgridinfo(x, y, 2); // 普通建筑类型为2
+            break;
+        }
+        case 3:
+        {
+            auto gs = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
+            gs->setGridPosition(gridPos);
+            realSprite = Sprite::create("gold_storage_lv3.png");
+            realSprite->setUserObject(gs.get());// 绑定建筑指针
+            initgridinfo(x, y, 2); // 普通建筑类型为2
+            break;
+        }
+        case 4:
+        {
+            auto es = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
+            es->setGridPosition(gridPos);
+            realSprite = Sprite::create("elixir_storage_lv3.png");
+            realSprite->setUserObject(es.get());// 绑定建筑指针
+            initgridinfo(x, y, 2); // 普通建筑类型为2
+            break;
+        }
+        /*
+        case 5:
+        {
+            auto mc = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
+            mc->setGridPosition(gridPos);
+            realSprite = Sprite::create("military_camp_lv3.png");
+            realSprite->setUserObject(mc.get());// 绑定建筑指针
+            initgridinfo(x, y, 2); // 普通建筑类型为2
+            break;
+        }未实现军营
+        */
+        case 6:
+        {
+            auto at = std::make_unique<DefenseBuilding>(ArcherTowerBuildingData,
+                -1,
+                DefenseBuilding::DefenseType::ARCHER_TOWER);
+            at->setGridPosition(gridPos);
+            realSprite = Sprite::create("archer_tower_lv3.png");
+            realSprite->setUserObject(at.get());// 绑定建筑指针
+            initgridinfo(x, y, 3); // 防御建筑类型为3
+            break;
+        }
+        case 7:
+        {
+            auto cn = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
+            cn->setGridPosition(gridPos);
+            realSprite = Sprite::create("canon_lv3.png");
+            realSprite->setUserObject(cn.get());// 绑定建筑指针
+            initgridinfo(x, y, 3); // 防御建筑类型为3
+            break;
+        }
+        case 8:
+            // 未实现建筑工人
+            break;
+        default:
+            break;
+            // 实现建筑初始化
+    }
+    Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+    realSprite->setAnchorPoint(Vec2(0.5, 0.5));
+    realSprite->setPosition(finalPos);
+    this->addChild(realSprite, 5);
+}
+
+
 // 更新箭头位置实现
 void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
     if (!targetBtn || !_arrowIndicator) 
@@ -288,7 +420,7 @@ bool BattleScene::init()
     ArmyManager::getInstance()->setUnitCount(UnitType::WALL_BREAKER, 22);
 
     //  战斗背景（全屏铺开）
-    auto background = Sprite::create("2village_background.jpg");
+    auto background = Sprite::create("battle_background.jpg");
     if (background) {
         background->setPosition(Vec2(visibleSize.width / 2 + origin.x,
             visibleSize.height / 2 + origin.y));
@@ -346,6 +478,19 @@ bool BattleScene::init()
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 	// 播放战斗背景音乐
 	SimpleAudioEngine::getInstance()->playBackgroundMusic("audio/battle_background.mp3", true);
+    
+    //初始化生成建筑
+    /*0:大本营 1:金矿 2:圣水收集器 3:金库 4:圣水库 5:军营 6:箭塔 7:加农炮 8:建筑工人
+    */
+    spawnBuilding(Vec2(20, 20), 0);
+    spawnBuilding(Vec2(10, 25), 1);
+    spawnBuilding(Vec2(15, 18), 2);
+    spawnBuilding(Vec2(25, 22), 3);
+    spawnBuilding(Vec2(30, 15), 4);
+    spawnBuilding(Vec2(18, 28), 6);
+    spawnBuilding(Vec2(22, 12), 7);
+    
+    
     // 开启帧更新（后续战斗逻辑靠这个）
     this->scheduleUpdate();
     return true;
