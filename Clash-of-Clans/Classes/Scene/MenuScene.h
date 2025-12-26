@@ -23,7 +23,7 @@ public:
     CREATE_FUNC(MenuScene);
 
 private:
-    // 你需要准备的png（Taffy提醒）
+    // 你需要准备的png
     // "menu_background.png"     // 全屏背景
     // "menu_logo.png"           // 游戏标题logo
     // "button_play_normal.png"  // 开始游戏按钮正常态

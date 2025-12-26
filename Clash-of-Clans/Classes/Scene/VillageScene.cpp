@@ -836,6 +836,7 @@ void VillageScene::onInfoButtonClicked(Ref* sender)
 
 void VillageScene::onBuildingPanelClosed() 
 {
+
     // 重新启用其他操作unfinished
 }
 
