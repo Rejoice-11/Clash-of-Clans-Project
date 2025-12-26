@@ -32,7 +32,7 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
         return;
     }
 
-    if (!GridUtils::isPointInDiamond(position)) {
+    if (!GridUtils::isPointInDiamondBattle(position)) {
         CCLOG("Spawn Failed: Not inside grid diamond!");
         return;
     }
@@ -40,10 +40,14 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
     // 2. 尝试从管理器扣除兵力
     if (ArmyManager::getInstance()->tryDeploy(_selectedType)) {
 
+        // 将玩家点击的坐标转换成最近的网格中心点坐标
+        Vec2 snappedPos = GridUtils::snapToGrid(position);
+
+
         // 3. 通过工厂生产士兵
         auto newUnit = UnitFactory::createUnit(_selectedType);
         if (newUnit) {
-            newUnit->setPosition(position);
+            newUnit->setPosition(snappedPos);
             auto sprite = newUnit->createSprite();
             this->addChild(sprite, GameConfig::Z_UNIT);
 
@@ -278,10 +282,10 @@ bool BattleScene::init()
     ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
 
 	// 模拟从村庄带来的兵力,到时候改成从VillageManager获取
-    ArmyManager::getInstance()->setUnitCount(UnitType::MELEE, 10);
-    ArmyManager::getInstance()->setUnitCount(UnitType::RANGED, 5);
-    ArmyManager::getInstance()->setUnitCount(UnitType::TANK, 3);
-    ArmyManager::getInstance()->setUnitCount(UnitType::WALL_BREAKER, 4);
+    ArmyManager::getInstance()->setUnitCount(UnitType::MELEE, 50);
+    ArmyManager::getInstance()->setUnitCount(UnitType::RANGED, 40);
+    ArmyManager::getInstance()->setUnitCount(UnitType::TANK, 36);
+    ArmyManager::getInstance()->setUnitCount(UnitType::WALL_BREAKER, 22);
 
     //  战斗背景（全屏铺开）
     auto background = Sprite::create("2village_background.jpg");

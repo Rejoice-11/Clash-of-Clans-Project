@@ -118,8 +118,31 @@ void GridUtils::drawGrid(Node* parent)
     }
 }
 
+bool GridUtils::isPointInDiamondBattle(const Vec2& point)
+{
+    
+	// 1. 计算菱形的中心点 (利用你的顶点坐标)
+	float centerX = (LEFT_VERTEX.x + RIGHT_VERTEX.x) / 2.0f; // 应该是 656
+	float centerY = (TOP_VERTEX.y + BOTTOM_VERTEX.y) / 2.0f; // 应该是 392
+
+	// 2. 计算菱形的半宽和半高
+	float halfWidth = (RIGHT_VERTEX.x - LEFT_VERTEX.x) / 2.0f; // 400
+	float halfHeight = (TOP_VERTEX.y - BOTTOM_VERTEX.y) / 2.0f; // 320
+
+	// 3. 将点击的点相对于中心点进行绝对值化
+	float dx = std::abs(point.x - centerX);
+	float dy = std::abs(point.y - centerY);
+
+	// 4. 菱形判定公式： |dx|/W + |dy|/H <= 1
+	// 我们稍微给一点点容错（1.05），防止点在边界上判不中
+	return (dx / halfWidth + dy / halfHeight) <= 1.05f;
+
+}
+
+
 bool GridUtils::isPointInDiamond(const Vec2& point)
 {
+    
     // 计算点到四条边的距离之和是否小于等于大菱形的半周长
     float distanceToLeftEdge = pointToLineDistance(point, LEFT_VERTEX, TOP_VERTEX);
     float distanceToTopEdge = pointToLineDistance(point, TOP_VERTEX, RIGHT_VERTEX);
@@ -133,6 +156,7 @@ bool GridUtils::isPointInDiamond(const Vec2& point)
     // 点在菱形内的判定
     return (distanceToLeftEdge + distanceToRightEdge <= halfWidth * 1.05f &&
         distanceToTopEdge + distanceToBottomEdge <= halfHeight * 1.05f);
+    
 }
 
 Vec2 GridUtils::snapToGrid(const Vec2& point)

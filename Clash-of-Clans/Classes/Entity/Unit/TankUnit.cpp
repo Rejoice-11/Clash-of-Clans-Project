@@ -4,7 +4,7 @@ USING_NS_CC;
 
 Sprite* TankUnit::createSprite() {
     // 假设巨人的资源文件名为这个
-    auto sprite = Sprite::create("Troop_HV_Giant_28.png");
+    auto sprite = Sprite::create("Giant_lvl_14.png");
     if (sprite) {
         sprite->setPosition(getPosition());
         // 巨人通常体积较大，如果需要可以在这里设置缩放

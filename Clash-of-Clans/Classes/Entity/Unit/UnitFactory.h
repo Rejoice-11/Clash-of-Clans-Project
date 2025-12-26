@@ -34,7 +34,7 @@ public:
                 unit = new (std::nothrow) RangedUnit(data);
                 break;
             case UnitType::WALL_BREAKER:
-                unit = new (std::nothrow) RangedUnit(data);
+                unit = new (std::nothrow) WallBreaker(data);
                 break;
 
             default:

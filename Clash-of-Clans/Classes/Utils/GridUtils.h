@@ -24,6 +24,9 @@ public:
     // 检查点是否在大菱形范围内
     static bool isPointInDiamond(const Vec2& point);
 
+	// 专门检查点是否在战斗区域大菱形范围内
+    static bool isPointInDiamondBattle(const Vec2& point);
+
     // 将点吸附到最近的网格点
     static Vec2 snapToGrid(const Vec2& point);
 
