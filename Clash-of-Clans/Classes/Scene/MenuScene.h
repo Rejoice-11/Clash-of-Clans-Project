@@ -6,7 +6,7 @@
 #include "Classes/Scene/MenuScene.h"
 #include "Classes/Scene/VillageScene.h"       // 等会儿自动跳转用
 #include "Classes/Core/GameDirector.h"
-#include "Classes/Core/ConfigManager.h"       // 假设你要在这里加载所有JSON
+#include "Classes/Core/ConfigManagerUnit.h"       // 假设你要在这里加载所有JSON
 USING_NS_CC;
 
 class MenuScene : public Scene

@@ -26,6 +26,7 @@
 #include "Classes/AppDelegate/AppDelegate.h"
 #include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
+#include "Classes/Core/ConfigManagerUnit.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -105,6 +106,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // 直接进入主菜单场景
     GameDirector::getInstance()->runWithScene(MenuScene::createScene());
+	// 加载unitjson配置文件
+    ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
 
     return true;
 }
