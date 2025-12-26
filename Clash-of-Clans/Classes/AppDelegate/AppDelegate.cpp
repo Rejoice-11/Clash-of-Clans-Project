@@ -106,8 +106,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // 直接进入主菜单场景
     GameDirector::getInstance()->runWithScene(MenuScene::createScene());
-	// 加载unitjson配置文件
-    ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
+
 
     return true;
 }

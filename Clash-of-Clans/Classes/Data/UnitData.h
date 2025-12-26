@@ -3,6 +3,7 @@
 
 enum class UnitType 
 {
+	NONE = -1,
 	MELEE = 0,
 	RANGED = 1,
 	TANK = 2,

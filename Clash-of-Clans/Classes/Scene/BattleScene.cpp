@@ -1,5 +1,7 @@
 // 必须包含对应的头文件
 #include "BattleScene.h"
+#include "Classes/System/ArmyManager.h"
+#include "Classes/Entity/Unit/UnitFactory.h"
 
 // 更新箭头位置实现
 void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
@@ -19,8 +21,65 @@ void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
 // 士兵生成实现（预留，后续完善具体逻辑）
 void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 {
-    // 预留，后续实现士兵生成逻辑
+    if (_selectedType == UnitType::NONE) {
+        CCLOG("Spawn Failed: No soldier selected!");
+        return;
+    }
+
+    // 1. 范围校验 (150线以上且在网格内)
+    if (position.y < GameConfig::DEPLOY_BOUNDARY_Y) {
+        CCLOG("Spawn Failed: Below deployment line (y < %f)", GameConfig::DEPLOY_BOUNDARY_Y);
+        return;
+    }
+
+    if (!GridUtils::isPointInDiamond(position)) {
+        CCLOG("Spawn Failed: Not inside grid diamond!");
+        return;
+    }
+
+    // 2. 尝试从管理器扣除兵力
+    if (ArmyManager::getInstance()->tryDeploy(_selectedType)) {
+
+        // 3. 通过工厂生产士兵
+        auto newUnit = UnitFactory::createUnit(_selectedType);
+        if (newUnit) {
+            newUnit->setPosition(position);
+            auto sprite = newUnit->createSprite();
+            this->addChild(sprite, GameConfig::Z_UNIT);
+
+            // 可以在这里加上一个小的烟雾特效或声音
+        }
+
+        // 4. 刷新 UI
+        refreshUI();
+    }
 }
+
+void BattleScene::refreshUI() {
+	for (auto const& [type, btn] : _unitButtons) {//我这里用了C++17的结构化绑定，现代特性
+        int count = ArmyManager::getInstance()->getRemainingCount(type);
+
+        // 更新数字显示
+        if (_unitLabels.count(type)) {
+            _unitLabels[type]->setString(std::to_string(count));
+        }
+
+        // 核心逻辑：数量为 0 则变灰并禁用
+        if (count <= 0) {
+            btn->setEnabled(false);
+            btn->setColor(Color3B(100, 100, 100)); // 变灰
+
+            // 如果当前选中的正好是这个用完的兵，取消选中状态
+            if (_selectedType == type) {
+                _selectedType = UnitType::NONE;
+                _selectedSoldierBtn = nullptr;
+                _arrowIndicator->setVisible(false);
+            }
+        }
+    }
+}
+
+
 
 // 鼠标事件注册实现
 void BattleScene::registerMouseEvents2()
@@ -52,6 +111,8 @@ void BattleScene::onMouseScroll2(EventMouse* event)
 }
 void BattleScene::onMouseDown2(EventMouse* event)
 {
+    CCLOG("Mouse Down Detected!"); //调试信息
+
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);
 	spawnSoldierAtPosition(worldPos);
@@ -148,8 +209,16 @@ void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
     if (!clickedBtn) 
         return;
 
-    // 2. 更新选中状态和箭头位置
+    UnitType type = static_cast<UnitType>(clickedBtn->getTag());
+
+    // 如果该兵种已经用完了，不允许选中
+    if (ArmyManager::getInstance()->getRemainingCount(type) <= 0) return;
+
+    // 2. 更新选中状态，标签和箭头位置
     _selectedSoldierBtn = clickedBtn;
+	_selectedType = type;
+
+    _arrowIndicator->setVisible(true);
     updateArrowPosition(clickedBtn);
 
     // 3. 预留：后续兵种选择逻辑（比如记录选中的兵种ID/类型）
@@ -158,7 +227,7 @@ void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
     // _selectedSoldierType = soldierType;
 }
 // 封装：创建带小图标的士兵按钮（避免重复代码）
-MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath) {
+MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath,UnitType type) {
     // 1. 创建基础按钮
     auto soldierBtn = MenuItemImage::create(
         "Soldier_Card.png",    // 正常状态
@@ -167,6 +236,7 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
         CC_CALLBACK_1(BattleScene::onSoldierSelectButtonClicked, this)
     );
     soldierBtn->setPosition(btnPos);
+    soldierBtn->setTag(static_cast<int>(type)); // 用 Tag 绑定类型
 
     // 2. 创建小图片精灵（作为按钮的子节点）
     auto smallIcon = Sprite::create(smallIconPath); // 替换为你的小图片路径（如 "Small_Soldier_Icon.png"）
@@ -181,6 +251,16 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
         soldierBtn->addChild(smallIcon);
     }
 
+    // 数量标签
+    int count = ArmyManager::getInstance()->getRemainingCount(type);
+    auto countLabel = Label::createWithTTF(std::to_string(count), "fonts/Marker Felt.ttf", 22);
+    countLabel->setPosition(Vec2(soldierBtn->getContentSize().width / 2, 20));
+    soldierBtn->addChild(countLabel);
+
+    // 存入 Map 以便后续精准刷新
+    _unitButtons[type] = soldierBtn;
+    _unitLabels[type] = countLabel;
+
     return soldierBtn;
 }
 
@@ -194,7 +274,16 @@ bool BattleScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    // 1. 战斗背景（全屏铺开）
+    // 加载配置与初始化兵力 
+    ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
+
+	// 模拟从村庄带来的兵力,到时候改成从VillageManager获取
+    ArmyManager::getInstance()->setUnitCount(UnitType::MELEE, 10);
+    ArmyManager::getInstance()->setUnitCount(UnitType::RANGED, 5);
+    ArmyManager::getInstance()->setUnitCount(UnitType::TANK, 3);
+    ArmyManager::getInstance()->setUnitCount(UnitType::WALL_BREAKER, 4);
+
+    //  战斗背景（全屏铺开）
     auto background = Sprite::create("2village_background.jpg");
     if (background) {
         background->setPosition(Vec2(visibleSize.width / 2 + origin.x,
@@ -225,10 +314,10 @@ bool BattleScene::init()
 
 	//兵种选择区预留（未实现）
     // 创建4个带小图标的士兵按钮
-    auto Soldier1 = createSoldierButton(Vec2(200, 60),"Troop_HV_Barbarian_28.png" );
-    auto Soldier2 = createSoldierButton(Vec2(320, 60), "AQ_Japan_Neutral_Shadow_01.png");
-    auto Soldier3 = createSoldierButton(Vec2(440, 60), "Giant_lvl_14.png");
-    auto Soldier4 = createSoldierButton(Vec2(560, 60), "Troop_HV_Wall_Breaker_1.png");
+    auto Soldier1 = createSoldierButton(Vec2(200, 60),"Troop_HV_Barbarian_28.png" ,UnitType::MELEE);
+    auto Soldier2 = createSoldierButton(Vec2(320, 60), "AQ_Japan_Neutral_Shadow_01.png",UnitType::RANGED);
+    auto Soldier3 = createSoldierButton(Vec2(440, 60), "Giant_lvl_14.png",UnitType::TANK);
+    auto Soldier4 = createSoldierButton(Vec2(560, 60), "Troop_HV_Wall_Breaker_1.png",UnitType::WALL_BREAKER);
     auto menu1 = Menu::create(Soldier1, Soldier2, Soldier3, Soldier4, nullptr);
 
     menu1->setPosition(Vec2::ZERO);
@@ -245,6 +334,10 @@ bool BattleScene::init()
         _selectedSoldierBtn = Soldier1;
         updateArrowPosition(Soldier1);
     }
+
+    // 注册事件
+    registerMouseEvents2();
+
 	//先删除背景音乐
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 	// 播放战斗背景音乐

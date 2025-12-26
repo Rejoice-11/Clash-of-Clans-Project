@@ -8,7 +8,10 @@
 #include "Classes/Entity/Building/MilitaryBuilding.h"
 #include "Classes/Entity/Building/DefenseBuilding.h"
 #include "Classes/Utils/Constants.h"
+#include "Classes/Data/UnitData.h"
+#include "Classes/Core/ConfigManagerUnit.h"
 #include "SimpleAudioEngine.h"
+#include <map>
 
 USING_NS_CC;
 using namespace CocosDenshion;
@@ -36,13 +39,23 @@ public:
 	void onSoldierSelectButtonClicked(Ref* sender); // 选择士兵（未实现）
 	void closeReturnWindow(Ref* sender);  // 关闭结束战斗确认窗口(未实现)
 	void closeBattleScene(Ref* sender);        // 关闭战斗场景(回到villagescene)(未实现)
-    MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath);// 封装：创建带小图标的士兵按钮（避免重复代码）
+    MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath,UnitType type);// 封装：创建带小图标的士兵按钮（避免重复代码）
     // Cocos2d-x 创建实例宏
     CREATE_FUNC(BattleScene);
 
+    //UI刷新函数
+    void refreshUI();
+
 private:
-    cocos2d::Sprite* _arrowIndicator; // 新增：箭头指示器
-    cocos2d::MenuItemImage* _selectedSoldierBtn; // 新增：记录当前选中的士兵按钮
+	cocos2d::Sprite* _arrowIndicator = nullptr; // 新增：箭头指示器
+	cocos2d::MenuItemImage* _selectedSoldierBtn = nullptr; // 新增：记录当前选中的士兵按钮
+    UnitType _selectedType = UnitType::NONE; // 当前选中的兵种
+
+    // UI 映射表：通过兵种类型直接找到对应的 按钮 和 数字标签
+    std::map<UnitType, cocos2d::MenuItemImage*> _unitButtons;
+    std::map<UnitType, cocos2d::Label*> _unitLabels;
+
+
     // 成员变量声明
     Layer* _backgroundLayer;   // 敌方村庄背景
     Layer* _buildingLayer;     // 敌方建筑
