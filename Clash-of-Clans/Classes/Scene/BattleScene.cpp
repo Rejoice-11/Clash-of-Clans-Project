@@ -84,6 +84,8 @@ void BattleScene::closeBattleScene(Ref* sender)
     closeReturnWindow(sender);
     // 使用popScene返回上一个场景（VillageScene），而非replaceScene
     // 这样会保留VillageScene的实例及其所有状态（包括已放置的建筑）
+    // 停止背景音乐（双重保障，防止跳转时未停止）
+    SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->popScene();
 }
 // 关闭确认窗口按钮点击回调实现
@@ -243,7 +245,10 @@ bool BattleScene::init()
         _selectedSoldierBtn = Soldier1;
         updateArrowPosition(Soldier1);
     }
-
+	//先删除背景音乐
+    SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+	// 播放战斗背景音乐
+	SimpleAudioEngine::getInstance()->playBackgroundMusic("audio/battle_background.mp3", true);
     // 开启帧更新（后续战斗逻辑靠这个）
     this->scheduleUpdate();
     return true;

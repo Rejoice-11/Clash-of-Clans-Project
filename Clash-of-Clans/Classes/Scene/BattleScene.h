@@ -8,8 +8,10 @@
 #include "Classes/Entity/Building/MilitaryBuilding.h"
 #include "Classes/Entity/Building/DefenseBuilding.h"
 #include "Classes/Utils/Constants.h"
-USING_NS_CC;
+#include "SimpleAudioEngine.h"
 
+USING_NS_CC;
+using namespace CocosDenshion;
 class BattleScene : public Scene
 {
 public:

@@ -1,13 +1,16 @@
-//开始界面
 // scene/MenuScene.h
 #pragma once
 
 #include "cocos2d.h"
+// 新增：引入音频引擎头文件
+#include "audio/include/SimpleAudioEngine.h"
 #include "Classes/Scene/MenuScene.h"
-#include "Classes/Scene/VillageScene.h"       // 等会儿自动跳转用
+#include "Classes/Scene/VillageScene.h"
 #include "Classes/Core/GameDirector.h"
-#include "Classes/Core/ConfigManagerUnit.h"       // 假设你要在这里加载所有JSON
+#include "Classes/Core/ConfigManagerUnit.h"
 USING_NS_CC;
+// 新增：使用音频引擎命名空间
+using namespace CocosDenshion;
 
 class MenuScene : public Scene
 {
@@ -15,10 +18,13 @@ public:
     static Scene* createScene();
     virtual bool init() override;
 
+    // 新增：重写onExit函数，确保场景销毁时释放音频
+    virtual void onExit() override;
+
     // 按钮回调
     void onPlayButtonClicked(Ref* sender);
-    void onSettingsButtonClicked(Ref* sender);  // 预留
-    void onExitButtonClicked(Ref* sender);      // 预留
+    void onSettingsButtonClicked(Ref* sender);
+    void onExitButtonClicked(Ref* sender);
 
     CREATE_FUNC(MenuScene);
 
@@ -29,6 +35,9 @@ private:
     // "button_play_normal.png"  // 开始游戏按钮正常态
     // "button_play_pressed.png" // 开始游戏按钮按下态
     // "button_play_disabled.png"// 可选
+
+    // 新增：音乐文件名常量（建议放在配置文件中）
+    const std::string MENU_BGM = "audio/menu_bgm.mp3"; // 根据你的实际路径修改
 };
 
 Scene* MenuScene::createScene()
@@ -43,7 +52,7 @@ Scene* MenuScene::createScene()
 
 bool MenuScene::init()
 {
-    if (!Scene::init()) {  // 注意：这里其实是Layer的init，但因为我们继承Scene也没事
+    if (!Scene::init()) {
         return false;
     }
 
@@ -80,11 +89,16 @@ bool MenuScene::init()
         progressTimer->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height * 0.3f + origin.y));
         this->addChild(progressTimer, 2);
 
-        auto progressTo = ProgressTo::create(2.0f, 100.0f);  // 2秒假加载
-        auto jump = CallFunc::create([]() {
+        // 新增：加载完成的回调函数（单独抽离，方便维护）
+        auto onLoadComplete = CallFunc::create([]() {
+            // 停止背景音乐播放
+            SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+            // 跳转到村庄场景
             GameDirector::getInstance()->replaceScene(VillageScene::createScene());
             });
-        progressTimer->runAction(Sequence::create(progressTo, jump, nullptr));
+
+        auto progressTo = ProgressTo::create(2.0f, 100.0f);  // 2秒假加载
+        progressTimer->runAction(Sequence::create(progressTo, onLoadComplete, nullptr));
     }
 
     // Loading文字
@@ -94,5 +108,25 @@ bool MenuScene::init()
         this->addChild(label, 3);
     }
 
+    // 新增：播放背景音乐
+    auto audioEngine = SimpleAudioEngine::getInstance();
+    // 设置背景音乐音量（0.0-1.0）
+    audioEngine->setBackgroundMusicVolume(0.8f);
+    // 循环播放背景音乐（第二个参数true表示循环）
+    audioEngine->playBackgroundMusic(MENU_BGM.c_str(), true);
+
     return true;
 }
+
+// 新增：重写onExit函数，确保场景销毁时释放音频资源
+void MenuScene::onExit()
+{
+    Scene::onExit();
+    // 可选：释放音频引擎资源（如果整个游戏退出时再调用更合适）
+    // SimpleAudioEngine::getInstance()->end();
+}
+
+// 空实现（保留你的原有函数）
+void MenuScene::onPlayButtonClicked(Ref* sender) {}
+void MenuScene::onSettingsButtonClicked(Ref* sender) {}
+void MenuScene::onExitButtonClicked(Ref* sender) {}
