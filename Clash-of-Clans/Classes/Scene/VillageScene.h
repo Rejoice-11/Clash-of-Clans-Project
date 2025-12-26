@@ -9,6 +9,8 @@
 #include "Classes/UI/StoreWindow.h"
 #include "Classes/Utils/GridUtils.h"
 #include "Classes/UI/BuildingPanel.h"
+// 引入设置层
+#include "Classes/Setting/SettingLayer.h"
 USING_NS_CC;
 
 class VillageScene : public Scene
@@ -17,7 +19,8 @@ public:
     static Scene* createScene();
     virtual bool init() override;
     virtual void update(float dt) override;
-
+    virtual void onEnter() override; // 添加进入场景回调
+    virtual void onExit() override;  // 添加退出场景回调
     // 按钮回调声明
     void onAttackButtonClicked(Ref* sender);
     void onShopButtonClicked(Ref* sender);
@@ -115,4 +118,12 @@ private:
     bool _isMovingBuilding = false;          // 新增：是否在移动建筑
     Building* _movingBuilding = nullptr;     // 要移动的建筑对象
     cocos2d::Sprite* _movingSprite = nullptr; // 原精灵（用于后续恢复）
+    // 音频相关成员变量（简化为使用SettingLayer）
+    MenuItemSprite* _settingButton = nullptr;        // 设置按钮
+    SettingLayer* _settingLayer = nullptr;          // 设置层
+
+    // 音频相关函数
+    void addSettingButton();                        // 添加设置按钮
+    void onSettingButtonClicked(Ref* sender);       // 设置按钮点击回调
+    void exitGame();                                // 退出游戏
 };

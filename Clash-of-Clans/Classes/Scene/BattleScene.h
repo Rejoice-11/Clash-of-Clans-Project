@@ -7,6 +7,7 @@
 #include "Classes/Entity/Building/StorageBuilding.h"
 #include "Classes/Entity/Building/MilitaryBuilding.h"
 #include "Classes/Entity/Building/DefenseBuilding.h"
+#include "Classes/Utils/Constants.h"
 USING_NS_CC;
 
 class BattleScene : public Scene

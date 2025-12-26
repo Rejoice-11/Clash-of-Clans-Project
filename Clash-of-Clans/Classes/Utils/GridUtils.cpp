@@ -78,7 +78,7 @@ void GridUtils::drawGrid(Node* parent)
 
     // 创建绘制命令
     auto drawNode = DrawNode::create();
-    parent->addChild(drawNode, 4);  // 确保在背景之上，建筑之下
+    parent->addChild(drawNode, GameConfig::Z_GRID);  // 确保在背景之上，建筑之下
 
     // 关键修改：将世界坐标转换为父节点（_scrollNode）的本地坐标
     Vec2 left = parent->convertToNodeSpace(LEFT_VERTEX);

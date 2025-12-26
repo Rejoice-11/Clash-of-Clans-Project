@@ -1,7 +1,7 @@
 ﻿//网格坐标转换（像素↔格子）
 #pragma once
 #include "cocos2d.h"
-
+#include "Classes/Utils/Constants.h"
 USING_NS_CC;
 
 class GridUtils

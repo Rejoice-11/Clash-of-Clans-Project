@@ -1,4 +1,9 @@
-// Classes/Core/ConfigManager.cpp
+// Classes/Core/ConfigManagerBuilding.cpp（改个名）
+//负责这一块的人：先不要或谨慎调用config manager unit的头文件，建议自己再写个building的，避免命名冲突
+//我们后续可能会把unit和building的config manager合并成一个更通用的config manager
+//现在能力有限，先这样分开写着
+//因为这一块还没写完，我先注释掉了，避免报错
+/*
 #include "ConfigManager.h"
 #include "platform/CCFileUtils.h"
 #include "json/document-wrapper.h"
@@ -93,3 +98,4 @@ bool ConfigManager::loadFromJson(const std::string& filepath)
 
     return true;
 }
+*/

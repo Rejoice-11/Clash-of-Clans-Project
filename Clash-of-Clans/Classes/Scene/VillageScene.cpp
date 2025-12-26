@@ -21,7 +21,26 @@ bool VillageScene::init()
 
     _visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
+    // 添加设置按钮（左上角）
+    addSettingButton();
+    //创建设置层（但不显示）
+    _settingLayer = SettingLayer::create();
+    if (_settingLayer) {
+        // 设置回调
+        _settingLayer->setExitCallback([this]() {
+            this->exitGame();
+            });
+        _settingLayer->setCloseCallback([this]() {
+            // 设置层关闭后的操作
+            CCLOG("Setting layer closed");
+            });
 
+        // 加载音频设置并播放背景音乐
+        _settingLayer->loadAudioSettings();
+
+        // 添加到场景，但初始隐藏
+        this->addChild(_settingLayer, 1);
+    }
     // 初始化缩放拖动节点（核心）
     initScrollNode();
     // 绘制网格
@@ -53,8 +72,95 @@ bool VillageScene::init()
 
     // 注册鼠标事件
     registerMouseEvents();
-
+    // 预加载按钮点击音效
+    SimpleAudioEngine::getInstance()->preloadEffect("audio/button_click.mp3");
     return true;
+}
+// 进入场景时调用
+void VillageScene::onEnter()
+{
+    Scene::onEnter();
+    // 播放背景音乐
+    SimpleAudioEngine::getInstance()->playBackgroundMusic("audio/background.mp3", true);
+}
+
+// 退出场景时调用
+void VillageScene::onExit()
+{
+    Scene::onExit();
+    // 保存音频设置
+    if (_settingLayer) {
+        _settingLayer->saveAudioSettings();
+    }
+}
+// 添加设置按钮到左上角
+void VillageScene::addSettingButton()
+{
+    Size visibleSize = Director::getInstance()->getVisibleSize();
+
+    // 尝试加载设置按钮图片
+    _settingButton = MenuItemImage::create(
+        "setting_normal.png",          // 正常状态图片
+        "setting_normal.png",        // 选中状态图片
+        CC_CALLBACK_1(VillageScene::onSettingButtonClicked, this));
+    _settingButton->setScale(0.2f);
+    // 如果图片不存在，创建文本按钮
+    if (!_settingButton) {
+        // 创建齿轮图标作为设置按钮
+        auto drawNode = DrawNode::create();
+        // 画齿轮形状
+        drawNode->drawCircle(Vec2(0, 0), 20, 0, 20, false, 1, 1, Color4F::WHITE);
+        for (int i = 0; i < 8; i++) {
+            float angle = i * (M_PI / 4);
+            Vec2 start(20 * cos(angle), 20 * sin(angle));
+            Vec2 end(30 * cos(angle), 30 * sin(angle));
+            drawNode->drawLine(start, end, Color4F::WHITE);
+        }
+
+        _settingButton = MenuItemSprite::create(drawNode, drawNode,
+            CC_CALLBACK_1(VillageScene::onSettingButtonClicked, this));
+
+        // 设置按钮大小
+        _settingButton->setScale(0.1f);
+    }
+
+    auto menu = Menu::create(_settingButton, nullptr);
+    menu->setPosition(Vec2(40, visibleSize.height - 40)); // 左上角位置
+    this->addChild(menu, 100); // 确保在最上层
+}
+// 设置按钮点击回调
+void VillageScene::onSettingButtonClicked(Ref* sender)
+{
+    if (_settingLayer) {
+        // 播放按钮点击音效
+        _settingLayer->playButtonClickSound();
+        // 显示设置层
+        _settingLayer->show();
+    }
+}
+// 退出游戏
+void VillageScene::exitGame()
+{
+    // 播放退出音效
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
+
+    // 延迟退出，确保音效播放
+    this->runAction(Sequence::create(
+        DelayTime::create(0.3f),
+        CallFunc::create([=]() {
+            // 停止所有音频
+            SimpleAudioEngine::getInstance()->stopAllEffects();
+            SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+
+            // 退出游戏
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+            exit(0);
+#else
+            Director::getInstance()->end();
+#endif
+            }),
+        nullptr
+    ));
 }
 
 // 初始化缩放拖动节点实现
@@ -228,7 +334,9 @@ void VillageScene::clampScrollNodeScale(float targetScale)
 void VillageScene::onAttackButtonClicked(Ref* sender)
 {
     if (_attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
-
+    if (_settingLayer) {
+        _settingLayer->playButtonClickSound(); // 添加音效
+    }
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     _grayMask->setVisible(true);
@@ -277,7 +385,9 @@ void VillageScene::closeAttackPanel(Ref*)
 void VillageScene::onMarketButtonClicked(Ref* sender)
 {
     if (_attackPanel || _isPlacementMode) return;  // 放置,攻击中不能开商店
-
+    if (_settingLayer) {
+        _settingLayer->playButtonClickSound(); // 添加音效
+    }
     if (!_storeWindow)
     {
         // 关键！回调带建筑类型
@@ -728,7 +838,9 @@ void VillageScene::onMoveButtonClicked(Ref* sender)
         hideBuildingActionPanel();
         return;
     }
-
+    if (_settingLayer) {
+        _settingLayer->playButtonClickSound(); // 添加音效
+    }
     // 记录要移动的建筑和精灵
     _movingBuilding = _selectedBuilding;
     _movingSprite = _selectedBuildingSprite;
@@ -769,7 +881,7 @@ void VillageScene::onMoveButtonClicked(Ref* sender)
 
 
 
-// 新增：更新幽灵位置suo
+// 新增：更新幽灵位置
 void VillageScene::updateGhostPosition(const Vec2& mouseWorldPos)
 {
     // 2. 网格吸附处理（确保3x3建筑中心对齐网格）
@@ -825,6 +937,9 @@ void VillageScene::recalculateMaxStorage()
 
 void VillageScene::onInfoButtonClicked(Ref* sender)
 {
+    if (_settingLayer) {
+        _settingLayer->playButtonClickSound(); // 添加音效
+    }
     auto panel = BuildingPanel::create(
         static_cast<Building*>(_selectedBuilding),
         [this]() { this->onBuildingPanelClosed(); }

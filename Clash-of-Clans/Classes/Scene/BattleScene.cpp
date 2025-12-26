@@ -1,5 +1,6 @@
 // 必须包含对应的头文件
 #include "BattleScene.h"
+
 // 更新箭头位置实现
 void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
     if (!targetBtn || !_arrowIndicator) 
@@ -196,10 +197,12 @@ bool BattleScene::init()
     if (background) {
         background->setPosition(Vec2(visibleSize.width / 2 + origin.x,
             visibleSize.height / 2 + origin.y));
-        this->addChild(background, -1);
+        this->addChild(background, GameConfig::Z_BACKGROUND);
     }
+
     // 绘制网格
     GridUtils::drawGrid(this);
+
     // 左下角 结束战斗按钮
     auto ReturnBtn = MenuItemImage::create(
         "Return_Button.png", "Return_Button.png",
@@ -209,12 +212,15 @@ bool BattleScene::init()
     auto menu = Menu::create(ReturnBtn,nullptr);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 2); // UI层级高于背景
+
+
 	//画一条水平线表示隔开兵种选择区和战斗区
     auto drawNode = cocos2d::DrawNode::create();
-    this->addChild(drawNode, 5);
+    this->addChild(drawNode, GameConfig::Z_UI);
 	Vec2 startPoint = Vec2(0, 150);
 	Vec2 endPoint = Vec2(visibleSize.width, 150);
     drawNode->drawLine(startPoint, endPoint, Color4F::WHITE);
+
 	//兵种选择区预留（未实现）
     // 创建4个带小图标的士兵按钮
     auto Soldier1 = createSoldierButton(Vec2(200, 60),"Troop_HV_Barbarian_28.png" );
@@ -224,14 +230,14 @@ bool BattleScene::init()
     auto menu1 = Menu::create(Soldier1, Soldier2, Soldier3, Soldier4, nullptr);
 
     menu1->setPosition(Vec2::ZERO);
-    this->addChild(menu1, 5); // UI层级高于背景
+    this->addChild(menu1, GameConfig::Z_UI); // UI层级高于背景
     // ===================== 新增：初始化箭头指示器 =====================
     _arrowIndicator = Sprite::create("1arrow.png"); // 替换为你的箭头图片路径（如 "arrow_up.png"）
     if (_arrowIndicator) {
         _arrowIndicator->setScale(0.8f); // 根据实际图片大小调整缩放
         _arrowIndicator->setAnchorPoint(Vec2(0.5, 0)); // 箭头锚点设为底部中心，方便对齐按钮顶部
         _arrowIndicator->setVisible(true); // 初始显示
-        this->addChild(_arrowIndicator, 6); // 层级高于士兵按钮（5），确保箭头在最上层
+		this->addChild(_arrowIndicator, GameConfig::Z_UI + 1); // 层级高于士兵按钮，确保箭头在最上层
 
         // 默认选中第一个士兵按钮，箭头定位到第一个按钮上方
         _selectedSoldierBtn = Soldier1;

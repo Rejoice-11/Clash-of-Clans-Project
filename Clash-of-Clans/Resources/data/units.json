@@ -1,0 +1,48 @@
+{
+  "units": [
+    {
+      "name_debug": "野蛮人",
+      "id": 0,
+      "type": 0,
+      "costForHavingOne": 100,
+      "hp": 100,
+      "damage": 15,
+      "attackRange": 30.0,
+      "attackInterval": 1.0,
+      "speed": 120.0
+    },
+    {
+      "name_debug": "弓箭手",
+      "id": 1,
+      "type": 1,
+      "costForHavingOne": 150,
+      "hp": 60,
+      "damage": 30,
+      "attackRange": 120.0,
+      "attackInterval": 1.5,
+      "speed": 80.0
+    },
+    {
+      "name_debug": "巨人",
+      "id": 2,
+      "type": 2,
+      "costForHavingOne": 250,
+      "hp": 500,
+      "damage": 20,
+      "attackRange": 20.0,
+      "attackInterval": 4.0,
+      "speed": 50.0
+    },
+    {
+      "name_debug": "炸弹人",
+      "id": 3,
+      "type": 3,
+      "costForHavingOne": 200,
+      "hp": 80,
+      "damage": 60,
+      "attackRange": 10.0,
+      "attackInterval": 0.5,
+      "speed": 120.0
+    }
+  ]
+}
