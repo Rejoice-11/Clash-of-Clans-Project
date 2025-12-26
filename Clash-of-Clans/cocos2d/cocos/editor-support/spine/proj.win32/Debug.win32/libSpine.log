@@ -32,17 +32,17 @@
   Skin.c
   Slot.c
   SlotData.c
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(310,24): warning C4018: “<”: 有符号/无符号不匹配
   TransformConstraint.c
   TransformConstraintData.c
   Triangulator.c
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(372,24): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonJson.c(97,12): warning C4018: “>=”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(484,26): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(649,2): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(652,2): warning C4018: “<”: 有符号/无符号不匹配
   VertexAttachment.c
   VertexEffect.c
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonJson.c(97,12): warning C4018: “>=”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(310,24): warning C4018: “<”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(372,24): warning C4018: “<”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(484,26): warning C4018: “<”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(649,2): warning C4018: “<”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBinary.c(652,2): warning C4018: “<”: 有符号/无符号不匹配
   AttachmentVertices.cpp
   Cocos2dAttachmentLoader.cpp
   SkeletonAnimation.cpp
@@ -50,8 +50,7 @@ D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBina
   SkeletonRenderer.cpp
   SkeletonTwoColorBatch.cpp
   spine-cocos2dx.cpp
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBatch.cpp(110,42): warning C4018: “<”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonTwoColorBatch.cpp(237,42): warning C4018: “<”: 有符号/无符号不匹配
-D:\Clash of Clans\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonTwoColorBatch.cpp(274,37): warning C4018: “<”: 有符号/无符号不匹配
-  libSpine.vcxproj -> D:\Clash of Clans\Clash-of-Clans\proj.win32\Debug.win32\libSpine.lib
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonBatch.cpp(110,42): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonTwoColorBatch.cpp(237,42): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\cocos2d\cocos\editor-support\spine\SkeletonTwoColorBatch.cpp(274,37): warning C4018: “<”: 有符号/无符号不匹配
   libSpine.vcxproj -> C:\Users\misak\source\repos\Clash-of-Clans-Project\Clash-of-Clans\proj.win32\Debug.win32\libSpine.lib

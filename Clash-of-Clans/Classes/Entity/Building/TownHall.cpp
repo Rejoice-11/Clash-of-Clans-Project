@@ -6,7 +6,8 @@
 int countofTownHallsInVillage = 0;
 
 // 初始化配置数据（建议从 JSON 加载，但先用硬编码）
-BuildingData TownHallBuildingData = {
+BuildingData TownHallBuildingData = 
+{
     1, // id
     BuildingType::TOWN_HALL,
     1, // level
@@ -23,7 +24,8 @@ BuildingData TownHallBuildingData = {
 
 // 构造函数实现
 TownHall::TownHall(const BuildingData& data, int instanceId)
-    : Building(data, instanceId) {
+    : Building(data, instanceId)
+{
     // 可以在这里做额外初始化
     if (instanceId == -1) {
         // 自动生成ID

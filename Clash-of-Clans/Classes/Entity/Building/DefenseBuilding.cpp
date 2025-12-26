@@ -101,7 +101,7 @@ float DefenseBuilding::getAttackRange() const
     {
         return 0.0f;
     }
-    return static_cast<float>(_data.attackRange[_currentLevel - 1]);
+    return static_cast<float>(_data.attackRange[_currentLevel + 1]);
 }
 
 float DefenseBuilding::getDamagePerSecond() const 
@@ -110,5 +110,5 @@ float DefenseBuilding::getDamagePerSecond() const
     {
         return 0.0f;
     }
-    return _data.damagePerSecond[_currentLevel - 1];
+    return _data.damagePerSecond[_currentLevel + 1];
 }

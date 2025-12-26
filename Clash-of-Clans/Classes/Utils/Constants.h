@@ -1,11 +1,10 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-
-
 //全局常量（BUILDING_TYPE_TOWN_HALL = 0）
 #pragma once
-namespace GameConfig {
+namespace GameConfig 
+{
     // 渲染层级
     constexpr int Z_BACKGROUND = -1;
     constexpr int Z_GRID = 4;
@@ -17,3 +16,4 @@ namespace GameConfig {
     // 战斗逻辑常量
     constexpr float DEPLOY_BOUNDARY_Y = 150.0f; // 兵种部署的 Y 轴分界线
 }
+#endif // CONSTANTS_H

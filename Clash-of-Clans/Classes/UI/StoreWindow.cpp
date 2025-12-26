@@ -64,15 +64,15 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
             BuildingType type = types[i];
             std::string iconName;
             switch (type) {
-            case BuildingType::TOWN_HALL: iconName = "town_hall_lv0.png"; break;
-            case BuildingType::GOLD_MINE: iconName = "gold_mine_lv0.png"; break;
-            case BuildingType::ELIXIR_COLLECTOR: iconName = "elixir_collector_lv0.png"; break;
-            case BuildingType::GOLD_STORAGE: iconName = "gold_storage_lv0.png"; break;
-            case BuildingType::ELIXIR_STORAGE: iconName = "elixir_storage_lv0.png"; break;
-            case BuildingType::MILITARY_CAMP: iconName = "military_camp_lv0.png"; break;
-            case BuildingType::ARCHER_TOWER: iconName = "archer_tower_lv0.png"; break;
-            case BuildingType::CANNON: iconName = "canon_lv0.png"; break;
-            case BuildingType::WORKER_HOME: iconName = "worker_home_lv0.png"; break;
+            case BuildingType::TOWN_HALL: iconName = "town_hall_lv1_sub.png"; break;
+            case BuildingType::GOLD_MINE: iconName = "gold_mine_lv1_sub.png"; break;
+            case BuildingType::ELIXIR_COLLECTOR: iconName = "elixir_collector_lv1_sub.png"; break;
+            case BuildingType::GOLD_STORAGE: iconName = "gold_storage_lv1_sub.png"; break;
+            case BuildingType::ELIXIR_STORAGE: iconName = "elixir_storage_lv1_sub.png"; break;
+            case BuildingType::MILITARY_CAMP: iconName = "military_camp_lv1_sub.png"; break;
+            case BuildingType::ARCHER_TOWER: iconName = "archer_tower_lv1_sub.png"; break;
+            case BuildingType::CANNON: iconName = "canon_lv1_sub.png"; break;
+            case BuildingType::WORKER_HOME: iconName = "worker_home_lv1_sub.png"; break;
 
             }
 

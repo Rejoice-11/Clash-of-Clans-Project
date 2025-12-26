@@ -935,24 +935,47 @@ void VillageScene::recalculateMaxStorage()
     ResourceManager::getInstance()->updateMaxElixirStorage(totalElixir);
 }
 
+// VillageScene.cpp
 void VillageScene::onInfoButtonClicked(Ref* sender)
 {
-    if (_settingLayer) {
-        _settingLayer->playButtonClickSound(); // 添加音效
+    if (_settingLayer) 
+    {
+        _settingLayer->playButtonClickSound();
     }
+
+    // 创建面板
     auto panel = BuildingPanel::create(
         static_cast<Building*>(_selectedBuilding),
         [this]() { this->onBuildingPanelClosed(); }
-    ); 
+    );
+
     hideBuildingActionPanel();
-    
     this->addChild(panel, 100);
 }
 
 void VillageScene::onBuildingPanelClosed() 
 {
+    // 刷新选中建筑的精灵（因为可能升级了）
+    if (_selectedBuildingSprite && _selectedBuilding)
+    {
+        std::string newSpriteName = getGhostSpriteName(_selectedBuildingType);
+        newSpriteName = newSpriteName.substr(0, newSpriteName.find("_lv")) +
+            "_lv" + std::to_string(_selectedBuilding->getCurrentLevel()) + ".png";
 
-    // 重新启用其他操作unfinished
+        auto newSprite = Sprite::create(newSpriteName);
+        if (newSprite) 
+        {
+            // 复制位置/锚点
+            newSprite->setPosition(_selectedBuildingSprite->getPosition());
+            newSprite->setAnchorPoint(_selectedBuildingSprite->getAnchorPoint());
+            newSprite->setUserObject(_selectedBuilding);
+
+            // 替换精灵
+            _scrollNode->addChild(newSprite, 5);
+            _selectedBuildingSprite->removeFromParent();
+            _selectedBuildingSprite = newSprite;
+        }
+    }
 }
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）

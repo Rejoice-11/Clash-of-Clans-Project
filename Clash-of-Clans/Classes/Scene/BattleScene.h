@@ -52,7 +52,7 @@ private:
     // 新增：保存弹窗面板和菜单（用于后续删除）
     cocos2d::Sprite* _returnPanel = nullptr;
     cocos2d::Menu* _returnMenu = nullptr;
-    // 所有建筑的容器（按类型分类）
+    /* 所有建筑的容器（按类型分类）
     std::vector<std::unique_ptr<TownHall>> _townHalls;
     std::vector<std::unique_ptr<ResourceBuilding>> _goldMines;
     std::vector<std::unique_ptr<ResourceBuilding>> _elixirCollectors;
@@ -60,4 +60,5 @@ private:
     std::vector<std::unique_ptr<StorageBuilding>> _elixirStorages;
     std::vector<std::unique_ptr<DefenseBuilding>> _archerTowers;
     std::vector<std::unique_ptr<DefenseBuilding>> _cannons;
+    */
 };
