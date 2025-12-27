@@ -18,7 +18,7 @@ void MeleeUnit::executeAttack(int x, int y) {
 
     // 2. 只有目标还活着才攻击
     if (grid[x][y].now_health > 0) {
-
+        SimpleAudioEngine::getInstance()->playEffect("audio/MeleeUnit.mp3");// 播放攻击音效
         // 3. 执行扣血
         grid[x][y].now_health -= this->getDamage();
 
@@ -29,7 +29,7 @@ void MeleeUnit::executeAttack(int x, int y) {
             grid[x][y].now_health = -1;
             CCLOG("Barbarian destroyed building at (%d, %d)!", x, y);
         }
-
+        
         // 5. 简单的视觉反馈：让小兵在攻击时稍微变大一点点再缩回去，模拟“发力”动作
         if (_mySprite) {
             auto scaleUp = cocos2d::ScaleTo::create(0.1f, 1.2f);
