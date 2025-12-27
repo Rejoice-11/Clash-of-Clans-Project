@@ -18,7 +18,7 @@ bool VillageScene::init()
     if (!Scene::init()) {
         return false;
     }
-
+   
     _visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     // 添加设置按钮（左上角）
@@ -87,6 +87,24 @@ void VillageScene::onEnter()
 // 退出场景时调用
 void VillageScene::onExit()
 {
+    // 清理可能残留的 UI
+    if (_storeWindow) {
+        _storeWindow->removeFromParent();
+        _storeWindow = nullptr;
+    }
+    if (_ghostBuilding) {
+        _ghostBuilding->removeFromParent();
+        _ghostBuilding = nullptr;
+    }
+    if (_buildingActionPanel) {
+        _buildingActionPanel->removeFromParent();
+        _buildingActionPanel = nullptr;
+    }
+    if (_attackPanel) {
+        _attackPanel->removeFromParent();
+        _attackPanel = nullptr;
+    }
+
     Scene::onExit();
     // 保存音频设置
     if (_settingLayer) {

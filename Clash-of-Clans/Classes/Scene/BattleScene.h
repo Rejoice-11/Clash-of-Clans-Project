@@ -22,6 +22,8 @@ using namespace CocosDenshion;
 class BattleScene : public Scene
 {
 public:
+    //战斗结束时候调用
+	void battleOver(bool isWin);
 	// 建筑生成
     void spawnBuilding(Vec2 gridPos,int Buildingname);
 	// 鼠标事件注册及回调声明
@@ -70,6 +72,7 @@ private:
     Layer* _uiLayer;           // 战斗HUD（剩余部队、时间、星级）
 	bool _isBattleStart=false;        // 战斗是否开始
 	bool _isBattleOver = false;         // 战斗是否结束
+	bool _isTownHallDestroyed = false; // 大本营是否被摧毁
     // 新增：保存弹窗面板和菜单（用于后续删除）
     cocos2d::Sprite* _returnPanel = nullptr;
     cocos2d::Menu* _returnMenu = nullptr;

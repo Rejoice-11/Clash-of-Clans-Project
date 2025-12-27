@@ -40,7 +40,44 @@ void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
 	grid[x][y].max_health = 1000; // 最大血量(暂时先写死，后面再调整)
 	grid[x][y].now_health = 1000; // 现在血量(暂时先写死，后面再调整)
 }
+// 战斗结束实现(战斗结束后调用)
+void BattleScene::battleOver(bool isWin)
+{
+	int countdestroyed = 0;
+	//遍历gridinfo二维数组，检查建筑状态,判断胜负
+    for (int i = 1; i <= 40; i++)
+    {
+        for(int j = 1; j <= 40; j++)
+        {
+            if(grid[i][j].now_health == -1)//-1的血量表示被摧毁
+            {
+				countdestroyed++;//记录建筑被摧毁数量
+                if (grid[i][j].buildingtype == 1)
+                {
+                    //大本营被摧毁
+                    isWin = true;
+                }
+			}
+		}
+    }
+	//如果摧毁建筑数量达到一定比例，判定为胜利
+    if (countdestroyed >= 5) // 假设摧毁5个建筑算胜利
+    {
+        isWin = true;
+    }
+    // 显示战斗结果UI等
+    if (isWin)
+    {
 
+        CCLOG("Battle Won!");
+        // 处理胜利逻辑
+    }
+    else
+    {
+        CCLOG("Battle Lost!");
+        // 处理失败逻辑
+    }
+}
 // 建筑生成实现
 void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
 {
