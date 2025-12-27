@@ -249,20 +249,31 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         upgradeCost = 100; // 示例默认值unfinished
 	}
 
-    auto upgradeBtn = MenuItemImage::create(costIcon, costIcon, CC_CALLBACK_1(BuildingPanel::onUpdateButtonClicked, this));
+    // 创建升级按钮
+    auto upgradeBtn = MenuItemImage::create(costIcon, costIcon,
+        CC_CALLBACK_1(BuildingPanel::onUpdateButtonClicked, this));
     upgradeBtn->setPosition(Vec2(480, 50));
 
+    // 创建成本标签
     _costLabel = Label::createWithSystemFont(std::to_string(upgradeCost), "arial", 24);
     _costLabel->setTextColor(isGold ? Color4B(255, 215, 0, 255) : Color4B(186, 85, 211, 255));
     _costLabel->enableOutline(Color4B::BLACK, 2);
-    _costLabel->setPosition(Vec2(480, 60));
-    bg->addChild(_costLabel);
+    _costLabel->setPosition(Vec2(70, 20)); // 相对于按钮中心
 
-    // 关闭按钮（右上）
-    auto closeBtn = MenuItemImage::create("out_of_now.png", "out_of_now.png", CC_CALLBACK_1(BuildingPanel::onCloseButtonClicked, this));
+    // 将文字添加到按钮上（作为子节点）
+    auto btnNode = static_cast<Node*>(upgradeBtn);
+    btnNode->addChild(_costLabel);
+
+    // 创建关闭按钮（右上角）
+    auto closeBtn = MenuItemImage::create("out_of_now.png", "out_of_now.png",
+        CC_CALLBACK_1(BuildingPanel::onCloseButtonClicked, this));
     closeBtn->setPosition(Vec2(bg->getContentSize().width - 40, bg->getContentSize().height - 40));
-    auto menu = Menu::create(upgradeBtn,closeBtn, nullptr);
+
+    // 创建菜单并添加按钮
+    auto menu = Menu::create(upgradeBtn, closeBtn, nullptr);
     menu->setPosition(Vec2::ZERO);
+
+    // 添加菜单到背景
     bg->addChild(menu);
 
     return true;
