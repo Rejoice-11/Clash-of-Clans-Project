@@ -50,6 +50,7 @@ void TankUnit::findBestTarget() {
 
 void TankUnit::executeAttack(int x, int y) {
     // 造成伤害
+    SimpleAudioEngine::getInstance()->playEffect("audio/TankUnit.mp3");// 播放攻击音效
     grid[x][y].now_health -= getDamage();
     if (grid[x][y].now_health <= 0) grid[x][y].now_health = -1;
 
