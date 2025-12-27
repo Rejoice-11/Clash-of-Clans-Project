@@ -4,6 +4,7 @@
 #include "Classes/Entity/Building/ResourceBuilding.h"
 #include "Classes/Entity/Building/StorageBuilding.h"
 #include "Classes/Entity/Building/DefenseBuilding.h"
+#include "Classes/Entity/Building/MilitaryBuilding.h"
 #include "Classes/Entity/Building/TownHall.h"
 
 BuildingPanel* BuildingPanel::create(Building* building, const std::function<void()>& onClose) 
@@ -84,6 +85,13 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
             );
             break;
 
+        case BuildingType::MILITARY_CAMP:
+            spriteName = "military_camp_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(MilitaryBuildingBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
+			break;
+
         default: spriteName = "worker_home_lv0.png";
     }
 
@@ -118,6 +126,9 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
 
         case BuildingType::CANNON: typeName = u8"加农炮";
             break;
+
+		case BuildingType::MILITARY_CAMP: typeName = u8"兵营";
+			break;
 
         default: typeName = u8"建筑者小屋";
     }
@@ -201,6 +212,12 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         }
     }
 
+    else if (dynamic_cast<MilitaryBuilding*>(_building)) 
+    {
+        addStat("hit_point.png", std::to_string(MilitaryBuildingBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
+		addStat("troop_capacity.PNG", std::to_string(static_cast<MilitaryBuilding*>(_building)->getTotalTroopCapacity()), statIndex++);
+	}
+
     else if (dynamic_cast<TownHall*>(_building)) 
     {
         addStat("hit_point.png", std::to_string(ArcherTowerBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
@@ -262,6 +279,11 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         {
             upgradeCost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
+	}
+
+    else if (dynamic_cast<MilitaryBuilding*>(_building)) 
+    {
+		upgradeCost = MilitaryBuildingBuildingData.goldCost[_building->getCurrentLevel() - 1];
 	}
 
     else
@@ -368,6 +390,12 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
             cost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
+
+    else if (dynamic_cast<MilitaryBuilding*>(_building)) 
+	{
+		cost = MilitaryBuildingBuildingData.goldCost[_building->getCurrentLevel() - 1];
+	}
+
     else 
     {
         // 默认处理
@@ -415,6 +443,9 @@ void BuildingPanel::refreshPanel()
 		case BuildingType::CANNON: typeName = u8"加农炮";
 			break;
 
+		case BuildingType::MILITARY_CAMP: typeName = u8"兵营";
+			break;
+
             // ... 其他类型 ...unfinished
         default: typeName = "Building";
     }
@@ -451,6 +482,10 @@ void BuildingPanel::refreshPanel()
 		case BuildingType::CANNON:
             spriteName = "canon_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
             break;
+
+		case BuildingType::MILITARY_CAMP:
+            spriteName = "military_camp_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
+			break;
 
 		default: spriteName = "";
     }

@@ -133,7 +133,7 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
                 }
 
                 else if (type == BuildingType::MILITARY_CAMP) {
-                    goldCost = 1000;
+                    goldCost = MilitaryBuildingBuildingData.goldCost[0];
                 }
 
                 else if (type == BuildingType::ARCHER_TOWER) {
@@ -344,7 +344,7 @@ void StoreWindow::rebuildMenu()
             }
 
             else if (type == BuildingType::MILITARY_CAMP) {
-                goldCost = 1000;
+				goldCost = MilitaryBuildingBuildingData.goldCost[0];
             }
 
             else if (type == BuildingType::ARCHER_TOWER) {
@@ -458,7 +458,7 @@ int StoreWindow::getCurrentCount(BuildingType type)
     if (type == BuildingType::ELIXIR_COLLECTOR) return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_COLLECTOR);
     if (type == BuildingType::GOLD_STORAGE) return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_STORAGE);
     if (type == BuildingType::ELIXIR_STORAGE) return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_STORAGE);
-    //if (type == BuildingType::MILITARY_CAMP) return rm->getBuildingCount(StoreWindow::BuildingType::MILITARY_CAMP);
+    if (type == BuildingType::MILITARY_CAMP) return rm->getBuildingCount(StoreWindow::BuildingType::MILITARY_CAMP);
     if (type == BuildingType::ARCHER_TOWER) return rm->getBuildingCount(StoreWindow::BuildingType::ARCHER_TOWER);
     if (type == BuildingType::CANNON) return rm->getBuildingCount(StoreWindow::BuildingType::CANNON);
     //if (type == BuildingType::WORKER_HOME) return rm->getBuildingCount(StoreWindow::BuildingType::WORKER_HOME);
@@ -489,12 +489,10 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel)
     {
         return ElixirStorageBuildingData.maxBuildCount[thLevel - 1];
     }
-    /*
     else if (type == BuildingType::MILITARY_CAMP)
     {
-        return MillitaryCampBuildingData.maxBuildCount[thLevel - 1];
+        return MilitaryBuildingBuildingData.maxBuildCount[thLevel - 1];
     }
-    */
     else if (type == BuildingType::ARCHER_TOWER)
     {
         return ArcherTowerBuildingData.maxBuildCount[thLevel - 1];

@@ -732,12 +732,11 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             realSprite->setUserObject(_elixirStorages.back().get()); // .get() 返回裸指针
             break;
         }
-        /*unfinished
         case StoreWindow::BuildingType::MILITARY_CAMP:
         {
-            cost = MilitaryCampBuildingData.goldCost[0];
+            cost = MilitaryBuildingBuildingData.goldCost[0];
 
-            auto camp = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
+            auto camp = std::make_unique<MilitaryBuilding>(MilitaryBuildingBuildingData, -1);
             camp->setGridPosition(gridPos);
             _militaryCamps.push_back(std::move(camp));
             // 创建精灵
@@ -748,7 +747,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             realSprite->setUserObject(_militaryCamps.back().get()); // .get() 返回裸指针
             break;
         }
-        */
 
         case StoreWindow::BuildingType::CANNON:
         {
@@ -1139,9 +1137,8 @@ std::map<StoreWindow::BuildingType, int> VillageScene::getCurrentBuildingCounts(
     for (const auto& cn : _cannons)
 		counts[StoreWindow::BuildingType::CANNON]++;
 
-	// 统计其他建筑类型
-	//for (const auto& mc : _militaryCamps) 
-	//        counts[StoreWindow::BuildingType::MILITARY_CAMP]++;
+    for (const auto& mc : _militaryCamps) 
+        counts[StoreWindow::BuildingType::MILITARY_CAMP]++;
 	//for (const auto& wh : _workerHomes)
 	//        counts[StoreWindow::BuildingType::WORKER_HOME]++;
 

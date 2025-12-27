@@ -16,7 +16,7 @@ BuildingData GoldMineBuildingData =
     {150, 400, 800, 1500, 2500},
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500}, // hitPoints
-    {200, 400, 700, 1200, 2000},    // productionPerHour ← 新增字段！
+    {2000, 4000, 7000, 12000, 20000},    // productionPerHour ← 新增字段！
     {},
     {},
     {}
@@ -32,7 +32,7 @@ BuildingData ElixirCollectorBuildingData =
     {0, 0, 0, 0, 0},
     {30, 60, 120, 180, 240},
     {800, 1200, 1800, 2500, 3500},
-    {200, 400, 700, 1200, 2000},    // productionPerHour
+    {2000, 4000, 7000, 12000, 20000},    // productionPerHour
     {},
     {},
     {}

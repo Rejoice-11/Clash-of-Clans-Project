@@ -50,6 +50,7 @@
     <ClCompile Include="..\Classes\Core\ConfigManagerUnit.cpp" />
     <ClCompile Include="..\Classes\System\ArmyManager.cpp" />
     <ClCompile Include="..\Classes\Setting\SettingLayer.cpp" />
+    <ClCompile Include="..\Classes\Entity\Building\MilitaryBuilding.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
