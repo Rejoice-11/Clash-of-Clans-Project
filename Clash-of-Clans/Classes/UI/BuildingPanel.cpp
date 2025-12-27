@@ -6,7 +6,8 @@
 #include "Classes/Entity/Building/DefenseBuilding.h"
 #include "Classes/Entity/Building/TownHall.h"
 
-BuildingPanel* BuildingPanel::create(Building* building, const std::function<void()>& onClose) {
+BuildingPanel* BuildingPanel::create(Building* building, const std::function<void()>& onClose) 
+{
     auto panel = new (std::nothrow) BuildingPanel();
     if (panel && panel->init(building, onClose)) {
         panel->autorelease();
@@ -231,7 +232,9 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         auto db = static_cast<DefenseBuilding*>(_building);
         if (db->getDefenseType() == DefenseBuilding::DefenseType::CANON)
         {
-            upgradeCost = CanonBuildingData.goldCost[_building->getCurrentLevel() - 1];
+            upgradeCost = CanonBuildingData.elixirCost[_building->getCurrentLevel() - 1];
+            isGold = false;
+            costIcon = "upgrade_by_elixir.png";
         }
 
         else
@@ -254,14 +257,13 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
 
     auto upgradeBtn = MenuItemImage::create(costIcon, costIcon, CC_CALLBACK_1(BuildingPanel::onUpdateButtonClicked, this));
     upgradeBtn->setPosition(Vec2(400, 100));
-    auto menu = Menu::create(upgradeBtn, nullptr);
-    menu->setPosition(Vec2::ZERO);
-    bg->addChild(menu);
 
     // ¹Ø±Õ°´Å¥£¨ÓÒÉÏ£©
     auto closeBtn = MenuItemImage::create("out_of_now.png", "out_of_now.png", CC_CALLBACK_1(BuildingPanel::onCloseButtonClicked, this));
     closeBtn->setPosition(Vec2(bg->getContentSize().width - 40, bg->getContentSize().height - 40));
-    bg->addChild(closeBtn);
+    auto menu = Menu::create(upgradeBtn,closeBtn, nullptr);
+    menu->setPosition(Vec2::ZERO);
+    bg->addChild(menu);
 
     return true;
 }
@@ -309,7 +311,7 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
         auto db = static_cast<DefenseBuilding*>(_building);
         if (db->getDefenseType() == DefenseBuilding::DefenseType::CANON)
         {
-            cost = CanonBuildingData.goldCost[_building->getCurrentLevel() - 1];
+            cost = CanonBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
         }
         else
