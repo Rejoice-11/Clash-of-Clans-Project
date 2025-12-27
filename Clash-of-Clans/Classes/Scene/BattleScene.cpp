@@ -3,18 +3,7 @@
 #include "Classes/System/ArmyManager.h"
 #include "Classes/Entity/Unit/UnitFactory.h"
 
-struct gridinfo
-{
-    //定义建筑的血量和类型(最大血量和现在的血量用于血条制作)
-    int max_health;
-    int now_health;
-    int buildingtype;//0:无建筑 1:大本营  2:普通建筑 3:防御建筑
-    void init(int type = 0, int maxH = 0, int nowH = 0) {
-        max_health = maxH;
-        now_health = nowH;
-        buildingtype = type;
-    }
-};
+
 gridinfo grid[41][41]; // 定义网格信息二维数组
 // 初始化网格信息二维数组
 void initializeGrid() {
@@ -270,6 +259,12 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
             this->addChild(sprite, GameConfig::Z_UNIT);
 
             // 可以在这里加上一个小的烟雾特效或声音
+
+            // 因为 Unit 类不是 Node，不会自动随场景销毁
+            // 我们需要手动引用计数并加入列表
+            newUnit->retain();
+            _liveUnits.push_back(newUnit);
+
         }
 
         // 4. 刷新 UI
@@ -590,7 +585,21 @@ bool BattleScene::init()
 // 实现 update 帧更新函数
 void BattleScene::update(float dt)
 {
-    // 暂时预留，后续添加：部队寻路、伤害结算、胜利判定等战斗逻辑
+    // 遍历所有活着的兵
+    for (auto it = _liveUnits.begin(); it != _liveUnits.end(); ) {
+        Unit* unit = *it;
+
+        if (unit->isDead()) {
+            // 如果兵死了：
+            unit->release();        // 释放内存
+            it = _liveUnits.erase(it); // 从列表中移除
+        }
+        else {
+            // 如果兵活着：执行它的大脑逻辑（寻敌、移动、攻击）
+            unit->update(dt);
+            ++it;
+        }
+    }
 }
 
 // 未实现的按钮回调（保持代码完整性）

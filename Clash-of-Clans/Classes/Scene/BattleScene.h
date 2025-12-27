@@ -15,6 +15,24 @@
 #include "Classes/Core/ConfigManagerUnit.h"
 #include "SimpleAudioEngine.h"
 #include <map>
+#include <vector>
+
+class Unit; // 前向声明
+
+struct gridinfo
+{
+    //定义建筑的血量和类型(最大血量和现在的血量用于血条制作)
+    int max_health;
+    int now_health;
+    int buildingtype;//0:无建筑 1:大本营  2:普通建筑 3:防御建筑
+    void init(int type = 0, int maxH = 0, int nowH = 0) {
+        max_health = maxH;
+        now_health = nowH;
+        buildingtype = type;
+    }
+};
+
+extern gridinfo grid[41][41]; // 定义网格信息二维数组
 
 USING_NS_CC;
 using namespace CocosDenshion;
@@ -66,6 +84,7 @@ private:
     std::map<UnitType, cocos2d::MenuItemImage*> _unitButtons;
     std::map<UnitType, cocos2d::Label*> _unitLabels;
 
+    std::vector<Unit *> _liveUnits; // 存放当前场上活着的兵
 
     // 成员变量声明
     Layer* _backgroundLayer;   // 敌方村庄背景

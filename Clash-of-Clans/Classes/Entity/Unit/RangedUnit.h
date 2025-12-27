@@ -16,10 +16,6 @@ public:
     // 渲染：创建弓箭手的 Sprite
     cocos2d::Sprite* createSprite() override;
 
-    // 重写攻击：远程单位不需要贴身
-    void attack(GameObject* target) override;
+    void RangedUnit::executeAttack(int x, int y) override;
 
-private:
-    // 简单的“射击”表现逻辑
-    void fireProjectile(GameObject* target);
 };

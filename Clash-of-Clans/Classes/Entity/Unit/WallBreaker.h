@@ -13,14 +13,11 @@ public:
     // 使用父类构造函数
     using Unit::Unit;
 
-    // 核心攻击逻辑：自爆
-    void attack(GameObject* target) override;
 
     // 类型标识
     UnitClass getUnitClass() const override { return UnitClass::WALL_BREAKER; }
 
-    // 偏好目标：只对建筑感兴趣（通常配合 AI 逻辑忽略敌方单位）
-    bool prefersTarget(const Building* target) const override;
+    void WallBreaker::executeAttack(int x, int y) override;
 
     // 渲染相关
     cocos2d::Sprite* createSprite() override;

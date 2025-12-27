@@ -11,20 +11,30 @@ Sprite* MeleeUnit::createSprite() {
     return sprite;
 }
 
-void MeleeUnit::attack(GameObject* target) {
-    if (!target || isDead() || target->getState() == State::DESTROYED || !canAttack()) return;
 
-    float dist = getPosition().distance(target->getPosition());
+void MeleeUnit::executeAttack(int x, int y) {
+    // 1. 安全检查（防止索引越界）
+    if (x < 0 || x >= 41 || y < 0 || y >= 41) return;
 
-    // 近战单位必须在攻击范围内
-    if (dist <= _data.attackRange) {
-        
-        target->takeDamage(this->getDamage());
-		resetAttackTimer(); // 重置攻击计时器
-        CCLOG("Barbarian %d hits target for %d damage", getId(), _data.damage);
-    }
-    else {
-        // 够不着，继续追击
-        moveTowards(target->getPosition());
+    // 2. 只有目标还活着才攻击
+    if (grid[x][y].now_health > 0) {
+
+        // 3. 执行扣血
+        grid[x][y].now_health -= this->getDamage();
+
+        CCLOG("Barbarian %d hits grid(%d, %d). HP left: %d", getId(), x, y, grid[x][y].now_health);
+
+        // 4. 死亡判定：摧毁置为 -1
+        if (grid[x][y].now_health <= 0) {
+            grid[x][y].now_health = -1;
+            CCLOG("Barbarian destroyed building at (%d, %d)!", x, y);
+        }
+
+        // 5. 简单的视觉反馈：让小兵在攻击时稍微变大一点点再缩回去，模拟“发力”动作
+        if (_mySprite) {
+            auto scaleUp = cocos2d::ScaleTo::create(0.1f, 1.2f);
+            auto scaleDown = cocos2d::ScaleTo::create(0.1f, 1.0f);
+            _mySprite->runAction(cocos2d::Sequence::create(scaleUp, scaleDown, nullptr));
+        }
     }
 }

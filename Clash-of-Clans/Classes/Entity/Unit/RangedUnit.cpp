@@ -13,48 +13,25 @@ Sprite* RangedUnit::createSprite() {
     return sprite;
 }
 
-void RangedUnit::attack(GameObject* target) {
-	if (!target || isDead() || target->getState() == State::DESTROYED || !canAttack()) return;
 
-    float dist = getPosition().getDistance(target->getPosition());
-
-    // 远程单位：只要在射程内就停止移动并开火
-    if (dist <= _data.attackRange) {
-        fireProjectile(target);
-		resetAttackTimer(); // 重置攻击计时器
-    }
-    else {
-        // 够不着，向目标走
-        moveTowards(target->getPosition());
-    }
-}
-
-void RangedUnit::fireProjectile(GameObject* target) {
-    // 1. 创建箭矢精灵
-    auto arrow = Sprite::create("arrow.png");
-    if (!arrow || !target) return;
-
-    // 2. 箭矢初始位置在弓箭手这里
+void RangedUnit::executeAttack(int x, int y) {
+    // 远程单位不立刻扣血，而是产生一个箭矢
+    auto arrow = cocos2d::Sprite::create("arrow.png");
     arrow->setPosition(this->getPosition());
+    this->_mySprite->getParent()->addChild(arrow);
 
-    // 将箭矢添加到当前的场景中（假设精灵的父节点是层）
-    _mySprite->getParent()->addChild(arrow);
+    Vec2 targetWorldPos = GridUtils::gridToWorld(Vec2(x, y));
+    float duration = getPosition().distance(targetWorldPos) / 500.0f; // 假设箭速500
 
-    Vec2 direction = target->getPosition() - this->getPosition();//计算距离
-
-    //  飞行并造成伤害
-    float flySpeed = 500.0f; // 箭速：像素/秒
-    float duration = direction.length() / flySpeed;
-
-    auto moveTo = MoveTo::create(duration, target->getPosition());
-    auto hitTarget = CallFunc::create([this, target, arrow]() {
-        // 只有箭到了，目标才真正扣血
-        if (target && target->getState() != State::DESTROYED) {
-            target->takeDamage(this->getDamage()); // 使用 UnitData 里的伤害值
+    auto moveTo = cocos2d::MoveTo::create(duration, targetWorldPos);
+    auto onHit = cocos2d::CallFunc::create([x, y, this, arrow]() {
+        // 箭到了，才真正改网格里的血量
+        if (grid[x][y].now_health > 0) {
+            grid[x][y].now_health -= this->getDamage();
+            if (grid[x][y].now_health <= 0) grid[x][y].now_health = -1;
         }
-        // 箭矢消失
         arrow->removeFromParent();
         });
-
-    arrow->runAction(Sequence::create(moveTo, hitTarget, nullptr));
+    arrow->runAction(cocos2d::Sequence::create(moveTo, onHit, nullptr));
 }
+

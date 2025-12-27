@@ -12,12 +12,13 @@ public:
     // 使用父类构造函数
     using Unit::Unit;
 
-    void attack(GameObject* target) override;
+
     // 实现基类纯虚函数
     UnitClass getUnitClass() const override { return UnitClass::MELEE; }
 
     // 渲染相关：创建野蛮人的 Sprite
     cocos2d::Sprite* createSprite() override;
 
+    void executeAttack(int x, int y) override;
 
 };

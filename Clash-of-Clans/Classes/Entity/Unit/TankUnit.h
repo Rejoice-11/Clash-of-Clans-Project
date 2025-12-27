@@ -14,13 +14,19 @@ public:
     using Unit::Unit;
 
     // 实现攻击逻辑（近战）
-    void attack(GameObject* target) override;
+    // 不用这个了
+    //void attack(GameObject* target) override;
+
+    // 重写攻击偏好：巨人只会锁定建筑（基类默认已实现，此处可显式保留或扩展）
+    // 不用这个了
+    //bool prefersTarget(const Building* target) const override;
 
     // 返回坦克类别，用于 AI 系统识别
     UnitClass getUnitClass() const override { return UnitClass::TANK; }
 
-    // 重写攻击偏好：巨人只会锁定建筑（基类默认已实现，此处可显式保留或扩展）
-    bool prefersTarget(const Building* target) const override;
+    void TankUnit::findBestTarget() override;
+
+    void TankUnit::executeAttack(int x, int y) override;
 
     // 渲染相关：创建巨人的 Sprite
     cocos2d::Sprite* createSprite() override;

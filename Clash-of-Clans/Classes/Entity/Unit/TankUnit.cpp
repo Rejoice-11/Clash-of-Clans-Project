@@ -14,38 +14,48 @@ Sprite* TankUnit::createSprite() {
     return sprite;
 }
 
-bool TankUnit::prefersTarget(const Building* target) const {
-    // 巨人的逻辑：只攻击建筑且建筑必须是存活状态
-    // 在更复杂的逻辑中，这里可以判断 target->getBuildingType() == DEFENSE
-    return target && target->getState() != State::DESTROYED;
+
+void TankUnit::findBestTarget() {
+    float minSourceDist = 999999.0f;
+    Vec2 myGridPos = GridUtils::worldToGrid(getPosition());
+    Vec2 bestDefense = Vec2(-1, -1);
+    Vec2 bestAny = Vec2(-1, -1);
+    float minAnyDist = 999999.0f;
+
+    for (int i = 0; i < 41; ++i) {
+        for (int j = 0; j < 41; ++j) {
+            if (grid[i][j].now_health > 0) {
+                float d = myGridPos.distance(Vec2(i, j));
+
+                // 优先寻找防御建筑 (假设 buildingtype == 3 是防御)
+                if (grid[i][j].buildingtype == 3) {
+                    if (d < minSourceDist) {
+                        minSourceDist = d;
+                        bestDefense = Vec2(i, j);
+                    }
+                }
+                // 同时记录最近的普通建筑，以防防御建筑全拆完了
+                if (d < minAnyDist) {
+                    minAnyDist = d;
+                    bestAny = Vec2(i, j);
+                }
+            }
+        }
+    }
+
+    // 巨人逻辑：有防御打防御，没防御打最近的建筑
+    _targetGridPos = (bestDefense.x != -1) ? bestDefense : bestAny;
 }
 
-void TankUnit::attack(GameObject* target) {
-	if (!target || isDead() || target->getState() == State::DESTROYED || !canAttack()) return;
 
-    // 检查目标是否为建筑（巨人的天职）
-    if (target->getType() != GameObject::Type::BUILDING) {
-        return; // 不攻击非建筑单位（如敌方士兵）
-    }
+void TankUnit::executeAttack(int x, int y) {
+    // 造成伤害
+    grid[x][y].now_health -= getDamage();
+    if (grid[x][y].now_health <= 0) grid[x][y].now_health = -1;
 
-    float dist = getPosition().distance(target->getPosition());
+    // 特有效果：震屏
+    auto scene = cocos2d::Director::getInstance()->getRunningScene();
+    CameraUtils::shakeScreen(scene, 0.2f, 6.0f);
 
-    // 坦克通常也是近战，需要在攻击范围内
-    if (dist <= _data.attackRange) {
-        // 执行伤害
-		target->takeDamage(this->getDamage());
-		resetAttackTimer(); // 重置攻击计时器
-        // 可以在这里添加巨人特有的攻击特效或震屏逻辑
-
-        auto currentScene = Director::getInstance()->getRunningScene();
-
-        // 参数：场景节点，持续0.2秒，强度6像素
-        CameraUtils::shakeScreen(currentScene, 0.2f, 6.0f);
-
-        CCLOG("Giant %d crushing building for %d damage", getId(), _data.damage);
-    }
-    else {
-        // 够不着，继续向建筑移动
-        moveTowards(target->getPosition());
-    }
+    CCLOG("Giant is smashing grid (%d, %d)", x, y);
 }
