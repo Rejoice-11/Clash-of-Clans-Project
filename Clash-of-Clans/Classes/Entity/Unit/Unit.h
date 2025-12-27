@@ -5,9 +5,9 @@
 #include "Classes/Data/UnitData.h"
 #include "Classes/Entity/Building/Building.h"
 #include "Classes/Scene/BattleScene.h"
-
+#include "SimpleAudioEngine.h"
 // 声明外部定义的网格，确保士兵能访问建筑信息
-
+using namespace CocosDenshion;
 
 /**
  * @brief 士兵单位抽象基类
