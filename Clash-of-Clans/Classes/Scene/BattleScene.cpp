@@ -87,46 +87,31 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
     {
         case 0:
         {
-            auto th = std::make_unique<TownHall>(TownHallBuildingData);
-            th->setGridPosition(gridPos);
             realSprite = Sprite::create("town_hall_lv3.png");
-            realSprite->setUserObject(th.get());// 绑定建筑指针
             initgridinfo(x, y, 1); // 大本营建筑类型为1
             break;
         }
         case 1:
         {
-            auto gm = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
-            gm->setGridPosition(gridPos);
             realSprite = Sprite::create("gold_mine_lv2.png");
-            realSprite->setUserObject(gm.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         }
         case 2:
         {
-            auto ec = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
-            ec->setGridPosition(gridPos);
             realSprite = Sprite::create("elixir_collector_lv2.png");
-            realSprite->setUserObject(ec.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         }
         case 3:
         {
-            auto gs = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
-            gs->setGridPosition(gridPos);
             realSprite = Sprite::create("gold_storage_lv2.png");
-            realSprite->setUserObject(gs.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         }
         case 4:
         {
-            auto es = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
-            es->setGridPosition(gridPos);
             realSprite = Sprite::create("elixir_storage_lv2.png");
-            realSprite->setUserObject(es.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         }
@@ -143,21 +128,13 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         */
         case 6:
         {
-            auto at = std::make_unique<DefenseBuilding>(ArcherTowerBuildingData,
-                -1,
-                DefenseBuilding::DefenseType::ARCHER_TOWER);
-            at->setGridPosition(gridPos);
             realSprite = Sprite::create("archer_tower_lv2.png");
-            realSprite->setUserObject(at.get());// 绑定建筑指针
             initgridinfo(x, y, 3); // 防御建筑类型为3
             break;
         }
         case 7:
         {
-            auto cn = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
-            cn->setGridPosition(gridPos);
             realSprite = Sprite::create("canon_lv2.png");
-            realSprite->setUserObject(cn.get());// 绑定建筑指针
             initgridinfo(x, y, 3); // 防御建筑类型为3
             break;
         }
