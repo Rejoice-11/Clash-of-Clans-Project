@@ -518,7 +518,13 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         _movingBuilding->setGridPosition(gridPos);
 
         // 2. 重新创建真实精灵（用原图）
-        std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+
+        std::string baseSpriteName = getGhostSpriteName(_pendingBuildingType);
+        size_t lvPos = baseSpriteName.find("1.png");
+        // 创建幽灵精灵（半透明）
+        std::string spriteName = baseSpriteName.substr(0, lvPos) +
+            std::to_string(_movingBuilding->getCurrentLevel()) + ".png";
+
         auto newSprite = Sprite::create(spriteName);
         if (!newSprite) 
         {
@@ -848,6 +854,18 @@ void VillageScene::hideBuildingActionPanel()
     _selectedBuilding = nullptr;
 }
 
+void VillageScene::hideBuildingActionPanelForInfoPanel()
+{
+    if (_buildingActionPanel)
+    {
+        _buildingActionPanel->removeFromParent();
+        _buildingActionPanel = nullptr;
+    }
+
+    _grayMask->setVisible(false);
+    _isInBuildingActionMode = false;
+}
+
 // 实现移动建筑逻辑
 void VillageScene::onMoveButtonClicked(Ref* sender) 
 {
@@ -876,8 +894,12 @@ void VillageScene::onMoveButtonClicked(Ref* sender)
     _selectedBuildingSprite = nullptr;
     _selectedBuilding = nullptr;
 
+    std::string baseSpriteName = getGhostSpriteName(_pendingBuildingType);
+    size_t lvPos = baseSpriteName.find("1.png");
     // 创建幽灵精灵（半透明）
-    std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+    std::string spriteName = baseSpriteName.substr(0, lvPos) +
+        std::to_string(_movingBuilding->getCurrentLevel()) + ".png";
+
     _ghostBuilding = Sprite::create(spriteName);
     if (!_ghostBuilding) 
     {
@@ -893,12 +915,7 @@ void VillageScene::onMoveButtonClicked(Ref* sender)
     // 初始化幽灵位置（屏幕中心）
     Vec2 initPos = Director::getInstance()->getVisibleSize() / 2;
     updateGhostPosition(initPos);
-
-
 }
-
-
-
 // 新增：更新幽灵位置
 void VillageScene::updateGhostPosition(const Vec2& mouseWorldPos)
 {
@@ -967,33 +984,34 @@ void VillageScene::onInfoButtonClicked(Ref* sender)
         [this]() { this->onBuildingPanelClosed(); }
     );
 
-    hideBuildingActionPanel();
+    hideBuildingActionPanelForInfoPanel();
     this->addChild(panel, 100);
 }
 
-void VillageScene::onBuildingPanelClosed() 
+void VillageScene::onBuildingPanelClosed()
 {
-    // 刷新选中建筑的精灵（因为可能升级了）
-    if (_selectedBuildingSprite && _selectedBuilding)
-    {
-        std::string newSpriteName = getGhostSpriteName(_selectedBuildingType);
-        newSpriteName = newSpriteName.substr(0, newSpriteName.find("_lv")) +
-            "_lv" + std::to_string(_selectedBuilding->getCurrentLevel()) + ".png";
+    if (!_selectedBuildingSprite || !_selectedBuilding) return;
 
-        auto newSprite = Sprite::create(newSpriteName);
-        if (newSprite) 
-        {
-            // 复制位置/锚点
-            newSprite->setPosition(_selectedBuildingSprite->getPosition());
-            newSprite->setAnchorPoint(_selectedBuildingSprite->getAnchorPoint());
-            newSprite->setUserObject(_selectedBuilding);
+    // 1. 获取新等级的精灵名
+    std::string baseName = getGhostSpriteName(_selectedBuildingType);
+    size_t pos = baseName.find("_lv");
+    if (pos == std::string::npos) return; // 安全检查
 
-            // 替换精灵
-            _scrollNode->addChild(newSprite, 5);
-            _selectedBuildingSprite->removeFromParent();
-            _selectedBuildingSprite = newSprite;
-        }
+    std::string newSpriteName = baseName.substr(0, pos) +
+        "_lv" + std::to_string(_selectedBuilding->getCurrentLevel()) + ".png";
+
+    // 2. 加载新纹理
+    auto texture = Director::getInstance()->getTextureCache()->addImage(newSpriteName);
+    if (!texture) {
+        CCLOG("Failed to load texture: %s", newSpriteName.c_str());
+        return;
     }
+
+    // 3.关键：直接替换原精灵的纹理（保留精灵对象！）
+    _selectedBuildingSprite->setTexture(texture);
+
+    _selectedBuildingSprite = nullptr;
+    _selectedBuilding = nullptr;
 }
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）

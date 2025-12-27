@@ -108,6 +108,7 @@ private:
     void onInfoButtonClicked(Ref* sender);
     void onMoveButtonClicked(Ref* sender);
     void onBuildingPanelClosed();
+    void hideBuildingActionPanelForInfoPanel();
 
     // 根据类型获取建筑容器
     std::vector<std::unique_ptr<Building>>* getBuildingContainer(StoreWindow::BuildingType type);
