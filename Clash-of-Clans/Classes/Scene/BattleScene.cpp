@@ -136,6 +136,7 @@ void BattleScene::battleOver()
 //实现确认按钮点击回调
 void BattleScene::onBtn_ConfirmClicked(Ref* sender)
 {
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 清理战斗场景，返回村庄场景
     if(resultUIContainer)
     {
@@ -362,6 +363,7 @@ Scene* BattleScene::createScene()
 // 关闭战斗场景按钮点击回调实现
 void BattleScene::closeBattleScene(Ref* sender)
 {
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 先关闭返回确认窗口
     closeReturnWindow(sender);
     // 使用popScene返回上一个场景（VillageScene），而非replaceScene
@@ -373,6 +375,7 @@ void BattleScene::closeBattleScene(Ref* sender)
 // 关闭确认窗口按钮点击回调实现
 void BattleScene::closeReturnWindow(Ref* sender)
 {
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 删除菜单（包含Cancel/Confirm按钮）
     if (_returnMenu)
     {
@@ -395,6 +398,7 @@ void BattleScene::onReturnButtonClicked(Ref* sender)
 	// 已经存在弹窗则不重复创建
     if (_returnPanel || _returnMenu)
         return;
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 替换为成员变量：保存弹窗面板
     _returnPanel = cocos2d::Sprite::create("1Point_Return_Button.png");
     if (_returnPanel)
@@ -425,6 +429,7 @@ void BattleScene::onReturnButtonClicked(Ref* sender)
 
 void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
 {
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 转换点击的按钮对象
     auto clickedBtn = dynamic_cast<MenuItemImage*>(sender);
     if (!clickedBtn) 
@@ -563,7 +568,8 @@ bool BattleScene::init()
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 	// 播放战斗背景音乐
 	SimpleAudioEngine::getInstance()->playBackgroundMusic("audio/battle_background.mp3", true);
-    
+    // 预加载音效文件
+    SimpleAudioEngine::getInstance()->preloadEffect("audio/button_click.mp3"); 
     //初始化生成建筑
     /*0:大本营 1:金矿 2:圣水收集器 3:金库 4:圣水库 5:军营 6:箭塔 7:加农炮 8:建筑工人
     */
