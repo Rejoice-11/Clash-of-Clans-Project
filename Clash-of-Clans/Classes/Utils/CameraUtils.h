@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cocos2d.h"
-
+#include<vector>
 /**
  * @brief 相机/屏幕特效工具类
  */
