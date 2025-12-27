@@ -37,7 +37,10 @@ void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
     grid[x - 1][y + 1].buildingtype = buildingtype;
     grid[x - 1][y - 1].buildingtype = buildingtype;*/
     //周围8个格子也标记为有建筑(暂存),好像没必要都标记
+	grid[x][y].max_health = 1000; // 最大血量(暂时先写死，后面再调整)
+	grid[x][y].now_health = 1000; // 现在血量(暂时先写死，后面再调整)
 }
+
 // 建筑生成实现
 void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
 {
@@ -58,7 +61,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         {
             auto gm = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
             gm->setGridPosition(gridPos);
-            realSprite = Sprite::create("gold_mine_lv3.png");
+            realSprite = Sprite::create("gold_mine_lv2.png");
             realSprite->setUserObject(gm.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
@@ -67,7 +70,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         {
             auto ec = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
             ec->setGridPosition(gridPos);
-            realSprite = Sprite::create("elixir_collector_lv3.png");
+            realSprite = Sprite::create("elixir_collector_lv2.png");
             realSprite->setUserObject(ec.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
@@ -76,7 +79,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         {
             auto gs = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
             gs->setGridPosition(gridPos);
-            realSprite = Sprite::create("gold_storage_lv3.png");
+            realSprite = Sprite::create("gold_storage_lv2.png");
             realSprite->setUserObject(gs.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
@@ -85,7 +88,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         {
             auto es = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
             es->setGridPosition(gridPos);
-            realSprite = Sprite::create("elixir_storage_lv3.png");
+            realSprite = Sprite::create("elixir_storage_lv2.png");
             realSprite->setUserObject(es.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
@@ -107,7 +110,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
                 -1,
                 DefenseBuilding::DefenseType::ARCHER_TOWER);
             at->setGridPosition(gridPos);
-            realSprite = Sprite::create("archer_tower_lv3.png");
+            realSprite = Sprite::create("archer_tower_lv2.png");
             realSprite->setUserObject(at.get());// 绑定建筑指针
             initgridinfo(x, y, 3); // 防御建筑类型为3
             break;
@@ -116,7 +119,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         {
             auto cn = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
             cn->setGridPosition(gridPos);
-            realSprite = Sprite::create("canon_lv3.png");
+            realSprite = Sprite::create("canon_lv2.png");
             realSprite->setUserObject(cn.get());// 绑定建筑指针
             initgridinfo(x, y, 3); // 防御建筑类型为3
             break;
@@ -402,7 +405,7 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
 
 // 实现 init 初始化函数
 bool BattleScene::init()
-{
+{ 
     if (!Scene::init()) {
         return false;
     }
