@@ -11,7 +11,7 @@ HUDLayer* HUDLayer::create() {
     return nullptr;
 }
 
-bool HUDLayer::init() 
+bool HUDLayer::init()
 {
     if (!Layer::init()) return false;
 
@@ -20,45 +20,55 @@ bool HUDLayer::init()
 
     // ========== 创建金币 UI ==========
     {
-        // 图标
+        // 图标（逻辑不变）
         _goldIcon = cocos2d::Sprite::create("coin.png");
         if (!_goldIcon) {
             _goldIcon = cocos2d::Sprite::create();
             _goldIcon->setContentSize(cocos2d::Size(ICON_SIZE, ICON_SIZE));
             _goldIcon->setColor(cocos2d::Color3B(255, 215, 0));
         }
-        float scale = ICON_SIZE / std::max(_goldIcon->getContentSize().width, 1.0f);
-        _goldIcon->setScale(scale);
+        float iconScale = ICON_SIZE / std::max(_goldIcon->getContentSize().width, 1.0f);
+        _goldIcon->setScale(iconScale);
 
-        // 文本
-        _goldLabel = cocos2d::Label::createWithSystemFont("0/0", "Arial", 18);
+        // 文本（逻辑不变）
+        _goldLabel = cocos2d::Label::createWithSystemFont("0/0", "Arial", 20);
         _goldLabel->setTextColor(cocos2d::Color4B(255, 255, 255, 255));
         _goldLabel->enableOutline(cocos2d::Color4B::BLACK, 1);
 
-        // 背景条（灰色）
+        // 背景条（逻辑不变）
         _goldBackgroundBar = cocos2d::Sprite::create("coin_bar_background.png");
         if (!_goldBackgroundBar) {
             _goldBackgroundBar = cocos2d::Sprite::create();
             _goldBackgroundBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _goldBackgroundBar->setColor(cocos2d::Color3B(60, 60, 60));
         }
+        float barScaleX = BAR_WIDTH / std::max(_goldBackgroundBar->getContentSize().width, 1.0f);
+        float barScaleY = BAR_HEIGHT / std::max(_goldBackgroundBar->getContentSize().height, 1.0f);
+        _goldBackgroundBar->setScaleX(barScaleX);
+        _goldBackgroundBar->setScaleY(barScaleY);
 
-        // 填充条（黄色）→ 从右往左覆盖
+        // 填充条（逻辑不变）
         _goldFillBar = cocos2d::Sprite::create("coin_bar_full.png");
         if (!_goldFillBar) {
             _goldFillBar = cocos2d::Sprite::create();
             _goldFillBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _goldFillBar->setColor(cocos2d::Color3B(255, 215, 0));
         }
-        _goldFillBar->setAnchorPoint(cocos2d::Vec2(1, 0.5f)); // ← 关键！从右侧开始
-        _goldFillBar->setScaleX(0); // 初始为0
+        _goldFillBar->setScaleX(barScaleX);
+        _goldFillBar->setScaleY(barScaleY);
+        _goldFillBar->setAnchorPoint(cocos2d::Vec2(1, 0.5f));
+        _goldFillBar->setScaleX(0 * barScaleX);
 
-        // 布局：金币在上
-        float barY = ICON_SIZE / 2 - 10;
-        _goldIcon->setPosition(cocos2d::Vec2(-125, ICON_SIZE / 2 - 10));
-        _goldLabel->setPosition(cocos2d::Vec2(ICON_SIZE + 10, ICON_SIZE / 2 - 10));
-        _goldBackgroundBar->setPosition(cocos2d::Vec2(ICON_SIZE + 10, ICON_SIZE / 2 - 10));
-        _goldFillBar->setPosition(_goldBackgroundBar->getPosition());
+        // 核心修改
+        float iconPosY = ICON_SIZE / 2 - 5;
+        _goldIcon->setPosition(cocos2d::Vec2(20, iconPosY)); 
+        _goldLabel->setPosition(cocos2d::Vec2(ICON_SIZE + 100, iconPosY));
+        _goldBackgroundBar->setPosition(cocos2d::Vec2(ICON_SIZE + 100, iconPosY));
+        // 填充条位置随背景条自动右移
+        _goldFillBar->setPosition(
+            _goldBackgroundBar->getPositionX() + (_goldBackgroundBar->getContentSize().width * barScaleX) / 2,
+            _goldBackgroundBar->getPositionY()
+        );
 
         this->addChild(_goldIcon, 2);
         this->addChild(_goldLabel, 3);
@@ -68,46 +78,56 @@ bool HUDLayer::init()
 
     // ========== 创建圣水 UI ==========
     {
-        // 图标
+        // 图标（逻辑不变）
         _elixirIcon = cocos2d::Sprite::create("elixir.png");
         if (!_elixirIcon) {
             _elixirIcon = cocos2d::Sprite::create();
             _elixirIcon->setContentSize(cocos2d::Size(ICON_SIZE, ICON_SIZE));
             _elixirIcon->setColor(cocos2d::Color3B(186, 85, 211));
         }
-        float scale = ICON_SIZE / std::max(_elixirIcon->getContentSize().width, 1.0f);
-        _elixirIcon->setScale(scale);
+        float iconScale = ICON_SIZE / std::max(_elixirIcon->getContentSize().width, 1.0f);
+        _elixirIcon->setScale(iconScale);
 
-        // 文本
-        _elixirLabel = cocos2d::Label::createWithSystemFont("0/0", "Arial", 18);
+        // 文本（逻辑不变）
+        _elixirLabel = cocos2d::Label::createWithSystemFont("0/0", "Arial", 20);
         _elixirLabel->setTextColor(cocos2d::Color4B(255, 255, 255, 255));
         _elixirLabel->enableOutline(cocos2d::Color4B::BLACK, 1);
 
-        // 背景条（紫色）
+        // 背景条（逻辑不变）
         _elixirBackgroundBar = cocos2d::Sprite::create("elixir_bar_background.PNG");
         if (!_elixirBackgroundBar) {
             _elixirBackgroundBar = cocos2d::Sprite::create();
             _elixirBackgroundBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _elixirBackgroundBar->setColor(cocos2d::Color3B(60, 60, 60));
         }
+        float barScaleX = BAR_WIDTH / std::max(_elixirBackgroundBar->getContentSize().width, 1.0f);
+        float barScaleY = BAR_HEIGHT / std::max(_elixirBackgroundBar->getContentSize().height, 1.0f);
+        _elixirBackgroundBar->setScaleX(barScaleX);
+        _elixirBackgroundBar->setScaleY(barScaleY);
 
-        // 填充条（紫色）→ 从右往左覆盖
+        // 填充条（逻辑不变）
         _elixirFillBar = cocos2d::Sprite::create("elixir_bar_full.png");
         if (!_elixirFillBar) {
             _elixirFillBar = cocos2d::Sprite::create();
             _elixirFillBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _elixirFillBar->setColor(cocos2d::Color3B(186, 85, 211));
         }
-        _elixirFillBar->setAnchorPoint(cocos2d::Vec2(1, 0.5f)); // ← 关键！从右侧开始
-        _elixirFillBar->setScaleX(0); // 初始为0
+        _elixirFillBar->setScaleX(barScaleX);
+        _elixirFillBar->setScaleY(barScaleY);
+        _elixirFillBar->setAnchorPoint(cocos2d::Vec2(1, 0.5f));
+        _elixirFillBar->setScaleX(0 * barScaleX);
 
-        // 布局：圣水在下
-        float offsetY = ICON_SIZE + 30;
-        float barY = ICON_SIZE / 2 - 10 + offsetY;
-        _elixirIcon->setPosition(cocos2d::Vec2(-125, barY));
-        _elixirLabel->setPosition(cocos2d::Vec2(ICON_SIZE + 10, barY));
-        _elixirBackgroundBar->setPosition(cocos2d::Vec2(ICON_SIZE + 10, barY));
-        _elixirFillBar->setPosition(_elixirBackgroundBar->getPosition());
+        // 核心修改：圣水图标同步右移
+        float offsetY = ICON_SIZE + 40;
+        float iconPosY = ICON_SIZE / 2 - 5 + offsetY;
+        _elixirIcon->setPosition(cocos2d::Vec2(20, iconPosY));
+        _elixirLabel->setPosition(cocos2d::Vec2(ICON_SIZE + 100, iconPosY));
+        _elixirBackgroundBar->setPosition(cocos2d::Vec2(ICON_SIZE + 100, iconPosY));
+        // 填充条位置随背景条自动右移
+        _elixirFillBar->setPosition(
+            _elixirBackgroundBar->getPositionX() + (_elixirBackgroundBar->getContentSize().width * barScaleX) / 2,
+            _elixirBackgroundBar->getPositionY()
+        );
 
         this->addChild(_elixirIcon, 2);
         this->addChild(_elixirLabel, 3);
@@ -115,13 +135,13 @@ bool HUDLayer::init()
         this->addChild(_elixirFillBar, 1);
     }
 
-    // 设置整体位置（右上角）
+    // 整体Layer位置保持不变（如需更靠右，可微调此处，当前无需修改）
     this->setPosition(cocos2d::Vec2(
         origin.x + visibleSize.width - (ICON_SIZE + BAR_WIDTH + 30),
-        origin.y + visibleSize.height - (ICON_SIZE + 30) - 50
+        origin.y + visibleSize.height - (ICON_SIZE + 40) - 50
     ));
 
-    // 绑定 ResourceManager 回调
+    // 绑定回调（逻辑不变）
     auto rm = ResourceManager::getInstance();
     rm->setOnResourceChange([this]() {
         cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([this]() {
@@ -136,17 +156,21 @@ bool HUDLayer::init()
 void HUDLayer::updateDisplay() {
     auto rm = ResourceManager::getInstance();
 
-    // 更新金币
+    // 更新金币（逻辑不变）
     int gold = rm->getGold();
     int maxGold = rm->getMaxGoldStorage();
     _goldLabel->setString(std::to_string(gold) + "/" + std::to_string(maxGold));
     float goldRatio = (maxGold > 0) ? static_cast<float>(gold) / maxGold : 0.0f;
-    _goldFillBar->setScaleX(cocos2d::clampf(goldRatio, 0.0f, 1.0f));
+    goldRatio = cocos2d::clampf(goldRatio, 0.0f, 1.0f);
+    float goldBarBaseScaleX = BAR_WIDTH / std::max(_goldBackgroundBar->getContentSize().width, 1.0f);
+    _goldFillBar->setScaleX(goldRatio * goldBarBaseScaleX);
 
-    // 更新圣水
+    // 更新圣水（逻辑不变）
     int elixir = rm->getElixir();
     int maxElixir = rm->getMaxElixirStorage();
     _elixirLabel->setString(std::to_string(elixir) + "/" + std::to_string(maxElixir));
     float elixirRatio = (maxElixir > 0) ? static_cast<float>(elixir) / maxElixir : 0.0f;
-    _elixirFillBar->setScaleX(cocos2d::clampf(elixirRatio, 0.0f, 1.0f));
+    elixirRatio = cocos2d::clampf(elixirRatio, 0.0f, 1.0f);
+    float elixirBarBaseScaleX = BAR_WIDTH / std::max(_elixirBackgroundBar->getContentSize().width, 1.0f);
+    _elixirFillBar->setScaleX(elixirRatio * elixirBarBaseScaleX);
 }

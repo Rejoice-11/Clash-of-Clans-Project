@@ -16,10 +16,10 @@ Sprite* RangedUnit::createSprite() {
 
 void RangedUnit::executeAttack(int x, int y) {
     // 远程单位不立刻扣血，而是产生一个箭矢
+    SimpleAudioEngine::getInstance()->playEffect("audio/RangedUnit.mp3");// 播放攻击音效
     auto arrow = cocos2d::Sprite::create("arrow.png");
     arrow->setPosition(this->getPosition());
     this->_mySprite->getParent()->addChild(arrow);
-
     Vec2 targetWorldPos = GridUtils::gridToWorld(Vec2(x, y));
     float duration = getPosition().distance(targetWorldPos) / 500.0f; // 假设箭速500
 

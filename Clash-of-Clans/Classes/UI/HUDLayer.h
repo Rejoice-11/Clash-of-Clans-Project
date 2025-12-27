@@ -23,9 +23,10 @@ private:
     cocos2d::Sprite* _elixirFillBar = nullptr;
     cocos2d::Sprite* _elixirBackgroundBar = nullptr;
 
-    const float BAR_WIDTH = 120.0f;
-    const float BAR_HEIGHT = 12.0f;
-    const float ICON_SIZE = 40.0f;
+    // 常量保持不变
+    const float ICON_SIZE = 40.0f;    // 图标尺寸保持不变
+    const float BAR_WIDTH = 200.0f;   // 进度条宽度
+    const float BAR_HEIGHT = 30.0f;   // 进度条高度
 };
 
 
