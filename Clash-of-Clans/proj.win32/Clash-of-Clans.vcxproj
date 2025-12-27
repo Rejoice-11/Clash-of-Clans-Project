@@ -177,6 +177,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\System\ResourceManager.cpp" />
     <ClCompile Include="..\Classes\UI\BuildingPanel.cpp" />
     <ClCompile Include="..\Classes\UI\HUDLayer.cpp" />
+    <ClCompile Include="..\Classes\UI\MilitaryArrange.cpp" />
     <ClCompile Include="..\Classes\UI\StoreWindow.cpp" />
     <ClCompile Include="..\Classes\Utils\CameraUtils.cpp" />
     <ClCompile Include="..\Classes\Utils\GridUtils.cpp" />
@@ -215,6 +216,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\System\ResourceManager.h" />
     <ClInclude Include="..\Classes\UI\BuildingPanel.h" />
     <ClInclude Include="..\Classes\UI\HUDLayer.h" />
+    <ClInclude Include="..\Classes\UI\MilitaryArrange.h" />
     <ClInclude Include="..\Classes\UI\StoreWindow.h" />
     <ClInclude Include="..\Classes\Utils\CameraUtils.h" />
     <ClInclude Include="..\Classes\Utils\Constants.h" />

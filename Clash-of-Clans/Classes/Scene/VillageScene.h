@@ -4,6 +4,7 @@
 #include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
 #include "Classes/System/ResourceManager.h"
+#include "Classes/UI/MilitaryArrange.h"
 #include "Classes/UI/HUDLayer.h"
 // 引入商店弹窗头文件
 #include "Classes/UI/StoreWindow.h"
@@ -27,7 +28,7 @@ public:
     void onBuilderButtonClicked(Ref* sender);
 
     CREATE_FUNC(VillageScene);
-
+    void onArmyButtonClicked(Ref* sender);
 
     void updateResourceAccumulation(float dt); // 累加资源
     void onGoldCollectClicked(Ref* sender);    // 收集金币

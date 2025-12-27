@@ -16,6 +16,8 @@ public:
     // 尝试部署一个（如果够扣就扣一个，并返回true）
     bool tryDeploy(UnitType id);
 
+    const std::map<UnitType, int>& getArmyPool() const { return _armyPool; } // ← 新增 getter
+
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;

@@ -53,6 +53,14 @@ bool VillageScene::init()
         "attack_button.png", "attack_button.png",
         CC_CALLBACK_1(VillageScene::onAttackButtonClicked, this));
     attackBtn->setPosition(Vec2(100 + origin.x, 100 + origin.y));
+    /*
+    auto armyBtn = MenuItemImage::create(
+        "army_arrangement_btn.png", "army_arrangement_btn.png",
+        CC_CALLBACK_1(VillageScene::onArmyButtonClicked, this)
+        );
+
+    armyBtn->setPosition(Vec2(_visibleSize.width - 100, _visibleSize.height / 2));
+    */
 
     // 右下角 商店按钮
     auto marketBtn = MenuItemImage::create(
@@ -1234,6 +1242,13 @@ void VillageScene::onElixirCollectClicked(Ref* sender)
         //SimpleAudioEngine::getInstance()->playEffect("audio/collect_elixir.mp3");
     }
 }
+
+/*void VillageScene::onArmyButtonClicked(Ref* sender)
+{
+    auto layer = MilitaryArrang::create(this);
+    this->addChild(layer, 100);
+
+}unfinished*/
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）
 void VillageScene::onStorageUpgraded(StorageBuilding* storage)
