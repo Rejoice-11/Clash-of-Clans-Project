@@ -28,6 +28,12 @@ public:
 
     CREATE_FUNC(VillageScene);
 
+
+    void updateResourceAccumulation(float dt); // 累加资源
+    void onGoldCollectClicked(Ref* sender);    // 收集金币
+    void onElixirCollectClicked(Ref* sender);  // 收集圣水
+    float calculateTotalProduction(ResourceBuilding::ResourceType type); // 计算总生产率
+
 private:
     Layer* _backgroundLayer;
     Layer* _buildingLayer;
@@ -130,4 +136,13 @@ private:
     void addSettingButton();                        // 添加设置按钮
     void onSettingButtonClicked(Ref* sender);       // 设置按钮点击回调
     void exitGame();                                // 退出游戏
+
+    // === 新增：资源收集系统 ===
+    float _goldAccumulated = 0.0f;      // 累计可收集金币
+    float _elixirAccumulated = 0.0f;    // 累计可收集圣水
+
+    MenuItemSprite* _goldCollectBtn = nullptr;
+    MenuItemSprite* _elixirCollectBtn = nullptr;
+    Label* _goldAmountLabel = nullptr;
+    Label* _elixirAmountLabel = nullptr;
 };

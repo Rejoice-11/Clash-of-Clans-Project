@@ -51,6 +51,8 @@ bool ResourceManager::addGold(int amount)
 
     if (_gold + amount > _maxGoldStorage) 
     {
+		_gold = _maxGoldStorage;
+        notifyResourceChange();
         return false; // ³¬³öÉÏÏÞ
     }
 
@@ -68,6 +70,8 @@ bool ResourceManager::addElixir(int amount)
 
     if (_elixir + amount > _maxElixirStorage) 
     {
+		_elixir = _maxElixirStorage;
+        notifyResourceChange();
         return false;
     }
 

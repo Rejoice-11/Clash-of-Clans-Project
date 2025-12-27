@@ -83,7 +83,7 @@ std::string StorageBuilding::getSpriteFrameName() const {
 // ！！！！！！！！ 贋刈蒙嗤貸辞 ！！！！！！！！
 
 int StorageBuilding::getCapacity() const {
-    if (_currentLevel < 0 || _currentLevel >= MAX_LEVELS) {
+    if (_currentLevel < 0 || _currentLevel > MAX_LEVELS) {
         return 0;
     }
     return _data.capacity[_currentLevel - 1];

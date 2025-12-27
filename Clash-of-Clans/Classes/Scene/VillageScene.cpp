@@ -64,6 +64,63 @@ bool VillageScene::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 10); // UI层级高于背景
 
+    // === 创建资源收集按钮 ===
+    auto goldIcon = Sprite::create("gold_collect_icon.png");
+    auto elixirIcon = Sprite::create("elixir_collect_icon.png");
+
+    _goldCollectBtn = MenuItemSprite::create(
+        goldIcon, goldIcon, CC_CALLBACK_1(VillageScene::onGoldCollectClicked, this)
+    );
+    _elixirCollectBtn = MenuItemSprite::create(
+        elixirIcon, elixirIcon, CC_CALLBACK_1(VillageScene::onElixirCollectClicked, this)
+    );
+
+    // 按钮位置：左侧中部（假设 visibleSize.width=1280）
+    float btnX = 80; // 左侧
+    float btnY = _visibleSize.height / 2;
+    _goldCollectBtn->setPosition(Vec2(btnX, btnY + 50));
+    _elixirCollectBtn->setPosition(Vec2(btnX, btnY - 50));
+
+    // === 金币数量 + 底图 ===
+    auto goldBarBg = Sprite::create("gold_bar_bg.png"); // ← 你的金币底图
+    if (!goldBarBg) {
+        goldBarBg = Sprite::create(); // 安全兜底（防止图片缺失）
+        goldBarBg->setContentSize(Size(120, 40));
+        goldBarBg->setColor(Color3B(50, 50, 0)); // 深金色备用
+    }
+    goldBarBg->setPosition(Vec2(btnX, btnY + 110));
+    this->addChild(goldBarBg, 10); // Z-order 和按钮同级或略低
+
+    _goldAmountLabel = Label::createWithSystemFont("0", "arial", 20);
+    _goldAmountLabel->setTextColor(Color4B(255, 215, 0, 255));
+    _goldAmountLabel->enableOutline(Color4B::BLACK, 2);
+    _goldAmountLabel->setPosition(Vec2(50, 12)); // 相对于底图居中
+    goldBarBg->addChild(_goldAmountLabel); // ← 文字作为底图的子节点！
+
+    // === 圣水数量 + 底图 ===
+    auto elixirBarBg = Sprite::create("elixir_bar_bg.png"); // ← 你的圣水底图
+    if (!elixirBarBg) {
+        elixirBarBg = Sprite::create();
+        elixirBarBg->setContentSize(Size(120, 40));
+        elixirBarBg->setColor(Color3B(60, 0, 60)); // 深紫色备用
+    }
+    elixirBarBg->setPosition(Vec2(btnX, btnY - 110));
+    this->addChild(elixirBarBg, 10);
+
+    _elixirAmountLabel = Label::createWithSystemFont("0", "arial", 20);
+    _elixirAmountLabel->setTextColor(Color4B(186, 85, 211, 255));
+    _elixirAmountLabel->enableOutline(Color4B::BLACK, 2);
+    _elixirAmountLabel->setPosition(Vec2(50, 12)); // 相对于底图居中
+    elixirBarBg->addChild(_elixirAmountLabel); // ← 文字作为底图的子节点！
+
+    auto collectMenu = Menu::create(_goldCollectBtn, _elixirCollectBtn, nullptr);
+    collectMenu->setPosition(Vec2::ZERO);
+    this->addChild(collectMenu, 10);
+
+
+    // 初始化时间
+    this->scheduleUpdate(); // 启用 update(dt) 回调
+
     // 预先创建遮罩层
     _grayMask = LayerColor::create(Color4B(0, 0, 0, 180), _visibleSize.width, _visibleSize.height);
     _grayMask->setPosition(origin);
@@ -153,11 +210,11 @@ void VillageScene::exitGame()
             SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 
             // 退出游戏
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+            #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
             exit(0);
-#else
+            #else
             Director::getInstance()->end();
-#endif
+            #endif
             }),
         nullptr
     ));
@@ -581,7 +638,7 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::GOLD_MINE:
         {
-            cost = GoldMineBuildingData.goldCost[0];
+            cost = GoldMineBuildingData.elixirCost[0];
 
 			isGold = false;
 
@@ -617,7 +674,7 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::GOLD_STORAGE:
         {
-            cost = GoldStorageBuildingData.goldCost[0];
+            cost = GoldStorageBuildingData.elixirCost[0];
 
 			isGold = false;
 
@@ -695,7 +752,7 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::CANNON:
         {
-            cost = CanonBuildingData.goldCost[0];
+            cost = CanonBuildingData.elixirCost[0];
 
 			isGold = false;
 
@@ -1093,16 +1150,98 @@ std::map<StoreWindow::BuildingType, int> VillageScene::getCurrentBuildingCounts(
     return counts;
 }
 
+// VillageScene.cpp
+void VillageScene::update(float dt)
+{
+    // 更新资源累加
+    updateResourceAccumulation(dt);
+
+    // 更新按钮文字（每秒刷新一次，避免频繁 setText）
+    static float labelUpdateTimer = 0.0f;
+    labelUpdateTimer += dt;
+    if (labelUpdateTimer >= 1.0f) 
+    {
+        _goldAmountLabel->setString(std::to_string(static_cast<int>(_goldAccumulated)));
+        _elixirAmountLabel->setString(std::to_string(static_cast<int>(_elixirAccumulated)));
+        labelUpdateTimer = 0.0f;
+    }
+}
+
+void VillageScene::updateResourceAccumulation(float dt) 
+{
+    // 直接用 dt（上一帧到当前帧的时间，单位：秒）
+    float goldProductionPerSec = calculateTotalProduction(ResourceBuilding::ResourceType::GOLD);
+    float elixirProductionPerSec = calculateTotalProduction(ResourceBuilding::ResourceType::ELIXIR);
+
+    // 累加：产量/秒 × dt（秒） = 本次增加的资源量
+    _goldAccumulated += goldProductionPerSec * dt;
+    _elixirAccumulated += elixirProductionPerSec * dt;
+
+    _goldAccumulated = std::max(0.0f, _goldAccumulated);
+    _elixirAccumulated = std::max(0.0f, _elixirAccumulated);
+}
+
+float VillageScene::calculateTotalProduction(ResourceBuilding::ResourceType type) {
+    float total = 0.0f;
+
+    if (type == ResourceBuilding::ResourceType::GOLD) 
+    {
+        for (const auto& mine : _goldMines) 
+        {
+            int level = mine->getCurrentLevel();
+            if (level > 0 && level <= MAX_LEVELS) 
+            {
+                // 转换为每秒产量
+                total += GoldMineBuildingData.productionPerHour[level - 1] / 3600.0f;
+            }
+        }
+    }
+    else if (type == ResourceBuilding::ResourceType::ELIXIR) 
+    {
+        for (const auto& collector : _elixirCollectors) 
+        {
+            int level = collector->getCurrentLevel();
+            if (level > 0 && level <= MAX_LEVELS) 
+            {
+                total += ElixirCollectorBuildingData.productionPerHour[level - 1] / 3600.0f;
+            }
+        }
+    }
+
+    return total;
+}
+
+void VillageScene::onGoldCollectClicked(Ref* sender)
+{
+    if (_goldAccumulated > 0)
+    {
+        int amount = static_cast<int>(_goldAccumulated);
+        ResourceManager::getInstance()->addGold(amount);
+        _goldAccumulated = 0.0f;
+        _goldAmountLabel->setString("0");
+
+        // 播放音效（可选）
+        //SimpleAudioEngine::getInstance()->playEffect("audio/collect_gold.mp3");
+    }
+}
+
+void VillageScene::onElixirCollectClicked(Ref* sender) 
+{
+    if (_elixirAccumulated > 0) {
+        int amount = static_cast<int>(_elixirAccumulated);
+        ResourceManager::getInstance()->addElixir(amount);
+        _elixirAccumulated = 0.0f;
+        _elixirAmountLabel->setString("0");
+
+        // 播放音效（可选）
+        //SimpleAudioEngine::getInstance()->playEffect("audio/collect_elixir.mp3");
+    }
+}
+
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）
 void VillageScene::onStorageUpgraded(StorageBuilding* storage)
 {
     recalculateMaxStorage();
-}
-
-// 帧更新函数实现
-void VillageScene::update(float dt)
-{
-    // 资源生产、建造倒计时等逻辑
 }
 
 // 未实现的空函数（保持代码完整性）
