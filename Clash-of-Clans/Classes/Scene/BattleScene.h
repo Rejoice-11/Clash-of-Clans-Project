@@ -22,6 +22,7 @@ using namespace CocosDenshion;
 class BattleScene : public Scene
 {
 public:
+	// 建筑生成
     void spawnBuilding(Vec2 gridPos,int Buildingname);
 	// 鼠标事件注册及回调声明
     void registerMouseEvents2();
