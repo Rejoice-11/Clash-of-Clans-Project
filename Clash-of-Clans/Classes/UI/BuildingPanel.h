@@ -24,5 +24,6 @@ private:
     cocos2d::Sprite* _buildingImage = nullptr;
     cocos2d::Label* _levelLabel = nullptr;
     cocos2d::Label* _costLabel = nullptr;
+    cocos2d::Label* _upgradeTimeLabel = nullptr;
     std::vector<cocos2d::Label*> _statLabels; // 存储所有属性数值标签
 };

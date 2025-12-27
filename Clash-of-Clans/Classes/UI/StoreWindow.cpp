@@ -393,11 +393,13 @@ void StoreWindow::rebuildMenu()
 
                 auto rmw = ResourceManager::getInstance();
 
-                auto alreadyHaveLabel = Label::createWithSystemFont(std::to_string(rmw->getBuildingCount(StoreWindow::BuildingType::TOWN_HALL)), "arial", 20);
+                std::string have = std::to_string(rmw->getBuildingCount(type)) + '/' + std::to_string(getMaxCount(type, rm->getTownHallLevel()));
+
+                auto alreadyHaveLabel = Label::createWithSystemFont(have, "arial", 20);
                 alreadyHaveLabel->setTextColor(Color4B::WHITE);
                 alreadyHaveLabel->enableOutline(Color4B::BLACK, 2);
 
-                alreadyHaveLabel->setPosition(Vec2(bar->getContentSize().width / 2, -barHeight / 2 + 160));
+                alreadyHaveLabel->setPosition(Vec2(bar->getContentSize().width / 2, -barHeight / 2 + 180));
                 buttonNode->addChild(alreadyHaveLabel, 3);
             }
             // ======================================
@@ -451,10 +453,7 @@ int StoreWindow::getCurrentCount(BuildingType type)
 {
     auto rm = ResourceManager::getInstance();
 
-    if (type == BuildingType::TOWN_HALL) {
-        return rm->getBuildingCount(StoreWindow::BuildingType::TOWN_HALL);
-        log("fassdf%d", rm->getBuildingCount(StoreWindow::BuildingType::TOWN_HALL));
-    }
+    if (type == BuildingType::TOWN_HALL) return rm->getBuildingCount(StoreWindow::BuildingType::TOWN_HALL);
     if (type == BuildingType::GOLD_MINE) return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_MINE);
     if (type == BuildingType::ELIXIR_COLLECTOR) return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_COLLECTOR);
     if (type == BuildingType::GOLD_STORAGE) return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_STORAGE);
@@ -493,16 +492,16 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel)
     /*
     else if (type == BuildingType::MILITARY_CAMP)
     {
-        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+        return MillitaryCampBuildingData.maxBuildCount[thLevel - 1];
     }
     */
     else if (type == BuildingType::ARCHER_TOWER)
     {
-        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+        return ArcherTowerBuildingData.maxBuildCount[thLevel - 1];
     }
     else if (type == BuildingType::CANNON)
     {
-        return TownHallBuildingData.maxBuildCount[thLevel - 1];
+        return CanonBuildingData.maxBuildCount[thLevel - 1];
     }
     else if (type == BuildingType::WORKER_HOME)
     {

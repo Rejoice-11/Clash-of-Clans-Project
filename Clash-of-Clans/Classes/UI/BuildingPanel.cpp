@@ -37,30 +37,51 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     {
         case BuildingType::TOWN_HALL:
             spriteName = "town_hall_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(TownHallBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         case BuildingType::GOLD_MINE:
             spriteName = "gold_mine_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png"; 
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(GoldMineBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         case BuildingType::ELIXIR_COLLECTOR:
             spriteName = "elixir_collector_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png"; 
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(ElixirCollectorBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         case BuildingType::GOLD_STORAGE:
             spriteName = "gold_storage_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(GoldStorageBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         case BuildingType::ELIXIR_STORAGE:
             spriteName = "elixir_storage_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(ElixirStorageBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         case BuildingType::ARCHER_TOWER:
             spriteName = "archer_tower_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(ArcherTowerBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         case BuildingType::CANNON:
             spriteName = "canon_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(CanonBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
             break;
 
         default: spriteName = "worker_home_lv0.png";
@@ -263,6 +284,23 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     // 将文字添加到按钮上（作为子节点）
     auto btnNode = static_cast<Node*>(upgradeBtn);
     btnNode->addChild(_costLabel);
+    
+    // --- 升级时间图标（在按钮右侧）---
+    auto timeIcon = Sprite::create("upgrade_time.png");
+
+    if (timeIcon) 
+    {
+            timeIcon->setPosition(Vec2(480 + 200, 50)); // 按钮X+80，Y相同
+            bg->addChild(timeIcon);
+        
+                // --- 升级时间文字（在图标上方）---
+         
+            _upgradeTimeLabel->setTextColor(Color4B::WHITE);
+            _upgradeTimeLabel->enableOutline(Color4B::BLACK, 2);
+            _upgradeTimeLabel->setPosition(Vec2(480 + 200, 50 - 10)); // 图标上方20像素
+            bg->addChild(_upgradeTimeLabel);
+    }
+    
 
     // 创建关闭按钮（右上角）
     auto closeBtn = MenuItemImage::create("out_of_now.png", "out_of_now.png",

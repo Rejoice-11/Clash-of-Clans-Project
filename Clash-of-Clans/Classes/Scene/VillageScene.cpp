@@ -557,10 +557,15 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         cocos2d::Sprite* realSprite = nullptr;
         // 创建建筑对象
 
+		bool isGold = true;
+        int cost = 0;
+
         switch (_pendingBuildingType)
         {
         case StoreWindow::BuildingType::TOWN_HALL:
         {
+			cost = TownHallBuildingData.goldCost[0];
+
             auto th = std::make_unique<TownHall>(TownHallBuildingData);
             th->setGridPosition(gridPos);
             _townHalls.push_back(std::move(th));
@@ -576,6 +581,10 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::GOLD_MINE:
         {
+            cost = GoldMineBuildingData.goldCost[0];
+
+			isGold = false;
+
             auto mine = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
             mine->setGridPosition(gridPos);
             _goldMines.push_back(std::move(mine));
@@ -591,6 +600,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::ELIXIR_COLLECTOR:
         {
+            cost = ElixirCollectorBuildingData.goldCost[0];
+
             auto collector = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
             collector->setGridPosition(gridPos);
             _elixirCollectors.push_back(std::move(collector));
@@ -606,9 +617,15 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::GOLD_STORAGE:
         {
+            cost = GoldStorageBuildingData.goldCost[0];
+
+			isGold = false;
+
             auto storage = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
             storage->setGridPosition(gridPos);
             _goldStorages.push_back(std::move(storage));
+
+            recalculateMaxStorage();
 
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
@@ -621,6 +638,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::ARCHER_TOWER:
         {
+            cost = ArcherTowerBuildingData.goldCost[0];
+
             auto tower = std::make_unique<DefenseBuilding>(
                 ArcherTowerBuildingData,
                 -1,
@@ -640,11 +659,14 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::ELIXIR_STORAGE:
         {
+            cost = ElixirStorageBuildingData.goldCost[0];
+
             auto storage = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
             storage->setGridPosition(gridPos);
             _elixirStorages.push_back(std::move(storage));
             // 放置后重新计算总容量
-            //unfinishd
+             recalculateMaxStorage();
+
             // 创建精灵
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
             realSprite = Sprite::create(spriteName);
@@ -656,6 +678,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         /*unfinished
         case StoreWindow::BuildingType::MILITARY_CAMP:
         {
+            cost = MilitaryCampBuildingData.goldCost[0];
+
             auto camp = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
             camp->setGridPosition(gridPos);
             _militaryCamps.push_back(std::move(camp));
@@ -671,6 +695,10 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         case StoreWindow::BuildingType::CANNON:
         {
+            cost = CanonBuildingData.goldCost[0];
+
+			isGold = false;
+
             auto cannon = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
             cannon->setGridPosition(gridPos);
             _cannons.push_back(std::move(cannon));
@@ -686,6 +714,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         /*unfinished
         case StoreWindow::BuildingType::WORKER_HOME:
         {
+            cost = WorkerHomeBuildingData.goldCost[0];
+
             auto home = std::make_unique<WorkerHome>(WorkerHomeBuildingData);
             home->setGridPosition(gridPos);
 
@@ -701,7 +731,11 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         */
         }
 
+
+
         auto counts = getCurrentBuildingCounts();
+        auto rm = ResourceManager::getInstance();
+        bool canAfford = isGold ? rm->spendGold(cost) : rm->spendElixir(cost);
         ResourceManager::getInstance()->syncBuildingCounts(counts);
 
         Vec2 finalPos = GridUtils::gridToWorld(gridPos);
@@ -938,7 +972,7 @@ std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
 
 void VillageScene::recalculateMaxStorage()
 {
-    int totalGold = 0, totalElixir = 0;
+    int totalGold = 10000, totalElixir = 10000;
 
     for (const auto& storage : _goldStorages)
     {
@@ -991,6 +1025,13 @@ void VillageScene::onBuildingPanelClosed()
             _selectedBuilding->getCurrentLevel());
 
     }
+
+    if (_selectedBuilding && 
+        (_selectedBuilding->getBuildingType() == GOLD_STORAGE || 
+         _selectedBuilding->getBuildingType() == ELIXIR_STORAGE)) 
+    {
+        recalculateMaxStorage();
+	}
 
     // 2. 加载新纹理
     auto texture = Director::getInstance()->getTextureCache()->addImage(newSpriteName);
