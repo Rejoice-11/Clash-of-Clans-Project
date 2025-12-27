@@ -5,6 +5,18 @@
 // 静态成员定义
 ResourceManager* ResourceManager::_instance = nullptr;
 
+void ResourceManager::syncBuildingCounts(
+    const std::map<StoreWindow::BuildingType, int>& counts) 
+{
+    _buildingCounts = counts; // 全量更新
+}
+
+int ResourceManager::getBuildingCount(StoreWindow::BuildingType type) const
+{
+    auto it = _buildingCounts.find(type);
+    return (it != _buildingCounts.end()) ? it->second : 0;
+}
+
 // ———————— 单例实现 ———————— //
 
 ResourceManager* ResourceManager::getInstance() 

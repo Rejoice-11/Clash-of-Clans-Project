@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <mutex>
+#include "Classes/UI/StoreWindow.h"
 
 /**
  * @brief 全局资源管理器（金币、圣水）
@@ -45,6 +46,15 @@ public:
     void updateMaxGoldStorage(int totalCapacity);
     void updateMaxElixirStorage(int totalCapacity);
 
+
+    // 同步建筑数量（由 VillageScene 调用）
+    void syncBuildingCounts(const std::map<StoreWindow::BuildingType, int>&counts);
+
+    // 外部查询接口
+    int getBuildingCount(StoreWindow::BuildingType type) const;
+    int getTownHallLevel() const { return _townHallLevel; }
+    void setTownHallLevel(int level) { _townHallLevel = level; }
+
     using ResourceChangeListener = std::function<void()>;
 
     void setOnResourceChange(const ResourceChangeListener& listener) 
@@ -59,6 +69,10 @@ private:
     // 禁止拷贝
     ResourceManager(const ResourceManager&) = delete;
     ResourceManager& operator=(const ResourceManager&) = delete;
+
+    // 核心数据：建筑类型 → 数量
+    std::map<StoreWindow::BuildingType, int> _buildingCounts;
+    int _townHallLevel = 1; // 默认等级
 
     void notifyResourceChange();
 

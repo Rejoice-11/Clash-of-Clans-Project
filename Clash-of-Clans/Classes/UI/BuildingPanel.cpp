@@ -249,14 +249,14 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         upgradeCost = 100; // 示例默认值unfinished
 	}
 
+    auto upgradeBtn = MenuItemImage::create(costIcon, costIcon, CC_CALLBACK_1(BuildingPanel::onUpdateButtonClicked, this));
+    upgradeBtn->setPosition(Vec2(480, 50));
+
     _costLabel = Label::createWithSystemFont(std::to_string(upgradeCost), "arial", 24);
     _costLabel->setTextColor(isGold ? Color4B(255, 215, 0, 255) : Color4B(186, 85, 211, 255));
     _costLabel->enableOutline(Color4B::BLACK, 2);
-    _costLabel->setPosition(Vec2(450, 100));
+    _costLabel->setPosition(Vec2(480, 60));
     bg->addChild(_costLabel);
-
-    auto upgradeBtn = MenuItemImage::create(costIcon, costIcon, CC_CALLBACK_1(BuildingPanel::onUpdateButtonClicked, this));
-    upgradeBtn->setPosition(Vec2(400, 100));
 
     // 关闭按钮（右上）
     auto closeBtn = MenuItemImage::create("out_of_now.png", "out_of_now.png", CC_CALLBACK_1(BuildingPanel::onCloseButtonClicked, this));

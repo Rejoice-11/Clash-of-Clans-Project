@@ -31,8 +31,12 @@ public:
 
     bool initWithPlaceCallback(const std::function<void(BuildingType)>& placeCallback);
 
+    void rebuildMenu();
+
     void show();
     void hide();
+
+    Menu* _menu;
 
 private:
     void onCloseButtonClicked(Ref* sender);

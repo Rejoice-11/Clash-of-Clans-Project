@@ -701,6 +701,8 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         */
         }
 
+        auto counts = getCurrentBuildingCounts();
+        ResourceManager::getInstance()->syncBuildingCounts(counts);
 
         Vec2 finalPos = GridUtils::gridToWorld(gridPos);
         realSprite->setAnchorPoint(Vec2(0.5, 0.5));
@@ -712,21 +714,21 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
         auto listener = EventListenerTouchOneByOne::create();
         listener->setSwallowTouches(true);
         listener->onTouchBegan = [this, realSprite](Touch* touch, Event* event)
+        {
+            Vec2 touchPos = touch->getLocation();
+            Vec2 nodePos = realSprite->getParent()->convertToNodeSpace(touchPos);
+            Rect bounds(realSprite->getPosition() - realSprite->getContentSize() / 2,
+                realSprite->getContentSize());
+
+            if (bounds.containsPoint(nodePos))
             {
-                Vec2 touchPos = touch->getLocation();
-                Vec2 nodePos = realSprite->getParent()->convertToNodeSpace(touchPos);
-                Rect bounds(realSprite->getPosition() - realSprite->getContentSize() / 2,
-                    realSprite->getContentSize());
-                if (bounds.containsPoint(nodePos))
-                {
-                    this->onBuildingClicked(realSprite);
-                    return true;
-                }
-                return false;
-            };
+                this->onBuildingClicked(realSprite);
+                return true;
+            }
+            return false;
+        };
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, realSprite);
     }
-
     cancelPlacementMode();
 }
 
@@ -972,7 +974,8 @@ void VillageScene::onInfoButtonClicked(Ref* sender)
 
 void VillageScene::onBuildingPanelClosed()
 {
-    if (!_selectedBuildingSprite || !_selectedBuilding) return;
+    if (!_selectedBuildingSprite || !_selectedBuilding) 
+        return;
 
     // 1. 获取新等级的精灵名
     std::string baseName = getGhostSpriteName(_selectedBuildingType);
@@ -981,6 +984,13 @@ void VillageScene::onBuildingPanelClosed()
 
     std::string newSpriteName = baseName.substr(0, pos) +
         "_lv" + std::to_string(_selectedBuilding->getCurrentLevel()) + ".png";
+
+    if (_selectedBuilding && _selectedBuilding->getBuildingType() == TOWN_HALL) 
+    {
+        ResourceManager::getInstance()->setTownHallLevel(
+            _selectedBuilding->getCurrentLevel());
+
+    }
 
     // 2. 加载新纹理
     auto texture = Director::getInstance()->getTextureCache()->addImage(newSpriteName);
@@ -994,6 +1004,52 @@ void VillageScene::onBuildingPanelClosed()
 
     _selectedBuildingSprite = nullptr;
     _selectedBuilding = nullptr;
+}
+
+// VillageScene.cpp
+std::map<StoreWindow::BuildingType, int> VillageScene::getCurrentBuildingCounts() const 
+{
+    std::map<StoreWindow::BuildingType, int> counts;
+
+    // 初始化所有类型为 0（可选）
+    for (int i = 0; i < static_cast<int>(StoreWindow::BuildingType::MAX_TYPES); ++i) 
+    {
+        counts[static_cast<StoreWindow::BuildingType>(i)] = 0;
+    }
+
+    // 统计 Town Hall
+    counts[StoreWindow::BuildingType::TOWN_HALL] = static_cast<int>(_townHalls.size());
+    log("abcd%d", counts[StoreWindow::BuildingType::TOWN_HALL]);
+    // 统计资源建筑
+    for (const auto& gm : _goldMines) 
+            counts[StoreWindow::BuildingType::GOLD_MINE]++;
+
+    for (const auto& ec : _elixirCollectors)
+            counts[StoreWindow::BuildingType::ELIXIR_COLLECTOR]++;
+
+    // 统计储藏建筑
+    for (const auto& gs : _goldStorages)
+            counts[StoreWindow::BuildingType::GOLD_STORAGE]++;
+
+    for (const auto& es : _elixirStorages)
+            counts[StoreWindow::BuildingType::ELIXIR_STORAGE]++;
+
+	// 统计防御建筑
+    for (const auto& at : _archerTowers)
+		counts[StoreWindow::BuildingType::ARCHER_TOWER]++;
+
+    for (const auto& cn : _cannons)
+		counts[StoreWindow::BuildingType::CANNON]++;
+
+	// 统计其他建筑类型
+	//for (const auto& mc : _militaryCamps) 
+	//        counts[StoreWindow::BuildingType::MILITARY_CAMP]++;
+	//for (const auto& wh : _workerHomes)
+	//        counts[StoreWindow::BuildingType::WORKER_HOME]++;
+
+    // ... 其他建筑类型 ...
+
+    return counts;
 }
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）

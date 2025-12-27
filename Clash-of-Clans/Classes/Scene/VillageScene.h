@@ -110,6 +110,9 @@ private:
     void onBuildingPanelClosed();
     void hideBuildingActionPanelForInfoPanel();
 
+	// 获取当前各类型建筑数量
+    std::map<StoreWindow::BuildingType, int> getCurrentBuildingCounts() const;
+
     // 根据类型获取建筑容器
     std::vector<std::unique_ptr<Building>>* getBuildingContainer(StoreWindow::BuildingType type);
     Building* findBuildingBySprite(Sprite* sprite);
