@@ -23,7 +23,7 @@ class BattleScene : public Scene
 {
 public:
     //战斗结束时候调用
-	void battleOver(bool isWin);
+	void battleOver();
 	// 建筑生成
     void spawnBuilding(Vec2 gridPos,int Buildingname);
 	// 鼠标事件注册及回调声明
@@ -53,8 +53,11 @@ public:
 
     //UI刷新函数
     void refreshUI();
+    //战斗结束返回按钮回调函数
+	void onBtn_ConfirmClicked(Ref* sender);
 
 private:
+	cocos2d::Node* resultUIContainer = Node::create();// 战斗结果UI容器
 	cocos2d::Sprite* _arrowIndicator = nullptr; // 新增：箭头指示器
 	cocos2d::MenuItemImage* _selectedSoldierBtn = nullptr; // 新增：记录当前选中的士兵按钮
     UnitType _selectedType = UnitType::NONE; // 当前选中的兵种
@@ -73,6 +76,7 @@ private:
 	bool _isBattleStart=false;        // 战斗是否开始
 	bool _isBattleOver = false;         // 战斗是否结束
 	bool _isTownHallDestroyed = false; // 大本营是否被摧毁
+	bool _iswin = false;// 战斗胜利标志
     // 新增：保存弹窗面板和菜单（用于后续删除）
     cocos2d::Sprite* _returnPanel = nullptr;
     cocos2d::Menu* _returnMenu = nullptr;

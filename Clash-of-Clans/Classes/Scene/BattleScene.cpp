@@ -41,7 +41,7 @@ void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
 	grid[x][y].now_health = 1000; // 现在血量(暂时先写死，后面再调整)
 }
 // 战斗结束实现(战斗结束后调用)
-void BattleScene::battleOver(bool isWin)
+void BattleScene::battleOver()
 {
 	int countdestroyed = 0;
 	//遍历gridinfo二维数组，检查建筑状态,判断胜负
@@ -55,7 +55,7 @@ void BattleScene::battleOver(bool isWin)
                 if (grid[i][j].buildingtype == 1)
                 {
                     //大本营被摧毁
-                    isWin = true;
+                    _iswin = true;
                 }
 			}
 		}
@@ -63,20 +63,88 @@ void BattleScene::battleOver(bool isWin)
 	//如果摧毁建筑数量达到一定比例，判定为胜利
     if (countdestroyed >= 5) // 假设摧毁5个建筑算胜利
     {
-        isWin = true;
+        _iswin = true;
     }
+    this->addChild(resultUIContainer, 100); // 战斗结果UI添加到场景
+    auto bg = Sprite::create();
+    bg->setTextureRect(Rect(0, 0, 1280,720));
+    bg->setColor(Color3B::GRAY);
+    bg->setOpacity(220);
+    bg->setPosition(640, 360);
+    resultUIContainer->addChild(bg,100);
     // 显示战斗结果UI等
-    if (isWin)
+    if (_iswin)
     {
-
+        auto victory = Sprite::create("victory.png");
+        victory->setScale(0.8);
+        victory->setPosition(640, 550);
+        resultUIContainer->addChild(victory, 101);
+		auto goldpic = Sprite::create("coin.png");
+        goldpic->setScale(0.2);
+        goldpic->setPosition(700, 420);
+        resultUIContainer->addChild(goldpic, 101);
+		auto goldlabel = Label::createWithTTF("+1000", "fonts/Marker Felt.ttf", 30);
+		goldlabel->setColor(Color3B::BLACK);
+		goldlabel->setPosition(600, 420);
+        resultUIContainer->addChild(goldlabel, 101);
+		auto elixirpic = Sprite::create("elixir.png");
+		elixirpic->setScale(0.2);
+		elixirpic->setPosition(700, 370);
+        resultUIContainer->addChild(elixirpic, 101);
+		auto elixirlabel = Label::createWithTTF("+1000", "fonts/Marker Felt.ttf", 30);
+		elixirlabel->setColor(Color3B::BLACK);
+		elixirlabel->setPosition(600, 370);
+        resultUIContainer->addChild(elixirlabel, 101);
         CCLOG("Battle Won!");
         // 处理胜利逻辑
     }
     else
     {
+		auto defeat = Sprite::create("defeat.png");
+        defeat->setScale(0.8);
+		defeat->setPosition(640, 550);
+        resultUIContainer->addChild(defeat, 101);
+        auto goldpic = Sprite::create("coin.png");
+        goldpic->setScale(0.2);
+        goldpic->setPosition(700, 420);
+        resultUIContainer->addChild(goldpic, 101);
+        auto goldlabel = Label::createWithTTF("+0", "fonts/Marker Felt.ttf", 30);
+        goldlabel->setColor(Color3B::BLACK);
+        goldlabel->setPosition(600, 420);
+        resultUIContainer->addChild(goldlabel, 101);
+        auto elixirpic = Sprite::create("elixir.png");
+        elixirpic->setScale(0.2);
+        elixirpic->setPosition(700, 370);
+        resultUIContainer->addChild(elixirpic, 101);
+        auto elixirlabel = Label::createWithTTF("+0", "fonts/Marker Felt.ttf", 30);
+        elixirlabel->setColor(Color3B::BLACK);
+        elixirlabel->setPosition(600, 370);
+        resultUIContainer->addChild(elixirlabel, 101);
         CCLOG("Battle Lost!");
         // 处理失败逻辑
     }
+    auto Btn_Confirm = MenuItemImage::create(
+        "Confirm_Button.png",
+        "Confirm_Button.png",
+        CC_CALLBACK_1(BattleScene::onBtn_ConfirmClicked, this));
+    Btn_Confirm->setScale(0.6);
+    Btn_Confirm->setPosition(Vec2(640, 250));
+    auto menu = Menu::create(Btn_Confirm, nullptr);
+    menu->setPosition(Vec2::ZERO);
+    resultUIContainer->addChild(menu, 101);
+}
+//实现确认按钮点击回调
+void BattleScene::onBtn_ConfirmClicked(Ref* sender)
+{
+    // 清理战斗场景，返回村庄场景
+    if(resultUIContainer)
+    {
+        this->removeAllChildren();
+        resultUIContainer = nullptr;
+    }
+    // 停止背景音乐（双重保障，防止跳转时未停止）
+    SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+    Director::getInstance()->popScene();
 }
 // 建筑生成实现
 void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
@@ -506,8 +574,8 @@ bool BattleScene::init()
     spawnBuilding(Vec2(30, 15), 4);
     spawnBuilding(Vec2(18, 28), 6);
     spawnBuilding(Vec2(22, 12), 7);
-    
-    
+
+
     // 开启帧更新（后续战斗逻辑靠这个）
     this->scheduleUpdate();
     return true;
