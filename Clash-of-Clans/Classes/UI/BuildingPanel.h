@@ -2,7 +2,8 @@
 #pragma once
 #include "cocos2d.h"
 #include "Classes/Entity/Building/Building.h"
-
+#include "SimpleAudioEngine.h"
+using namespace CocosDenshion;
 class BuildingPanel : public cocos2d::Layer 
 {
 public:

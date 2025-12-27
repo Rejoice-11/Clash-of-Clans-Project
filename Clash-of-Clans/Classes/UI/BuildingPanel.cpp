@@ -334,7 +334,7 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
 
     // 升级建筑
     _building->upgrade();
-
+    SimpleAudioEngine::getInstance()->playEffect("audio/level_up.mp3");
     // 刷新面板
     refreshPanel();
 }
