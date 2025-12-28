@@ -26,9 +26,22 @@ bool ArmyManager::tryDeploy(UnitType id) {
     return false;
 }
 
-void ArmyManager::setArmyPool(const std::map<UnitType, int>& newPool)
+void ArmyManager::getRemainingCapacity()
 {
-    _armyPool = newPool;
+    for (int i = 0; i < 4; i++)
+    {
+		_armyPool[(UnitType)i]= _armyPool[(UnitType)i]/2;
+    }
+}
+
+void ArmyManager::initializeArmyForBattle()
+{
+    // 这里可以根据需要初始化兵力，比如从存档或默认值
+    // 目前假设已经在其他地方设置好了兵力
+    for (int i = 0; i < 4; i++)
+    {
+        _armyPool[(UnitType)i] = _armyPool[(UnitType)i] *2;
+    }
 }
 
 void ArmyManager::setTotalCapacity(int capacity) 

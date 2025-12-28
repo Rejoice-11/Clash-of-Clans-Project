@@ -50,7 +50,7 @@ void BattleScene::battleOver()
 		}
     }
 	//如果摧毁建筑数量达到一定比例，判定为胜利
-    if (countdestroyed >= 5) // 假设摧毁5个建筑算胜利
+    if (countdestroyed >= 9) // 摧毁9个建筑(超过一半)算胜利
     {
         _iswin = true;
     }
@@ -132,6 +132,7 @@ void BattleScene::onBtn_ConfirmClicked(Ref* sender)
         this->removeAllChildren();
         resultUIContainer = nullptr;
     }
+	void getRemainingCapacity(); // 获取剩余兵力
     // 停止背景音乐（双重保障，防止跳转时未停止）
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->popScene();
@@ -225,6 +226,8 @@ void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
 // 士兵生成实现（预留，后续完善具体逻辑）
 void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 {
+    if (!_isBattleStart)
+        return;
     if (_selectedType == UnitType::NONE) {
         CCLOG("Spawn Failed: No soldier selected!");
         return;
@@ -271,7 +274,7 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 
 void BattleScene::refreshUI() {
 	for (auto const& [type, btn] : _unitButtons) {//我这里用了C++17的结构化绑定，现代特性
-        int count = ArmyManager::getInstance()->getRemainingCount(type);
+        int count = ArmyManager::getInstance()->getRemainingCount(type)/2;
 
         // 更新数字显示
         if (_unitLabels.count(type)) {
@@ -330,15 +333,18 @@ void BattleScene::closeBattleScene(Ref* sender)
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 先关闭返回确认窗口
     closeReturnWindow(sender);
+	_isBattleStart = false;// 标记战斗未开始
     // 使用popScene返回上一个场景（VillageScene），而非replaceScene
     // 这样会保留VillageScene的实例及其所有状态（包括已放置的建筑）
     // 停止背景音乐（双重保障，防止跳转时未停止）
+    ArmyManager::getInstance()->getRemainingCapacity(); // 获取剩余兵力
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->popScene();
 }
 // 关闭确认窗口按钮点击回调实现
 void BattleScene::closeReturnWindow(Ref* sender)
 {
+    _isBattleStart = true;
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 删除菜单（包含Cancel/Confirm按钮）
     if (_returnMenu)
@@ -357,8 +363,7 @@ void BattleScene::closeReturnWindow(Ref* sender)
 // 结束战斗按钮点击回调实现
 void BattleScene::onReturnButtonClicked(Ref* sender)
 {
-    if (_isBattleStart)
-        return;
+    _isBattleStart = false;
 	// 已经存在弹窗则不重复创建
     if (_returnPanel || _returnMenu)
         return;
@@ -395,6 +400,7 @@ void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
 {
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 转换点击的按钮对象
+    _isBattleStart = true;
     auto clickedBtn = dynamic_cast<MenuItemImage*>(sender);
     if (!clickedBtn) 
         return;
@@ -442,7 +448,7 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
     }
 
     // 数量标签
-    int count = ArmyManager::getInstance()->getRemainingCount(type);
+    int count = ArmyManager::getInstance()->getRemainingCount(type)/2;
     auto countLabel = Label::createWithTTF(std::to_string(count), "fonts/Marker Felt.ttf", 22);
     countLabel->setPosition(Vec2(soldierBtn->getContentSize().width / 2, 20));
     soldierBtn->addChild(countLabel);
@@ -467,8 +473,9 @@ bool BattleScene::init()
     // 加载配置与初始化兵力 
     ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
 
-	// 模拟从村庄带来的兵力,到时候改成从VillageManager获取
-
+	// 拿到从村庄带来的兵力
+    ArmyManager::getInstance()->initializeArmyForBattle();
+    
     //  战斗背景（全屏铺开）
     auto background = Sprite::create("battle_background.jpg");
     if (background) {

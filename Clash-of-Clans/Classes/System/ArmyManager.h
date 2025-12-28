@@ -30,9 +30,10 @@ public:
     int getUsedCapacity() const;
 
     void setUsedCapacity(int capacity);
-
-    void setArmyPool(const std::map<UnitType, int>& newPool);
-
+    //计算剩余兵力
+    void getRemainingCapacity();
+	// 计算进入时有的兵力
+	void initializeArmyForBattle();
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;
