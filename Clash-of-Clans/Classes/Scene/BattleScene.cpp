@@ -141,6 +141,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
 {
     int x = static_cast<int>(gridPos.x);
     int y = static_cast<int>(gridPos.y);
+	// 根据Buildingname选择不同建筑类型
     switch (Buildingname)
     {
         case 0:
@@ -173,17 +174,12 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         }
-        /*
         case 5:
         {
-            auto mc = std::make_unique<MilitaryCamp>(MilitaryCampBuildingData);
-            mc->setGridPosition(gridPos);
             realSprite = Sprite::create("military_camp_lv3.png");
-            realSprite->setUserObject(mc.get());// 绑定建筑指针
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
-        }未实现军营
-        */
+        }
         case 6:
         {
             realSprite = Sprite::create("archer_tower_lv2.png");
@@ -197,7 +193,8 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
             break;
         }
         case 8:
-            // 未实现建筑工人
+            realSprite = Sprite::create("worker_home.png");
+            initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         default:
             break;
@@ -569,12 +566,14 @@ bool BattleScene::init()
     /*0:大本营 1:金矿 2:圣水收集器 3:金库 4:圣水库 5:军营 6:箭塔 7:加农炮 8:建筑工人
     */
     spawnBuilding(Vec2(20, 20), 0);
-    spawnBuilding(Vec2(10, 25), 1);
-    spawnBuilding(Vec2(15, 18), 2);
-    spawnBuilding(Vec2(25, 22), 3);
-    spawnBuilding(Vec2(30, 15), 4);
-    spawnBuilding(Vec2(18, 28), 6);
-    spawnBuilding(Vec2(22, 12), 7);
+    spawnBuilding(Vec2(23, 20), 1);
+    spawnBuilding(Vec2(16, 20), 2);
+    spawnBuilding(Vec2(23, 23), 3);
+    spawnBuilding(Vec2(17, 17), 4);
+	spawnBuilding(Vec2(15, 13), 5);
+    spawnBuilding(Vec2(20, 23), 6);
+    spawnBuilding(Vec2(20, 17), 7);
+	spawnBuilding(Vec2(10, 23), 8);
 
 
     // 开启帧更新（后续战斗逻辑靠这个）
