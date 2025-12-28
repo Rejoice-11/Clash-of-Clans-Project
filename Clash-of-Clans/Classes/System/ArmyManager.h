@@ -31,6 +31,8 @@ public:
 
     void setUsedCapacity(int capacity);
 
+    void setArmyPool(const std::map<UnitType, int>& newPool);
+
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;
