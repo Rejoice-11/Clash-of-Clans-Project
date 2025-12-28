@@ -1253,7 +1253,7 @@ void VillageScene::onElixirCollectClicked(Ref* sender)
 
 void VillageScene::onArmyButtonClicked(Ref* sender) {
     if (_militaryLayer) return;
-
+    SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 创建 Layer（无参！）
     _militaryLayer = MilitaryArrange::create();
     if (_militaryLayer) {

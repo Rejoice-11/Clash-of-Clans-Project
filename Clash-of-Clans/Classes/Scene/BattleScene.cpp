@@ -298,30 +298,10 @@ void BattleScene::refreshUI() {
 // 鼠标事件注册实现
 void BattleScene::registerMouseEvents2()
 {
-    // 鼠标滚轮事件
-    auto mouseScrollListener = EventListenerMouse::create();
-    mouseScrollListener->onMouseScroll = CC_CALLBACK_1(BattleScene::onMouseScroll2, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseScrollListener, this);
-
     // 鼠标按下事件
     auto mouseDownListener = EventListenerMouse::create();
     mouseDownListener->onMouseDown = CC_CALLBACK_1(BattleScene::onMouseDown2, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseDownListener, this);
-
-    // 鼠标移动事件
-    auto mouseMoveListener = EventListenerMouse::create();
-    mouseMoveListener->onMouseMove = CC_CALLBACK_1(BattleScene::onMouseMove2, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseMoveListener, this);
-
-    // 鼠标松开事件
-    auto mouseUpListener = EventListenerMouse::create();
-    mouseUpListener->onMouseUp = CC_CALLBACK_1(BattleScene::onMouseUp2, this);
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseUpListener, this);
-}
-// 鼠标事件回调实现（预留，后续完善具体逻辑）
-void BattleScene::onMouseScroll2(EventMouse* event)
-{
-    // 预留，后续实现鼠标滚轮缩放逻辑
 }
 void BattleScene::onMouseDown2(EventMouse* event)
 {
@@ -332,14 +312,6 @@ void BattleScene::onMouseDown2(EventMouse* event)
 	spawnSoldierAtPosition(worldPos);
 
     // 预留，后续实现鼠标按下逻辑
-}
-void BattleScene::onMouseMove2(EventMouse* event)
-{
-    // 预留，后续实现鼠标移动逻辑
-}
-void BattleScene::onMouseUp2(EventMouse* event)
-{
-    // 预留，后续实现鼠标松开逻辑
 }
 
 // 实现 createScene 静态函数
@@ -488,7 +460,7 @@ bool BattleScene::init()
     if (!Scene::init()) {
         return false;
     }
-
+	initializeGrid(); // 初始化网格信息二维数组
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
