@@ -1234,7 +1234,7 @@ void VillageScene::onGoldCollectClicked(Ref* sender)
         _goldAmountLabel->setString("0");
 
         // 播放音效（可选）
-        //SimpleAudioEngine::getInstance()->playEffect("audio/collect_gold.mp3");
+        SimpleAudioEngine::getInstance()->playEffect("audio/collect_gold.mp3");
     }
 }
 
@@ -1247,7 +1247,7 @@ void VillageScene::onElixirCollectClicked(Ref* sender)
         _elixirAmountLabel->setString("0");
 
         // 播放音效（可选）
-        //SimpleAudioEngine::getInstance()->playEffect("audio/collect_elixir.mp3");
+        SimpleAudioEngine::getInstance()->playEffect("audio/collect_elixir.mp3");
     }
 }
 
