@@ -7,7 +7,8 @@ int countofGoldStoragesInVillage = 0;
 int countofElixirStoragesInVillage = 0;
 
 // 建筑数据定义（与 ResourceBuilding 风格一致）
-BuildingData GoldStorageBuildingData = {
+BuildingData GoldStorageBuildingData =
+{
     4, // id
     BuildingType::GOLD_STORAGE,
     1, // 初始等级
@@ -22,7 +23,8 @@ BuildingData GoldStorageBuildingData = {
     {}
 };
 
-BuildingData ElixirStorageBuildingData = {
+BuildingData ElixirStorageBuildingData =
+{
     5, // id
     BuildingType::ELIXIR_STORAGE,
     1,
@@ -40,27 +42,34 @@ BuildingData ElixirStorageBuildingData = {
 // 构造函数
 StorageBuilding::StorageBuilding(const BuildingData& data, int instanceId, StorageType type)
     : Building(data, instanceId)
-    , _storageType(type) {
+    , _storageType(type) 
+{
     // 初始化时增加全局计数
-    if (instanceId == -1) {
+    if (instanceId == -1)
+    {
         static int nextId = 3001; // 从2001开始（避免和TownHall冲突）
         setId(nextId++);
     }
 
-    if (_storageType == StorageType::GOLD_STORAGE) {
+    if (_storageType == StorageType::GOLD_STORAGE)
+    {
         countofGoldStoragesInVillage++;
     }
-    else {
+
+    else 
+    {
         countofElixirStoragesInVillage++;
     }
 }
 
 // ———————— 重写基类虚函数 ————————
 
-cocos2d::Sprite* StorageBuilding::createSprite() {
+cocos2d::Sprite* StorageBuilding::createSprite()
+{
     std::string frameName = getSpriteFrameName();
     auto sprite = cocos2d::Sprite::create(frameName + ".png");
-    if (!sprite) {
+    if (!sprite) 
+    {
         // 回退到默认图
         std::string fallback = (_storageType == StorageType::GOLD_STORAGE) ? "gold_storage_lv1.png" : "elixir_storage_lv1.png";
         sprite = cocos2d::Sprite::create(fallback);
@@ -68,22 +77,27 @@ cocos2d::Sprite* StorageBuilding::createSprite() {
     return sprite;
 }
 
-void StorageBuilding::upgrade() {
-    if (_currentLevel < MAX_LEVELS) {
+void StorageBuilding::upgrade()
+{
+    if (_currentLevel < MAX_LEVELS)
+    {
         _currentLevel++;
         // 可在此触发UI更新（比如刷新ResourceManager的maxStorage）
     }
 }
 
-std::string StorageBuilding::getSpriteFrameName() const {
+std::string StorageBuilding::getSpriteFrameName() const
+{
     std::string baseName = (_storageType == StorageType::GOLD_STORAGE) ? "gold_storage_lv" : "elixir_storage_lv";
     return baseName + std::to_string(_currentLevel);
 }
 
 // ———————— 存储特有逻辑 ————————
 
-int StorageBuilding::getCapacity() const {
-    if (_currentLevel < 0 || _currentLevel > MAX_LEVELS) {
+int StorageBuilding::getCapacity() const
+{
+    if (_currentLevel < 0 || _currentLevel > MAX_LEVELS) 
+    {
         return 0;
     }
     return _data.capacity[_currentLevel - 1];

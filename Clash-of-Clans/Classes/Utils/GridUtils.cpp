@@ -13,7 +13,8 @@ bool GridUtils::_parametersInitialized = false;
 
 void GridUtils::initGridParameters()
 {
-    if (_parametersInitialized) return;
+    if (_parametersInitialized)
+        return;
 
     // 计算大菱形的宽度和高度
     float diamondWidth = distance(LEFT_VERTEX, RIGHT_VERTEX);
@@ -55,11 +56,13 @@ float GridUtils::pointToLineDistance(const Vec2& point, const Vec2& lineStart, c
         xx = lineStart.x;
         yy = lineStart.y;
     }
+
     else if (param > 1)
     {
         xx = lineEnd.x;
         yy = lineEnd.y;
     }
+
     else
     {
         xx = lineStart.x + param * C;

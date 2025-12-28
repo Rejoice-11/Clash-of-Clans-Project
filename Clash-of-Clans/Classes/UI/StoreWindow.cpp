@@ -6,11 +6,13 @@
 StoreWindow* StoreWindow::create(const std::function<void(BuildingType)>& placeCallback)
 {
     auto window = new (std::nothrow) StoreWindow();
+
     if (window && window->init() && window->initWithPlaceCallback(placeCallback))
     {
         window->autorelease();
         return window;
     }
+
     CC_SAFE_DELETE(window);
     return nullptr;
 }
@@ -42,7 +44,8 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
             _storePanel->getContentSize().height - 40));
 
         // 九个建筑按钮
-        std::vector<BuildingType> types = {
+        std::vector<BuildingType> types =
+        {
             BuildingType::ARCHER_TOWER, BuildingType::CANNON, BuildingType::ELIXIR_COLLECTOR,
             BuildingType::ELIXIR_STORAGE, BuildingType::GOLD_MINE,
             BuildingType::GOLD_STORAGE, BuildingType::MILITARY_CAMP, BuildingType::TOWN_HALL,
@@ -66,16 +69,41 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
             std::string iconName;
             switch (type)
             {
-            case BuildingType::TOWN_HALL: iconName = "town_hall_lv1_sub.png"; break;
-            case BuildingType::GOLD_MINE: iconName = "gold_mine_lv1_sub.png"; break;
-            case BuildingType::ELIXIR_COLLECTOR: iconName = "elixir_collector_lv1_sub.png"; break;
-            case BuildingType::GOLD_STORAGE: iconName = "gold_storage_lv1_sub.png"; break;
-            case BuildingType::ELIXIR_STORAGE: iconName = "elixir_storage_lv1_sub.png"; break;
-            case BuildingType::MILITARY_CAMP: iconName = "military_camp_lv1_sub.png"; break;
-            case BuildingType::ARCHER_TOWER: iconName = "archer_tower_lv1_sub.png"; break;
-            case BuildingType::CANNON: iconName = "canon_lv1_sub.png"; break;
-            case BuildingType::WORKER_HOME: iconName = "worker_home_lv1_sub.png"; break;
+                case BuildingType::TOWN_HALL:
+                    iconName = "town_hall_lv1_sub.png";
+                    break;
 
+                case BuildingType::GOLD_MINE: 
+                    iconName = "gold_mine_lv1_sub.png";
+                    break;
+
+                case BuildingType::ELIXIR_COLLECTOR:
+                    iconName = "elixir_collector_lv1_sub.png"; 
+                    break;
+
+                case BuildingType::GOLD_STORAGE: 
+                    iconName = "gold_storage_lv1_sub.png";
+                    break;
+
+                case BuildingType::ELIXIR_STORAGE:
+                    iconName = "elixir_storage_lv1_sub.png"; 
+                    break;
+
+                case BuildingType::MILITARY_CAMP:
+                    iconName = "military_camp_lv1_sub.png";
+                    break;
+
+                case BuildingType::ARCHER_TOWER:
+                    iconName = "archer_tower_lv1_sub.png";
+                    break;
+
+                case BuildingType::CANNON:
+                    iconName = "canon_lv1_sub.png";
+                    break;
+
+                case BuildingType::WORKER_HOME:
+                    iconName = "worker_home_lv1_sub.png"; 
+                    break;
             }
 
             // 判断可用
@@ -103,7 +131,8 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
             auto buttonNode = Node::create();
             auto icon = Sprite::create(iconName);
             auto bar = Sprite::create(barName);
-            if (icon && bar) {
+            if (icon && bar) 
+            {
                 icon->setPosition(Vec2(bar->getContentSize().width / 2,
                     bar->getContentSize().height / 2 + 20));  // 图标在上
                 bar->setPosition(Vec2(bar->getContentSize().width / 2, bar->getContentSize().height / 2));
@@ -127,24 +156,29 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
                     elixirCost = data.elixirCost[0];
                 }
 
-                else if (type == BuildingType::ELIXIR_COLLECTOR || type == BuildingType::ELIXIR_STORAGE) {
+                else if (type == BuildingType::ELIXIR_COLLECTOR || type == BuildingType::ELIXIR_STORAGE) 
+                {
                     const auto& data = (type == BuildingType::ELIXIR_COLLECTOR) ? ElixirCollectorBuildingData : ElixirStorageBuildingData;
                     goldCost = data.goldCost[0];
                 }
 
-                else if (type == BuildingType::MILITARY_CAMP) {
+                else if (type == BuildingType::MILITARY_CAMP)
+                {
                     goldCost = MilitaryBuildingBuildingData.goldCost[0];
                 }
 
-                else if (type == BuildingType::ARCHER_TOWER) {
+                else if (type == BuildingType::ARCHER_TOWER) 
+                {
                     goldCost = ArcherTowerBuildingData.goldCost[0];
                 }
 
-                else if (type == BuildingType::CANNON) {
+                else if (type == BuildingType::CANNON) 
+                {
                     elixirCost = CanonBuildingData.elixirCost[0];
                 }
 
-                else if (type == BuildingType::WORKER_HOME) {
+                else if (type == BuildingType::WORKER_HOME)
+                {
                     goldCost = WorkerHomeBuildingData.goldCost[0];
                 }
 
@@ -167,10 +201,13 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
                     costLabel->enableOutline(Color4B::BLACK, 2);
 
                     // 设置颜色：如果只花金币 → 金色；只花圣水 → 紫色；两者都有 → 白色+图标区分（这里简化为白色）
-                    if (goldCost > 0 && elixirCost == 0) {
+                    if (goldCost > 0 && elixirCost == 0) 
+                    {
                         costLabel->setTextColor(Color4B(255, 215, 0, 255)); // 金色
                     }
-                    else if (elixirCost > 0 && goldCost == 0) {
+
+                    else if (elixirCost > 0 && goldCost == 0)
+                    {
                         costLabel->setTextColor(Color4B(186, 85, 211, 255)); // 紫色（圣水色）
                     }
 
@@ -199,12 +236,16 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
             float y = startY - row * spacingY;
 
             auto btn = MenuItemSprite::create(buttonNode, buttonNode, buttonNode,
-                [this, type, available](Ref*) {
-                    if (available) {
+                [this, type, available](Ref*) 
+                {
+                    if (available) 
+                    {
                         this->hide();
                         if (_placeCallback) _placeCallback(type);
                     }
-                    else {
+
+                    else 
+                    {
                         // 不可用时晃晃提示（可选）
                         // todo: 播放不可用动画
                     }
@@ -217,6 +258,7 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
         _menu = Menu::create();
 
         _menu->setPosition(Vec2::ZERO);
+
         for (auto item : items)
         {
             _menu->addChild(item);
@@ -255,7 +297,8 @@ void StoreWindow::rebuildMenu()
     items.pushBack(closeBtn);
 
     // 九个建筑按钮
-    std::vector<BuildingType> types = {
+    std::vector<BuildingType> types = 
+    {
         BuildingType::ARCHER_TOWER, BuildingType::CANNON, BuildingType::ELIXIR_COLLECTOR,
         BuildingType::ELIXIR_STORAGE, BuildingType::GOLD_MINE,
         BuildingType::GOLD_STORAGE, BuildingType::MILITARY_CAMP, BuildingType::TOWN_HALL,
@@ -276,16 +319,41 @@ void StoreWindow::rebuildMenu()
         std::string iconName;
         switch (type)
         {
-        case BuildingType::TOWN_HALL: iconName = "town_hall_lv1_sub.png"; break;
-        case BuildingType::GOLD_MINE: iconName = "gold_mine_lv1_sub.png"; break;
-        case BuildingType::ELIXIR_COLLECTOR: iconName = "elixir_collector_lv1_sub.png"; break;
-        case BuildingType::GOLD_STORAGE: iconName = "gold_storage_lv1_sub.png"; break;
-        case BuildingType::ELIXIR_STORAGE: iconName = "elixir_storage_lv1_sub.png"; break;
-        case BuildingType::MILITARY_CAMP: iconName = "military_camp_lv1_sub.png"; break;
-        case BuildingType::ARCHER_TOWER: iconName = "archer_tower_lv1_sub.png"; break;
-        case BuildingType::CANNON: iconName = "canon_lv1_sub.png"; break;
-        case BuildingType::WORKER_HOME: iconName = "worker_home_lv1_sub.png"; break;
+            case BuildingType::TOWN_HALL: 
+                iconName = "town_hall_lv1_sub.png"; 
+                break;
 
+            case BuildingType::GOLD_MINE: 
+                iconName = "gold_mine_lv1_sub.png"; 
+                break;
+
+            case BuildingType::ELIXIR_COLLECTOR: 
+                iconName = "elixir_collector_lv1_sub.png"; 
+                break;
+
+            case BuildingType::GOLD_STORAGE: 
+                iconName = "gold_storage_lv1_sub.png"; 
+                break;
+
+            case BuildingType::ELIXIR_STORAGE: 
+                iconName = "elixir_storage_lv1_sub.png";
+                break;
+
+            case BuildingType::MILITARY_CAMP: 
+                iconName = "military_camp_lv1_sub.png";
+                break;
+
+            case BuildingType::ARCHER_TOWER: 
+                iconName = "archer_tower_lv1_sub.png"; 
+                break;
+
+            case BuildingType::CANNON: 
+                iconName = "canon_lv1_sub.png"; 
+                break;
+
+            case BuildingType::WORKER_HOME:
+                iconName = "worker_home_lv1_sub.png"; 
+                break;
         }
 
         // 判断可用
@@ -313,7 +381,8 @@ void StoreWindow::rebuildMenu()
         auto buttonNode = Node::create();
         auto icon = Sprite::create(iconName);
         auto bar = Sprite::create(barName);
-        if (icon && bar) {
+        if (icon && bar) 
+        {
             icon->setPosition(Vec2(bar->getContentSize().width / 2,
                 bar->getContentSize().height / 2 + 20));  // 图标在上
             bar->setPosition(Vec2(bar->getContentSize().width / 2, bar->getContentSize().height / 2));
@@ -337,24 +406,29 @@ void StoreWindow::rebuildMenu()
                 elixirCost = data.elixirCost[0];
             }
 
-            else if (type == BuildingType::ELIXIR_COLLECTOR || type == BuildingType::ELIXIR_STORAGE) {
+            else if (type == BuildingType::ELIXIR_COLLECTOR || type == BuildingType::ELIXIR_STORAGE)
+            {
                 const auto& data = (type == BuildingType::ELIXIR_COLLECTOR) ? ElixirCollectorBuildingData : ElixirStorageBuildingData;
                 goldCost = data.goldCost[0];
             }
 
-            else if (type == BuildingType::MILITARY_CAMP) {
+            else if (type == BuildingType::MILITARY_CAMP) 
+            {
 				goldCost = MilitaryBuildingBuildingData.goldCost[0];
             }
 
-            else if (type == BuildingType::ARCHER_TOWER) {
+            else if (type == BuildingType::ARCHER_TOWER)
+            {
                 goldCost = ArcherTowerBuildingData.goldCost[0];
             }
 
-            else if (type == BuildingType::CANNON) {
+            else if (type == BuildingType::CANNON)
+            {
                 elixirCost = CanonBuildingData.elixirCost[0];
             }
 
-            else if (type == BuildingType::WORKER_HOME) {
+            else if (type == BuildingType::WORKER_HOME) 
+            {
                 goldCost = WorkerHomeBuildingData.goldCost[0];
             }
 
@@ -377,10 +451,13 @@ void StoreWindow::rebuildMenu()
                 costLabel->enableOutline(Color4B::BLACK, 2);
 
                 // 设置颜色：如果只花金币 → 金色；只花圣水 → 紫色；两者都有 → 白色+图标区分（这里简化为白色）
-                if (goldCost > 0 && elixirCost == 0) {
+                if (goldCost > 0 && elixirCost == 0)
+                {
                     costLabel->setTextColor(Color4B(255, 215, 0, 255)); // 金色
                 }
-                else if (elixirCost > 0 && goldCost == 0) {
+
+                else if (elixirCost > 0 && goldCost == 0) 
+                {
                     costLabel->setTextColor(Color4B(186, 85, 211, 255)); // 紫色（圣水色）
                 }
 
@@ -411,11 +488,14 @@ void StoreWindow::rebuildMenu()
         float y = startY - row * spacingY;
 
         auto btn = MenuItemSprite::create(buttonNode, buttonNode, buttonNode,
-            [this, type, available](Ref*) {
-                if (available) {
+            [this, type, available](Ref*)
+            {
+                if (available) 
+                {
                     this->hide();
                     if (_placeCallback) _placeCallback(type);
                 }
+
                 else 
                 {
                     // 不可用时晃晃提示（可选）
@@ -451,15 +531,32 @@ int StoreWindow::getCurrentCount(BuildingType type)
 {
     auto rm = ResourceManager::getInstance();
 
-    if (type == BuildingType::TOWN_HALL) return rm->getBuildingCount(StoreWindow::BuildingType::TOWN_HALL);
-    if (type == BuildingType::GOLD_MINE) return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_MINE);
-    if (type == BuildingType::ELIXIR_COLLECTOR) return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_COLLECTOR);
-    if (type == BuildingType::GOLD_STORAGE) return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_STORAGE);
-    if (type == BuildingType::ELIXIR_STORAGE) return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_STORAGE);
-    if (type == BuildingType::MILITARY_CAMP) return rm->getBuildingCount(StoreWindow::BuildingType::MILITARY_CAMP);
-    if (type == BuildingType::ARCHER_TOWER) return rm->getBuildingCount(StoreWindow::BuildingType::ARCHER_TOWER);
-    if (type == BuildingType::CANNON) return rm->getBuildingCount(StoreWindow::BuildingType::CANNON);
-    if (type == BuildingType::WORKER_HOME) return rm->getBuildingCount(StoreWindow::BuildingType::WORKER_HOME);
+    if (type == BuildingType::TOWN_HALL)
+        return rm->getBuildingCount(StoreWindow::BuildingType::TOWN_HALL);
+
+    if (type == BuildingType::GOLD_MINE) 
+        return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_MINE);
+
+    if (type == BuildingType::ELIXIR_COLLECTOR)
+        return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_COLLECTOR);
+
+    if (type == BuildingType::GOLD_STORAGE) 
+        return rm->getBuildingCount(StoreWindow::BuildingType::GOLD_STORAGE);
+
+    if (type == BuildingType::ELIXIR_STORAGE) 
+        return rm->getBuildingCount(StoreWindow::BuildingType::ELIXIR_STORAGE);
+
+    if (type == BuildingType::MILITARY_CAMP)
+        return rm->getBuildingCount(StoreWindow::BuildingType::MILITARY_CAMP);
+
+    if (type == BuildingType::ARCHER_TOWER)
+        return rm->getBuildingCount(StoreWindow::BuildingType::ARCHER_TOWER);
+
+    if (type == BuildingType::CANNON) 
+        return rm->getBuildingCount(StoreWindow::BuildingType::CANNON);
+
+    if (type == BuildingType::WORKER_HOME)
+        return rm->getBuildingCount(StoreWindow::BuildingType::WORKER_HOME);
 
 	return 0;  // 默认0
 }
@@ -471,34 +568,42 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel)
     {
         return TownHallBuildingData.maxBuildCount[thLevel - 1];  // 假设等级从1开始
     }
+
     else if (type == BuildingType::GOLD_MINE)
     {
         return GoldMineBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::ELIXIR_COLLECTOR)
     {
         return ElixirCollectorBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::GOLD_STORAGE)
     {
         return GoldStorageBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::ELIXIR_STORAGE)
     {
         return ElixirStorageBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::MILITARY_CAMP)
     {
         return MilitaryBuildingBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::ARCHER_TOWER)
     {
         return ArcherTowerBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::CANNON)
     {
         return CanonBuildingData.maxBuildCount[thLevel - 1];
     }
+
     else if (type == BuildingType::WORKER_HOME)
     {
         return WorkerHomeBuildingData.maxBuildCount[thLevel - 1];

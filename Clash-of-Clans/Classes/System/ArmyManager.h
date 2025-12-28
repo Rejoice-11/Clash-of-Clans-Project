@@ -3,7 +3,8 @@
 #include <map>
 #include "Classes/Data/UnitData.h"
 
-class ArmyManager {
+class ArmyManager 
+{
 public:
     static ArmyManager* getInstance();
 
@@ -17,9 +18,15 @@ public:
     bool tryDeploy(UnitType id);
 
     /** @brief 获取军队池（用于修改） */
-    std::map<UnitType, int>& getArmyPool() { return _armyPool; }
+    std::map<UnitType, int>& getArmyPool()
+    { 
+        return _armyPool;
+    }
 
-    const std::map<UnitType, int>& getArmyPool() const { return _armyPool; } // ← 新增 getter
+    const std::map<UnitType, int>& getArmyPool() const
+    {
+        return _armyPool; 
+    } // ← 新增 getter
 
     void setTotalCapacity(int capacity);
 
@@ -30,8 +37,10 @@ public:
     int getUsedCapacity() const;
 
     void setUsedCapacity(int capacity);
+
     //计算剩余兵力
     void getRemainingCapacity();
+
     // 计算进入时有的兵力
     void initializeArmyForBattle();
 private:

@@ -36,14 +36,16 @@ TownHall::TownHall(const BuildingData& data, int instanceId)
 }
 
 // 创建精灵
-cocos2d::Sprite* TownHall::createSprite() {
+cocos2d::Sprite* TownHall::createSprite()
+{
     auto sprite = cocos2d::Sprite::create("town_hall.png"); // 先用统一图
     sprite->setScale(1.2f);
     return sprite;
 }
 
 // 升级逻辑
-void TownHall::upgrade() {
+void TownHall::upgrade()
+{
     if (_currentLevel < MAX_LEVELS) 
     {
         _currentLevel++;
@@ -52,6 +54,7 @@ void TownHall::upgrade() {
 }
 
 // 获取精灵名（未来支持多级）
-std::string TownHall::getSpriteFrameName() const {
+std::string TownHall::getSpriteFrameName() const 
+{
     return "town_hall_lv" + std::to_string(_currentLevel);
 }

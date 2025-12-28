@@ -10,16 +10,20 @@
 BuildingPanel* BuildingPanel::create(Building* building, const std::function<void()>& onClose) 
 {
     auto panel = new (std::nothrow) BuildingPanel();
-    if (panel && panel->init(building, onClose)) {
+    if (panel && panel->init(building, onClose)) 
+    {
         panel->autorelease();
         return panel;
     }
     CC_SAFE_DELETE(panel);
+
     return nullptr;
 }
 
-bool BuildingPanel::init(Building* building, const std::function<void()>& onClose) {
-    if (!Layer::init()) return false;
+bool BuildingPanel::init(Building* building, const std::function<void()>& onClose) 
+{
+    if (!Layer::init()) 
+        return false;
 
     _building = building;
     _onCloseCallback = onClose;
@@ -34,75 +38,86 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
 
     // 建筑图片（左）
     std::string spriteName = "";
+
     switch (_building->getBuildingType()) 
     {
         case BuildingType::TOWN_HALL:
             spriteName = "town_hall_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(TownHallBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::GOLD_MINE:
             spriteName = "gold_mine_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png"; 
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(GoldMineBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::ELIXIR_COLLECTOR:
             spriteName = "elixir_collector_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png"; 
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(ElixirCollectorBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::GOLD_STORAGE:
             spriteName = "gold_storage_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(GoldStorageBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::ELIXIR_STORAGE:
             spriteName = "elixir_storage_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(ElixirStorageBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::ARCHER_TOWER:
             spriteName = "archer_tower_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(ArcherTowerBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::CANNON:
             spriteName = "canon_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(CanonBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
             break;
 
         case BuildingType::MILITARY_CAMP:
             spriteName = "military_camp_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(MilitaryBuildingBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
 			break;
 
         case BuildingType::WORKER_HOME:
             spriteName = "worker_home_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
             _upgradeTimeLabel = Label::createWithSystemFont(
                 std::to_string(WorkerHomeBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
-            );
+                );
+
 			break;
 
         default: spriteName = "worker_home_lv0.png";
     }
 
     _buildingImage = Sprite::create(spriteName);
+
     if (_buildingImage) 
     {
         _buildingImage->setPosition(Vec2(180, bg->getContentSize().height / 2 - 30));
@@ -111,6 +126,7 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
 
     // 建筑类型+等级（上）
     std::string typeName = "";
+
     switch (_building->getBuildingType()) 
     {
         case BuildingType::TOWN_HALL: typeName = u8"大本营"; 
@@ -146,7 +162,8 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     _levelLabel = Label::createWithSystemFont(
         typeName + u8" 等级: " + std::to_string(_building->getCurrentLevel()),
         "arial", 24
-    );
+        );
+
 	_levelLabel->setTextColor(Color4B::WHITE);
     _levelLabel->setPosition(Vec2(bg->getContentSize().width / 2, bg->getContentSize().height - 50));
     bg->addChild(_levelLabel);
@@ -356,13 +373,16 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
     // 获取升级成本
     int cost = 0;
     bool isGold = true;
+
     if (dynamic_cast<TownHall*>(_building)) 
     {
         cost = TownHallBuildingData.goldCost[_building->getCurrentLevel() - 1];
     }
+
     else if (dynamic_cast<ResourceBuilding*>(_building)) 
     {
         auto rb = static_cast<ResourceBuilding*>(_building);
+
         if (rb->getResourceType() == ResourceBuilding::ResourceType::GOLD) 
         {
             cost = GoldMineBuildingData.elixirCost[_building->getCurrentLevel() - 1];
@@ -374,19 +394,23 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
             cost = ElixirCollectorBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
+
     else if (dynamic_cast<StorageBuilding*>(_building))
     {
         auto sb = static_cast<StorageBuilding*>(_building);
+
         if (sb->getStorageType() == StorageBuilding::StorageType::GOLD_STORAGE)
         {
             cost = GoldStorageBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
         }
+
         else
         {
             cost = ElixirStorageBuildingData.goldCost[_building->getCurrentLevel() - 1];
         }
     }
+
     else if (dynamic_cast<DefenseBuilding*>(_building)) 
     {
         auto db = static_cast<DefenseBuilding*>(_building);
@@ -395,6 +419,7 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
             cost = CanonBuildingData.elixirCost[_building->getCurrentLevel() - 1];
             isGold = false;
         }
+
         else
         {
             cost = ArcherTowerBuildingData.goldCost[_building->getCurrentLevel() - 1];
@@ -430,6 +455,7 @@ void BuildingPanel::refreshPanel()
 {
     // 更新等级显示
     std::string typeName = "";
+
     switch (_building->getBuildingType())
     {
         case BuildingType::TOWN_HALL: typeName = u8"大本营";

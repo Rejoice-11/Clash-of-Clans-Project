@@ -29,30 +29,37 @@ WorkerHome::WorkerHome(const BuildingData& data, int instanceId)
     }
 }
 
-void WorkerHome::upgrade() {
-    if (_currentLevel < MAX_LEVELS) {
+void WorkerHome::upgrade() 
+{
+    if (_currentLevel < MAX_LEVELS) 
+    {
         _currentLevel++;
         // TODO: 触发 UI 更新（如 VillageScene 刷新建造队列）
     }
 }
 
-int WorkerHome::getWorkerCount() const {
-    if (_currentLevel <= 0 || _currentLevel > MAX_LEVELS) {
+int WorkerHome::getWorkerCount() const 
+{
+    if (_currentLevel <= 0 || _currentLevel > MAX_LEVELS)
+    {
         return 0;
     }
     // 注意：workerCapacity 存储在 BuildingData 的 capacity 字段
     return WorkerHomeBuildingData.capacity[_currentLevel - 1];
 }
 
-cocos2d::Sprite* WorkerHome::createSprite() {
+cocos2d::Sprite* WorkerHome::createSprite() 
+{
     std::string frameName = getSpriteFrameName();
     auto sprite = cocos2d::Sprite::create(frameName + ".png");
-    if (!sprite) {
+    if (!sprite)
+    {
         sprite = cocos2d::Sprite::create("worker_home_lv1.png"); // 默认 fallback
     }
     return sprite;
 }
 
-std::string WorkerHome::getSpriteFrameName() const {
+std::string WorkerHome::getSpriteFrameName() const 
+{
     return "worker_home_lv" + std::to_string(_currentLevel);
 }

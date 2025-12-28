@@ -15,7 +15,10 @@ public:
 
 
     // 类型标识
-    UnitClass getUnitClass() const override { return UnitClass::WALL_BREAKER; }
+    UnitClass getUnitClass() const override
+    { 
+        return UnitClass::WALL_BREAKER; 
+    }
 
     void WallBreaker::executeAttack(int x, int y) override;
 

@@ -7,7 +7,8 @@ Scene* VillageScene::createScene()
 {
     auto scene = Scene::create();
     auto layer = VillageScene::create();
-    if (layer) {
+    if (layer)
+    {
         scene->addChild(layer);
     }
     return scene;
@@ -16,7 +17,8 @@ Scene* VillageScene::createScene()
 // 初始化函数实现
 bool VillageScene::init()
 {
-    if (!Scene::init()) {
+    if (!Scene::init()) 
+    {
         return false;
     }
    
@@ -26,15 +28,19 @@ bool VillageScene::init()
     addSettingButton();
     //创建设置层（但不显示）
     _settingLayer = SettingLayer::create();
-    if (_settingLayer) {
+    if (_settingLayer) 
+    {
         // 设置回调
-        _settingLayer->setExitCallback([this]() {
+        _settingLayer->setExitCallback([this]()
+        {
             this->exitGame();
-            });
-        _settingLayer->setCloseCallback([this]() {
+        });
+
+        _settingLayer->setCloseCallback([this]() 
+        {
             // 设置层关闭后的操作
             CCLOG("Setting layer closed");
-            });
+        });
 
         // 加载音频设置并播放背景音乐
         _settingLayer->loadAudioSettings();
@@ -53,6 +59,7 @@ bool VillageScene::init()
     auto attackBtn = MenuItemImage::create(
         "attack_button.png", "attack_button.png",
         CC_CALLBACK_1(VillageScene::onAttackButtonClicked, this));
+
     attackBtn->setPosition(Vec2(100 + origin.x, 100 + origin.y));
 
     auto armyBtn = MenuItemImage::create(
@@ -67,6 +74,7 @@ bool VillageScene::init()
     auto marketBtn = MenuItemImage::create(
         "market_button.png", "market_button.png",
         CC_CALLBACK_1(VillageScene::onMarketButtonClicked, this));
+
     marketBtn->setPosition(Vec2(_visibleSize.width - 100 + origin.x, 100 + origin.y));
 
     auto menu = Menu::create(armyBtn, attackBtn, marketBtn, nullptr);
@@ -79,10 +87,10 @@ bool VillageScene::init()
 
     _goldCollectBtn = MenuItemSprite::create(
         goldIcon, goldIcon, CC_CALLBACK_1(VillageScene::onGoldCollectClicked, this)
-    );
+        );
     _elixirCollectBtn = MenuItemSprite::create(
         elixirIcon, elixirIcon, CC_CALLBACK_1(VillageScene::onElixirCollectClicked, this)
-    );
+        );
 
     // 按钮位置：左侧中部（假设 visibleSize.width=1280）
     float btnX = 80; // 左侧
@@ -92,7 +100,9 @@ bool VillageScene::init()
 
     // === 金币数量 + 底图 ===
     auto goldBarBg = Sprite::create("gold_bar_bg.png"); // ← 你的金币底图
-    if (!goldBarBg) {
+
+    if (!goldBarBg)
+    {
         goldBarBg = Sprite::create(); // 安全兜底（防止图片缺失）
         goldBarBg->setContentSize(Size(120, 40));
         goldBarBg->setColor(Color3B(50, 50, 0)); // 深金色备用
@@ -108,11 +118,13 @@ bool VillageScene::init()
 
     // === 圣水数量 + 底图 ===
     auto elixirBarBg = Sprite::create("elixir_bar_bg.png"); // ← 你的圣水底图
-    if (!elixirBarBg) {
+    if (!elixirBarBg) 
+    {
         elixirBarBg = Sprite::create();
         elixirBarBg->setContentSize(Size(120, 40));
         elixirBarBg->setColor(Color3B(60, 0, 60)); // 深紫色备用
     }
+
     elixirBarBg->setPosition(Vec2(btnX, btnY - 110));
     this->addChild(elixirBarBg, 10);
 
@@ -155,7 +167,8 @@ void VillageScene::onExit()
 {
     Scene::onExit();
     // 保存音频设置
-    if (_settingLayer) {
+    if (_settingLayer) 
+    {
         _settingLayer->saveAudioSettings();
     }
 }
@@ -171,12 +184,14 @@ void VillageScene::addSettingButton()
         CC_CALLBACK_1(VillageScene::onSettingButtonClicked, this));
     _settingButton->setScale(0.2f);
     // 如果图片不存在，创建文本按钮
-    if (!_settingButton) {
+    if (!_settingButton) 
+    {
         // 创建齿轮图标作为设置按钮
         auto drawNode = DrawNode::create();
         // 画齿轮形状
         drawNode->drawCircle(Vec2(0, 0), 20, 0, 20, false, 1, 1, Color4F::WHITE);
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) 
+        {
             float angle = i * (M_PI / 4);
             Vec2 start(20 * cos(angle), 20 * sin(angle));
             Vec2 end(30 * cos(angle), 30 * sin(angle));
@@ -197,7 +212,8 @@ void VillageScene::addSettingButton()
 // 设置按钮点击回调
 void VillageScene::onSettingButtonClicked(Ref* sender)
 {
-    if (_settingLayer) {
+    if (_settingLayer) 
+    {
         // 播放按钮点击音效
         _settingLayer->playButtonClickSound();
         // 显示设置层
@@ -211,9 +227,11 @@ void VillageScene::exitGame()
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
 
     // 延迟退出，确保音效播放
-    this->runAction(Sequence::create(
+    this->runAction(Sequence::create
+    (
         DelayTime::create(0.3f),
-        CallFunc::create([=]() {
+        CallFunc::create([=]() 
+        {
             // 停止所有音频
             SimpleAudioEngine::getInstance()->stopAllEffects();
             SimpleAudioEngine::getInstance()->stopBackgroundMusic();
@@ -224,7 +242,7 @@ void VillageScene::exitGame()
             #else
             Director::getInstance()->end();
             #endif
-            }),
+        }),
         nullptr
     ));
 }
@@ -239,7 +257,8 @@ void VillageScene::initScrollNode()
 
     // 加载背景精灵
     _backgroundSprite = Sprite::create("2village_background.jpg");
-    if (_backgroundSprite) {
+    if (_backgroundSprite) 
+    {
         _backgroundSize = _backgroundSprite->getContentSize();
         _backgroundSprite->setPosition(Vec2::ZERO); // 相对于scrollNode居中
         _scrollNode->addChild(_backgroundSprite);
@@ -327,7 +346,8 @@ void VillageScene::onMouseDown(EventMouse* event)
         return;
     }
 
-    if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) return;
+    if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) 
+        return;
 
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);
@@ -347,13 +367,15 @@ void VillageScene::onMouseMove(EventMouse* event)
 {
     Vec2 mousePos = Vec2(event->getCursorX(), event->getCursorY());
     Vec2 worldPos = this->convertToNodeSpace(mousePos);  // 屏幕→世界坐标
+
     if (_isPlacementMode )
     {
         updateGhostPosition(worldPos);
         return; 
     }
 
-    if (!_isDragging || !_backgroundSprite) return;
+    if (!_isDragging || !_backgroundSprite)
+        return;
 
     Vec2 currentTouchPos = this->convertToNodeSpace(mousePos);
     Vec2 delta = currentTouchPos - _lastTouchPos;
@@ -365,14 +387,17 @@ void VillageScene::onMouseMove(EventMouse* event)
 // 鼠标松开实现
 void VillageScene::onMouseUp(EventMouse* event)
 {
-    if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) return;
+    if (event->getMouseButton() != EventMouse::MouseButton::BUTTON_LEFT) 
+        return;
+
     _isDragging = false;
 }
 
 // 限制scrollNode的位置（无黑边）实现
 void VillageScene::clampScrollNodePosition()
 {
-    if (!_backgroundSprite) return;
+    if (!_backgroundSprite)
+        return;
 
     float currentScale = _scrollNode->getScale();
     // 计算scrollNode的有效移动范围
@@ -399,16 +424,21 @@ void VillageScene::clampScrollNodeScale(float targetScale)
 // 攻击按钮点击回调实现
 void VillageScene::onAttackButtonClicked(Ref* sender)
 {
-    if (_militaryLayer || _attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
-    if (_settingLayer) {
+    if (_militaryLayer || _attackPanel || (_storeWindow && _storeWindow->isVisible()))
+        return;
+
+    if (_settingLayer)
+    {
         _settingLayer->playButtonClickSound(); // 添加音效
     }
+
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     _grayMask->setVisible(true);
 
     auto panel = Sprite::create("attack_out_when_point_the_attack_button_in_village_scene.png");
-    if (panel) {
+    if (panel) 
+    {
         panel->setAnchorPoint(Vec2(0, 0.5f));
         panel->setPosition(Vec2(origin.x, _visibleSize.height / 2 + origin.y));
         this->addChild(panel, 30);
@@ -417,7 +447,8 @@ void VillageScene::onAttackButtonClicked(Ref* sender)
         auto fightBtn = MenuItemImage::create(
             "attack_button_to_reverse_to_battle_scene.png",
             "attack_button_to_reverse_to_battle_scene.png",
-            [this](Ref*) {
+            [this](Ref*) 
+            {
                 this->closeAttackPanel(nullptr);
                 GameDirector::getInstance()->pushScene(BattleScene::createScene());
             });
@@ -441,7 +472,8 @@ void VillageScene::onAttackButtonClicked(Ref* sender)
 // 关闭攻击面板回调实现
 void VillageScene::closeAttackPanel(Ref*)
 {
-    if (_attackPanel) {
+    if (_attackPanel) 
+    {
         _attackPanel->removeFromParent();
         _attackPanel = nullptr;
     }
@@ -450,16 +482,22 @@ void VillageScene::closeAttackPanel(Ref*)
 
 void VillageScene::onMarketButtonClicked(Ref* sender)
 {
-    if (_militaryLayer || _attackPanel || _isPlacementMode) return;  // 放置,攻击中不能开商店
-    if (_settingLayer) {
+    if (_militaryLayer || _attackPanel || _isPlacementMode) 
+        return;  // 放置,攻击中不能开商店
+
+    if (_settingLayer) 
+    {
         _settingLayer->playButtonClickSound(); // 添加音效
     }
+
     if (!_storeWindow)
     {
         // 关键！回调带建筑类型
-        _storeWindow = StoreWindow::create([this](StoreWindow::BuildingType type) {
+        _storeWindow = StoreWindow::create([this](StoreWindow::BuildingType type) 
+        {
             this->enterPlacementMode(type);
-            });
+        });
+
         this->addChild(_storeWindow, 30);
     }
     _storeWindow->show();
@@ -795,8 +833,6 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             }
         }
 
-
-
         auto counts = getCurrentBuildingCounts();
         auto rm = ResourceManager::getInstance();
         bool canAfford = isGold ? rm->spendGold(cost) : rm->spendElixir(cost);
@@ -852,6 +888,7 @@ Building* VillageScene::findBuildingBySprite(Sprite* sprite)
 StoreWindow::BuildingType VillageScene::getBuildingTypeFromSprite(Sprite* sprite) 
 {
     auto building = findBuildingBySprite(sprite);
+
     if (!building) 
         return StoreWindow::BuildingType::MAX_TYPES;
 
@@ -859,32 +896,42 @@ StoreWindow::BuildingType VillageScene::getBuildingTypeFromSprite(Sprite* sprite
 
     switch (static_cast<BuildingType>(typeID))
     {
-    case BuildingType::TOWN_HALL:
-        return StoreWindow::BuildingType::TOWN_HALL;
-    case BuildingType::GOLD_MINE:
-        return StoreWindow::BuildingType::GOLD_MINE;
-    case BuildingType::ELIXIR_COLLECTOR:
-        return StoreWindow::BuildingType::ELIXIR_COLLECTOR;
-    case BuildingType::GOLD_STORAGE:
-        return StoreWindow::BuildingType::GOLD_STORAGE;
-    case BuildingType::ELIXIR_STORAGE:
-        return StoreWindow::BuildingType::ELIXIR_STORAGE;
-    case BuildingType::MILITARY_CAMP:
-        return StoreWindow::BuildingType::MILITARY_CAMP;
-    case BuildingType::ARCHER_TOWER:
-        return StoreWindow::BuildingType::ARCHER_TOWER;
-    case BuildingType::CANNON:
-        return StoreWindow::BuildingType::CANNON;
-    case BuildingType::WORKER_HOME:
-        return StoreWindow::BuildingType::WORKER_HOME;
-    default:
-        return StoreWindow::BuildingType::MAX_TYPES;
+        case BuildingType::TOWN_HALL:
+            return StoreWindow::BuildingType::TOWN_HALL;
+
+        case BuildingType::GOLD_MINE:
+            return StoreWindow::BuildingType::GOLD_MINE;
+
+        case BuildingType::ELIXIR_COLLECTOR:
+            return StoreWindow::BuildingType::ELIXIR_COLLECTOR;
+
+        case BuildingType::GOLD_STORAGE:
+            return StoreWindow::BuildingType::GOLD_STORAGE;
+
+        case BuildingType::ELIXIR_STORAGE:
+            return StoreWindow::BuildingType::ELIXIR_STORAGE;
+
+        case BuildingType::MILITARY_CAMP:
+            return StoreWindow::BuildingType::MILITARY_CAMP;
+
+        case BuildingType::ARCHER_TOWER:
+            return StoreWindow::BuildingType::ARCHER_TOWER;
+
+        case BuildingType::CANNON:
+            return StoreWindow::BuildingType::CANNON;
+
+        case BuildingType::WORKER_HOME:
+            return StoreWindow::BuildingType::WORKER_HOME;
+
+        default:
+            return StoreWindow::BuildingType::MAX_TYPES;
     }
 }
 
 void VillageScene::showBuildingActionPanel() 
 {
-    if (_buildingActionPanel) {
+    if (_buildingActionPanel)
+    {
         _buildingActionPanel->removeFromParent();
     }
 
@@ -899,17 +946,19 @@ void VillageScene::showBuildingActionPanel()
         "information_and_upgrade_of_this_building.png",
         "information_and_upgrade_of_this_building.png",
         CC_CALLBACK_1(VillageScene::onInfoButtonClicked, this)
-    );
+        );
+
     auto moveBtn = MenuItemImage::create(
         "move_this_building.png",
         "move_this_building.png",
         CC_CALLBACK_1(VillageScene::onMoveButtonClicked, this)
-    );
+        );
+
     auto closeBtn = MenuItemImage::create(
         "out_of_now.png",
         "out_of_now.png",
         [this](Ref*) { hideBuildingActionPanel(); }
-    );
+        );
 
     infoBtn->setPosition(Vec2(-100, 0));
     moveBtn->setPosition(Vec2(0, 0));
@@ -956,7 +1005,9 @@ void VillageScene::onMoveButtonClicked(Ref* sender)
         hideBuildingActionPanel();
         return;
     }
-    if (_settingLayer) {
+
+    if (_settingLayer)
+    {
         _settingLayer->playButtonClickSound(); // 添加音效
     }
     // 记录要移动的建筑和精灵
@@ -1030,7 +1081,6 @@ std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
         case StoreWindow::BuildingType::ARCHER_TOWER: return "archer_tower_lv1.png";
         case StoreWindow::BuildingType::CANNON: return "canon_lv1.png";
         case StoreWindow::BuildingType::WORKER_HOME: return "worker_home_lv1.png";
-
     }
 }
 
@@ -1064,7 +1114,7 @@ void VillageScene::onInfoButtonClicked(Ref* sender)
     auto panel = BuildingPanel::create(
         static_cast<Building*>(_selectedBuilding),
         [this]() { this->onBuildingPanelClosed(); }
-    );
+        );
 
     hideBuildingActionPanelForInfoPanel();
     this->addChild(panel, 100);
@@ -1078,7 +1128,8 @@ void VillageScene::onBuildingPanelClosed()
     // 1. 获取新等级的精灵名
     std::string baseName = getGhostSpriteName(_selectedBuildingType);
     size_t pos = baseName.find("_lv");
-    if (pos == std::string::npos) return; // 安全检查
+    if (pos == std::string::npos) 
+        return; // 安全检查
 
     std::string newSpriteName = baseName.substr(0, pos) +
         "_lv" + std::to_string(_selectedBuilding->getCurrentLevel()) + ".png";
@@ -1087,7 +1138,6 @@ void VillageScene::onBuildingPanelClosed()
     {
         ResourceManager::getInstance()->setTownHallLevel(
             _selectedBuilding->getCurrentLevel());
-
     }
 
     else if (_selectedBuilding && 
@@ -1105,7 +1155,8 @@ void VillageScene::onBuildingPanelClosed()
 
     // 2. 加载新纹理
     auto texture = Director::getInstance()->getTextureCache()->addImage(newSpriteName);
-    if (!texture) {
+    if (!texture) 
+    {
         CCLOG("Failed to load texture: %s", newSpriteName.c_str());
         return;
     }
@@ -1257,15 +1308,18 @@ void VillageScene::onArmyButtonClicked(Ref* sender) {
 		return;
 
     if (_militaryLayer) return;
-    if (_settingLayer) {
+    if (_settingLayer) 
+    {
         _settingLayer->playButtonClickSound(); // 添加音效
 	}
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 创建 Layer（无参！）
     _militaryLayer = MilitaryArrange::create();
-    if (_militaryLayer) {
+    if (_militaryLayer) 
+    {
         // 设置关闭回调（仿 StoreWindow 的 setPlaceCallback）
-        _militaryLayer->setCloseCallback([this]() {
+        _militaryLayer->setCloseCallback([this]()
+        {
             _militaryLayer = nullptr; // 清理指针
         });
         this->addChild(_militaryLayer, 100);

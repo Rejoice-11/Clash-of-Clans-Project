@@ -1,19 +1,24 @@
 #include "HUDLayer.h"
 #include "Classes/System/ResourceManager.h"
 
-HUDLayer* HUDLayer::create() {
+HUDLayer* HUDLayer::create()
+{
     auto layer = new (std::nothrow) HUDLayer();
-    if (layer && layer->init()) {
+
+    if (layer && layer->init()) 
+    {
         layer->autorelease();
         return layer;
     }
+
     CC_SAFE_DELETE(layer);
     return nullptr;
 }
 
 bool HUDLayer::init()
 {
-    if (!Layer::init()) return false;
+    if (!Layer::init())
+        return false;
 
     auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
     auto origin = cocos2d::Director::getInstance()->getVisibleOrigin();
@@ -22,11 +27,14 @@ bool HUDLayer::init()
     {
         // 图标（逻辑不变）
         _goldIcon = cocos2d::Sprite::create("coin.png");
-        if (!_goldIcon) {
+
+        if (!_goldIcon) 
+        {
             _goldIcon = cocos2d::Sprite::create();
             _goldIcon->setContentSize(cocos2d::Size(ICON_SIZE, ICON_SIZE));
             _goldIcon->setColor(cocos2d::Color3B(255, 215, 0));
         }
+
         float iconScale = ICON_SIZE / std::max(_goldIcon->getContentSize().width, 1.0f);
         _goldIcon->setScale(iconScale);
 
@@ -37,11 +45,13 @@ bool HUDLayer::init()
 
         // 背景条（逻辑不变）
         _goldBackgroundBar = cocos2d::Sprite::create("coin_bar_background.png");
-        if (!_goldBackgroundBar) {
+        if (!_goldBackgroundBar) 
+        {
             _goldBackgroundBar = cocos2d::Sprite::create();
             _goldBackgroundBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _goldBackgroundBar->setColor(cocos2d::Color3B(60, 60, 60));
         }
+
         float barScaleX = BAR_WIDTH / std::max(_goldBackgroundBar->getContentSize().width, 1.0f);
         float barScaleY = BAR_HEIGHT / std::max(_goldBackgroundBar->getContentSize().height, 1.0f);
         _goldBackgroundBar->setScaleX(barScaleX);
@@ -49,11 +59,13 @@ bool HUDLayer::init()
 
         // 填充条（逻辑不变）
         _goldFillBar = cocos2d::Sprite::create("coin_bar_full.png");
-        if (!_goldFillBar) {
+        if (!_goldFillBar) 
+        {
             _goldFillBar = cocos2d::Sprite::create();
             _goldFillBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _goldFillBar->setColor(cocos2d::Color3B(255, 215, 0));
         }
+
         _goldFillBar->setScaleX(barScaleX);
         _goldFillBar->setScaleY(barScaleY);
         _goldFillBar->setAnchorPoint(cocos2d::Vec2(1, 0.5f));
@@ -68,7 +80,7 @@ bool HUDLayer::init()
         _goldFillBar->setPosition(
             _goldBackgroundBar->getPositionX() + (_goldBackgroundBar->getContentSize().width * barScaleX) / 2,
             _goldBackgroundBar->getPositionY()
-        );
+            );
 
         this->addChild(_goldIcon, 2);
         this->addChild(_goldLabel, 3);
@@ -80,11 +92,13 @@ bool HUDLayer::init()
     {
         // 图标（逻辑不变）
         _elixirIcon = cocos2d::Sprite::create("elixir.png");
-        if (!_elixirIcon) {
+        if (!_elixirIcon)
+        {
             _elixirIcon = cocos2d::Sprite::create();
             _elixirIcon->setContentSize(cocos2d::Size(ICON_SIZE, ICON_SIZE));
             _elixirIcon->setColor(cocos2d::Color3B(186, 85, 211));
         }
+
         float iconScale = ICON_SIZE / std::max(_elixirIcon->getContentSize().width, 1.0f);
         _elixirIcon->setScale(iconScale);
 
@@ -95,11 +109,14 @@ bool HUDLayer::init()
 
         // 背景条（逻辑不变）
         _elixirBackgroundBar = cocos2d::Sprite::create("elixir_bar_background.PNG");
-        if (!_elixirBackgroundBar) {
+
+        if (!_elixirBackgroundBar)
+        {
             _elixirBackgroundBar = cocos2d::Sprite::create();
             _elixirBackgroundBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _elixirBackgroundBar->setColor(cocos2d::Color3B(60, 60, 60));
         }
+
         float barScaleX = BAR_WIDTH / std::max(_elixirBackgroundBar->getContentSize().width, 1.0f);
         float barScaleY = BAR_HEIGHT / std::max(_elixirBackgroundBar->getContentSize().height, 1.0f);
         _elixirBackgroundBar->setScaleX(barScaleX);
@@ -107,11 +124,14 @@ bool HUDLayer::init()
 
         // 填充条（逻辑不变）
         _elixirFillBar = cocos2d::Sprite::create("elixir_bar_full.png");
-        if (!_elixirFillBar) {
+
+        if (!_elixirFillBar)
+        {
             _elixirFillBar = cocos2d::Sprite::create();
             _elixirFillBar->setContentSize(cocos2d::Size(BAR_WIDTH, BAR_HEIGHT));
             _elixirFillBar->setColor(cocos2d::Color3B(186, 85, 211));
         }
+
         _elixirFillBar->setScaleX(barScaleX);
         _elixirFillBar->setScaleY(barScaleY);
         _elixirFillBar->setAnchorPoint(cocos2d::Vec2(1, 0.5f));
@@ -127,7 +147,7 @@ bool HUDLayer::init()
         _elixirFillBar->setPosition(
             _elixirBackgroundBar->getPositionX() + (_elixirBackgroundBar->getContentSize().width * barScaleX) / 2,
             _elixirBackgroundBar->getPositionY()
-        );
+            );
 
         this->addChild(_elixirIcon, 2);
         this->addChild(_elixirLabel, 3);
@@ -139,21 +159,24 @@ bool HUDLayer::init()
     this->setPosition(cocos2d::Vec2(
         origin.x + visibleSize.width - (ICON_SIZE + BAR_WIDTH + 30),
         origin.y + visibleSize.height - (ICON_SIZE + 40) - 50
-    ));
+        ));
 
     // 绑定回调（逻辑不变）
     auto rm = ResourceManager::getInstance();
-    rm->setOnResourceChange([this]() {
-        cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([this]() {
-            this->updateDisplay();
-            });
+    rm->setOnResourceChange([this]() 
+    {
+        cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([this]() 
+        {
+        this->updateDisplay();
         });
+    });
 
     updateDisplay(); // 初始刷新
     return true;
 }
 
-void HUDLayer::updateDisplay() {
+void HUDLayer::updateDisplay() 
+{
     auto rm = ResourceManager::getInstance();
 
     // 更新金币（逻辑不变）

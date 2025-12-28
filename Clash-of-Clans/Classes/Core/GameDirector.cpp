@@ -6,7 +6,8 @@ GameDirector* GameDirector::instance = nullptr;
 
 GameDirector* GameDirector::getInstance()
 {
-    if (!instance) {
+    if (!instance) 
+    {
         instance = new (std::nothrow) GameDirector();
     }
     return instance;
@@ -22,10 +23,14 @@ void GameDirector::init()
 void GameDirector::runWithScene(Scene* scene)
 {
     auto director = Director::getInstance();
-    if (director->getRunningScene()) {
+
+    if (director->getRunningScene()) 
+    {
         director->replaceScene(TransitionFade::create(0.5f, scene));
     }
-    else {
+
+    else 
+    {
         director->runWithScene(TransitionFade::create(0.5f, scene));
     }
 }

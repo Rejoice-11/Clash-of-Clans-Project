@@ -7,19 +7,25 @@
 
 gridinfo grid[41][41]; // 定义网格信息二维数组
 // 初始化网格信息二维数组
-void initializeGrid() {
-    for (int i = 0; i < 41; i++) {
-        for (int j = 0; j < 41; j++) {
+void initializeGrid() 
+{
+    for (int i = 0; i < 41; i++) 
+    {
+        for (int j = 0; j < 41; j++) 
+        {
             grid[i][j].init(); // 使用默认参数
         }
     }
 }
 // 清空建筑精灵map的完整方法
-void BattleScene::clearBuildingSprites() {
+void BattleScene::clearBuildingSprites()
+{
     // 1. 遍历map，释放每个Sprite对象（核心步骤）
-    for (auto& pair : _buildingSprites) {
+    for (auto& pair : _buildingSprites)
+    {
         cocos2d::Sprite* sprite = pair.second;
-        if (sprite) { // 判空，避免空指针操作
+        if (sprite) 
+        { // 判空，避免空指针操作
             // 从父节点移除并清理内存（推荐方式）
             // true 表示同时清理精灵的所有动作和回调
             sprite->removeFromParentAndCleanup(true);
@@ -52,13 +58,16 @@ void BattleScene::battleOver()
 {
     CCLOG("Battle Over Triggered");
     // 如果已经显示了，或者正在显示中，就不要再 addChild 了
-    if (!_isBattleOver ) {
+    if (!_isBattleOver ) 
+    {
         return;
     }
+
     if (_isover)
     {
         return;
     }
+
 	int countdestroyed = 0;
 	//遍历gridinfo二维数组，检查建筑状态,判断胜负
     for (int i = 1; i <= 40; i++)
@@ -92,22 +101,27 @@ void BattleScene::battleOver()
     {
         _isover = true;
         SimpleAudioEngine::getInstance()->playEffect("audio/Victory.mp3");// 播放胜利音效
+
         auto victory = Sprite::create("victory.png");
         victory->setScale(0.8);
         victory->setPosition(640, 550);
         this->addChild(victory, 201);
+
 		auto goldpic = Sprite::create("coin.png");
         goldpic->setScale(0.2);
         goldpic->setPosition(700, 420);
         this->addChild(goldpic, 201);
+
 		auto goldlabel = Label::createWithTTF("+1000", "fonts/Marker Felt.ttf", 30);
 		goldlabel->setColor(Color3B::BLACK);
 		goldlabel->setPosition(600, 420);
         this->addChild(goldlabel, 201);
+
 		auto elixirpic = Sprite::create("elixir.png");
 		elixirpic->setScale(0.2);
 		elixirpic->setPosition(700, 370);
         this->addChild(elixirpic, 201);
+
 		auto elixirlabel = Label::createWithTTF("+1000", "fonts/Marker Felt.ttf", 30);
 		elixirlabel->setColor(Color3B::BLACK);
 		elixirlabel->setPosition(600, 370);
@@ -122,26 +136,32 @@ void BattleScene::battleOver()
     {
         _isover = true;
         SimpleAudioEngine::getInstance()->playEffect("audio/Defeat.mp3");// 播放失败音效
+
 		auto defeat = Sprite::create("defeat.png");
         defeat->setScale(0.8);
 		defeat->setPosition(640, 550);
         this->addChild(defeat, 201);
+
         auto goldpic = Sprite::create("coin.png");
         goldpic->setScale(0.2);
         goldpic->setPosition(700, 420);
         this->addChild(goldpic, 201);
+
         auto goldlabel = Label::createWithTTF("+0", "fonts/Marker Felt.ttf", 30);
         goldlabel->setColor(Color3B::BLACK);
         goldlabel->setPosition(600, 420);
         this->addChild(goldlabel, 201);
+
         auto elixirpic = Sprite::create("elixir.png");
         elixirpic->setScale(0.2);
         elixirpic->setPosition(700, 370);
         this->addChild(elixirpic, 201);
+
         auto elixirlabel = Label::createWithTTF("+0", "fonts/Marker Felt.ttf", 30);
         elixirlabel->setColor(Color3B::BLACK);
         elixirlabel->setPosition(600, 370);
         this->addChild(elixirlabel, 201);
+
         CCLOG("Battle Lost!");
         // 处理失败逻辑
     }
@@ -151,6 +171,7 @@ void BattleScene::battleOver()
         CC_CALLBACK_1(BattleScene::onBtn_ConfirmClicked, this));
     Btn_Confirm->setScale(0.6);
     Btn_Confirm->setPosition(Vec2(640, 250));
+
     auto menu = Menu::create(Btn_Confirm, nullptr);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 201);
@@ -273,7 +294,8 @@ void BattleScene::removeBuilding(int x, int y)
 
 
 // 更新箭头位置实现
-void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
+void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) 
+{
     if (!targetBtn || !_arrowIndicator) 
         return;
 
@@ -292,26 +314,32 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 {
     if (!_isBattleStart)
         return;
+
     if(_isover)
 		return;
-    if (_selectedType == UnitType::NONE) {
+
+    if (_selectedType == UnitType::NONE) 
+    {
         CCLOG("Spawn Failed: No soldier selected!");
         return;
     }
 
     // 1. 范围校验 (150线以上且在网格内)
-    if (position.y < GameConfig::DEPLOY_BOUNDARY_Y) {
+    if (position.y < GameConfig::DEPLOY_BOUNDARY_Y)
+    {
         CCLOG("Spawn Failed: Below deployment line (y < %f)", GameConfig::DEPLOY_BOUNDARY_Y);
         return;
     }
 
-    if (!GridUtils::isPointInDiamondBattle(position)) {
+    if (!GridUtils::isPointInDiamondBattle(position))
+    {
         CCLOG("Spawn Failed: Not inside grid diamond!");
         return;
     }
 
     // 2. 尝试从管理器扣除兵力
-    if (ArmyManager::getInstance()->tryDeploy(_selectedType)) {
+    if (ArmyManager::getInstance()->tryDeploy(_selectedType))
+    {
 
         // 将玩家点击的坐标转换成最近的网格中心点坐标
         Vec2 snappedPos = GridUtils::snapToGrid(position);
@@ -319,7 +347,8 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 
         // 3. 通过工厂生产士兵
         auto newUnit = UnitFactory::createUnit(_selectedType);
-        if (newUnit) {
+        if (newUnit) 
+        {
             newUnit->setPosition(snappedPos);
             auto sprite = newUnit->createSprite();
             this->addChild(sprite, GameConfig::Z_UNIT);
@@ -338,22 +367,27 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
     }
 }
 
-void BattleScene::refreshUI() {
-	for (auto const& [type, btn] : _unitButtons) {//我这里用了C++17的结构化绑定，现代特性
+void BattleScene::refreshUI()
+{
+	for (auto const& [type, btn] : _unitButtons) 
+    {//我这里用了C++17的结构化绑定，现代特性
         int count = ArmyManager::getInstance()->getRemainingCount(type)/2;
 
         // 更新数字显示
-        if (_unitLabels.count(type)) {
+        if (_unitLabels.count(type))
+        {
             _unitLabels[type]->setString(std::to_string(count));
         }
 
         // 核心逻辑：数量为 0 则变灰并禁用
-        if (count <= 0) {
+        if (count <= 0) 
+        {
             btn->setEnabled(false);
             btn->setColor(Color3B(100, 100, 100)); // 变灰
 
             // 如果当前选中的正好是这个用完的兵，取消选中状态
-            if (_selectedType == type) {
+            if (_selectedType == type)
+            {
                 _selectedType = UnitType::NONE;
                 _selectedSoldierBtn = nullptr;
                 _arrowIndicator->setVisible(false);
@@ -388,7 +422,8 @@ Scene* BattleScene::createScene()
 {
     auto scene = Scene::create();
     auto layer = BattleScene::create();
-    if (layer) {
+    if (layer)
+    {
         scene->addChild(layer);
     }
     return scene;
@@ -433,9 +468,11 @@ void BattleScene::onReturnButtonClicked(Ref* sender)
 	// 已经存在弹窗则不重复创建
     if (_returnPanel || _returnMenu)
         return;
+
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 替换为成员变量：保存弹窗面板
     _returnPanel = cocos2d::Sprite::create("1Point_Return_Button.png");
+
     if (_returnPanel)
     {
         _returnPanel->setScale(1);
@@ -445,11 +482,13 @@ void BattleScene::onReturnButtonClicked(Ref* sender)
         auto CancleBtn = cocos2d::MenuItemImage::create(
             "Cancel_Button.png", "Cancel_Button.png",
             CC_CALLBACK_1(BattleScene::closeReturnWindow, this)
-        );
+            );
+
         auto ConfirmBtn = cocos2d::MenuItemImage::create(
             "Confirm_Button.png", "Confirm_Button.png",
             CC_CALLBACK_1(BattleScene::closeBattleScene, this)
-        );
+            );
+
         CancleBtn->setScale(0.5);
         ConfirmBtn->setScale(0.5);
         CancleBtn->setPosition(cocos2d::Vec2(520, 300));
@@ -467,14 +506,17 @@ void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 转换点击的按钮对象
     _isBattleStart = true;
+
     auto clickedBtn = dynamic_cast<MenuItemImage*>(sender);
+
     if (!clickedBtn) 
         return;
 
     UnitType type = static_cast<UnitType>(clickedBtn->getTag());
 
     // 如果该兵种已经用完了，不允许选中
-    if (ArmyManager::getInstance()->getRemainingCount(type) <= 0) return;
+    if (ArmyManager::getInstance()->getRemainingCount(type) <= 0)
+        return;
 
     // 2. 更新选中状态，标签和箭头位置
     _selectedSoldierBtn = clickedBtn;
@@ -489,26 +531,30 @@ void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
     // _selectedSoldierType = soldierType;
 }
 // 封装：创建带小图标的士兵按钮（避免重复代码）
-MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath,UnitType type) {
+MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::string& smallIconPath,UnitType type)
+{
     // 1. 创建基础按钮
     auto soldierBtn = MenuItemImage::create(
         "Soldier_Card.png",    // 正常状态
         "Soldier_Card1.png",   // 按下状态
 		"Soldier_Card1.png", // 禁用状态(当兵种数量为0时)
         CC_CALLBACK_1(BattleScene::onSoldierSelectButtonClicked, this)
-    );
+        );
+
     soldierBtn->setPosition(btnPos);
     soldierBtn->setTag(static_cast<int>(type)); // 用 Tag 绑定类型
 
     // 2. 创建小图片精灵（作为按钮的子节点）
     auto smallIcon = Sprite::create(smallIconPath); // 替换为你的小图片路径（如 "Small_Soldier_Icon.png"）
-    if (smallIcon) { // 判空避免资源缺失崩溃
+
+    if (smallIcon) 
+    { // 判空避免资源缺失崩溃
         // 设置小图片在按钮上的位置（示例：按钮中心，可根据需求调整偏移）
 		smallIcon->setScale(1.5); // 可选：调整小图片大小以适应按钮
         smallIcon->setPosition(Vec2(
             soldierBtn->getContentSize().width / 2,   // 按钮宽度的一半（水平居中）
             soldierBtn->getContentSize().height / 2   // 按钮高度的一半（垂直居中）
-        ));
+            ));
         // 将小图片添加为按钮的子节点
         soldierBtn->addChild(smallIcon);
     }
@@ -529,9 +575,11 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
 // 实现 init 初始化函数
 bool BattleScene::init()
 { 
-    if (!Scene::init()) {
+    if (!Scene::init())
+    {
         return false;
     }
+
 	initializeGrid(); // 初始化网格信息二维数组
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -544,7 +592,8 @@ bool BattleScene::init()
     
     //  战斗背景（全屏铺开）
     auto background = Sprite::create("battle_background.jpg");
-    if (background) {
+    if (background) 
+    {
         background->setPosition(Vec2(visibleSize.width / 2 + origin.x,
             visibleSize.height / 2 + origin.y));
         this->addChild(background, GameConfig::Z_BACKGROUND);
@@ -556,17 +605,19 @@ bool BattleScene::init()
     // 左下角 结束战斗按钮
     auto ReturnBtn = MenuItemImage::create(
         "Return_Button.png", "Return_Button.png",
-        CC_CALLBACK_1(BattleScene::onReturnButtonClicked, this));
+        CC_CALLBACK_1(BattleScene::onReturnButtonClicked, this
+        ));
     ReturnBtn->setScale(0.5);
     ReturnBtn->setPosition(Vec2(50 + origin.x, 180 + origin.y));
+
     auto menu = Menu::create(ReturnBtn,nullptr);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 2); // UI层级高于背景
 
-
 	//画一条水平线表示隔开兵种选择区和战斗区
     auto drawNode = cocos2d::DrawNode::create();
     this->addChild(drawNode, GameConfig::Z_UI);
+
 	Vec2 startPoint = Vec2(0, 150);
 	Vec2 endPoint = Vec2(visibleSize.width, 150);
     drawNode->drawLine(startPoint, endPoint, Color4F::WHITE);
@@ -583,7 +634,8 @@ bool BattleScene::init()
     this->addChild(menu1, GameConfig::Z_UI); // UI层级高于背景
     // ===================== 新增：初始化箭头指示器 =====================
     _arrowIndicator = Sprite::create("1arrow.png"); // 替换为你的箭头图片路径（如 "arrow_up.png"）
-    if (_arrowIndicator) {
+    if (_arrowIndicator) 
+    {
         _arrowIndicator->setScale(0.8f); // 根据实际图片大小调整缩放
         _arrowIndicator->setAnchorPoint(Vec2(0.5, 0)); // 箭头锚点设为底部中心，方便对齐按钮顶部
         _arrowIndicator->setVisible(true); // 初始显示
@@ -610,6 +662,8 @@ bool BattleScene::init()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(0, 1);
+
+
 	const int mode = dis(gen); //随机选择一种布局模式
     if(mode==0)
     {
@@ -642,6 +696,7 @@ bool BattleScene::init()
         spawnBuilding(Vec2(10, 20), 8); // 建筑工人小屋1（最左侧）
         spawnBuilding(Vec2(30, 20), 8); // 建筑工人小屋2（最右侧）
     }
+
     else
     {
         // 核心：大本营（唯一，偏右但不极端，x=24更合理，核心区x=12~30）
@@ -697,26 +752,33 @@ void BattleScene::updateDefenseBuildings(float dt)
     float archerDamage = 12.0f;    // 伤害稍低
     float archerInterval = 0.8f;   // 攻速更快
 
-    for (int i = 1; i <= 40; i++) {
-        for (int j = 1; j <= 40; j++) {
+    for (int i = 1; i <= 40; i++)
+    {
+        for (int j = 1; j <= 40; j++) 
+        {
             int type = grid[i][j].buildingtype;
-            if ((type == 3 || type == 4) && grid[i][j].now_health > 0) {
+            if ((type == 3 || type == 4) && grid[i][j].now_health > 0)
+            {
 
                 // 1. 更新冷却时间
                 _defenseTimers[i][j] += dt;
 
                 float interval = (type == 3) ? cannonInterval : archerInterval;
-                if (_defenseTimers[i][j] >= interval) {
+                if (_defenseTimers[i][j] >= interval)
+                {
 
                     // 2. 寻找最近的敌人
                     Vec2 buildPos = GridUtils::gridToWorld(Vec2(i, j));
                     Unit* targetUnit = nullptr;
                     float minDistance = (type == 3) ? cannonRange : archerRange;
 
-                    for (auto unit : _liveUnits) {
-                        if (!unit->isDead()) {
+                    for (auto unit : _liveUnits)
+                    {
+                        if (!unit->isDead())
+                        {
                             float d = buildPos.distance(unit->getPosition());
-                            if (d < minDistance) {
+                            if (d < minDistance)
+                            {
                                 minDistance = d;
                                 targetUnit = unit;
                             }
@@ -724,14 +786,17 @@ void BattleScene::updateDefenseBuildings(float dt)
                     }
 
                     // 3. 如果找到敌人，发射子弹
-                    if (targetUnit) {
+                    if (targetUnit)
+                    {
                         _defenseTimers[i][j] = 0.0f; // 重置冷却
 
                         std::string img = (type == 3) ? "cannon_ball.png" : "arrow.png";
                         float damage = (type == 3) ? cannonDamage : archerDamage;
+                        
                         if(type==3)
                             SimpleAudioEngine::getInstance()->playEffect("audio/CannonFire.mp3");// 播放攻击音效
-						else
+						
+                        else
                             SimpleAudioEngine::getInstance()->playEffect("audio/RangedUnit.mp3");// 播放攻击音效
                         // 创建子弹表现
                         auto bullet = Sprite::create(img);
@@ -741,12 +806,14 @@ void BattleScene::updateDefenseBuildings(float dt)
                         // 子弹飞行并造成伤害
                         float flyTime = buildPos.distance(targetUnit->getPosition()) / 600.0f;
                         auto moveTo = MoveTo::create(flyTime, targetUnit->getPosition());
-                        auto hit = CallFunc::create([targetUnit, damage, bullet]() {
-                            if (targetUnit && !targetUnit->isDead()) {
+                        auto hit = CallFunc::create([targetUnit, damage, bullet]() 
+                        {
+                            if (targetUnit && !targetUnit->isDead()) 
+                            {
                                 targetUnit->takeDamage(damage);
                             }
                             bullet->removeFromParent();
-                            });
+                        });
                         bullet->runAction(Sequence::create(moveTo, hit, nullptr));
                     }
                 }
@@ -763,15 +830,19 @@ void BattleScene::update(float dt)
     updateDefenseBuildings(dt);
 
     // 遍历所有活着的兵
-    for (auto it = _liveUnits.begin(); it != _liveUnits.end(); ) {
+    for (auto it = _liveUnits.begin(); it != _liveUnits.end(); ) 
+    {
         Unit* unit = *it;
 
-        if (unit->isDead()) {
+        if (unit->isDead())
+        {
             // 如果兵死了：
             unit->release();        // 释放内存
             it = _liveUnits.erase(it); // 从列表中移除
         }
-        else {
+
+        else 
+        {
             // 如果兵活着：执行它的大脑逻辑（寻敌、移动、攻击）
             unit->update(dt);
             ++it;
@@ -780,11 +851,15 @@ void BattleScene::update(float dt)
 
 	// 检查 A：是否还有活着的建筑,并将血量为-1的建筑视为已摧毁(删除)
     bool hasBuildingAlive = false;
-    for (int i = 1; i <= 40; i++) {
-        for (int j = 1; j <= 40; j++) {
-            if (grid[i][j].buildingtype > 0 && grid[i][j].now_health > 0) {
+    for (int i = 1; i <= 40; i++)
+    {
+        for (int j = 1; j <= 40; j++) 
+        {
+            if (grid[i][j].buildingtype > 0 && grid[i][j].now_health > 0)
+            {
                 hasBuildingAlive = true;
             }
+
             if(grid[i][j].now_health <= -1)
             {
                 removeBuilding(i, j); // 删除建筑精灵
@@ -795,8 +870,10 @@ void BattleScene::update(float dt)
 
     // 检查 B：玩家是否还能出兵 (遍历四种兵种)
     bool canStillSpawn = false;
-    for (int typeID = 0; typeID <= 3; typeID++) {
-        if (ArmyManager::getInstance()->getRemainingCount(static_cast<UnitType>(typeID))-1 > 0) {
+    for (int typeID = 0; typeID <= 3; typeID++)
+    {
+        if (ArmyManager::getInstance()->getRemainingCount(static_cast<UnitType>(typeID))-1 > 0)
+        {
             canStillSpawn = true;
             break;
         }
@@ -805,21 +882,24 @@ void BattleScene::update(float dt)
     // --- 决定是否吹哨 ---
 
     // 情况 1: 100% 拆迁完成
-    if (!hasBuildingAlive) {
+    if (!hasBuildingAlive) 
+    {
         _isBattleOver = true; // 防止重复调用
         this->battleOver();   // 交给原本的函数去处理结算和 UI
+
         return;
     }
 
     // 情况 2: 场上没兵了 且 手里也没兵了
-    if (_liveUnits.empty() && !canStillSpawn) {
+    if (_liveUnits.empty() && !canStillSpawn) 
+    {
         // 稍微给一点延迟（比如1秒），让最后一发炮弹飞一会儿，视觉上更自然
         _isBattleOver = true;
         this->runAction(Sequence::create(
             DelayTime::create(1.0f),
             CallFunc::create([this]() { this->battleOver(); }),
             nullptr
-        ));
+            ));
     }
 
 }

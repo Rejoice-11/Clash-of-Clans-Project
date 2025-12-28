@@ -60,7 +60,8 @@ bool HelloWorld::init()
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this
+                                           ));
 
     if (closeItem == nullptr ||
         closeItem->getContentSize().width <= 0 ||
@@ -68,6 +69,7 @@ bool HelloWorld::init()
     {
         problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
     }
+
     else
     {
         float x = origin.x + visibleSize.width - closeItem->getContentSize().width/2;
@@ -91,6 +93,7 @@ bool HelloWorld::init()
     {
         problemLoading("'fonts/Marker Felt.ttf'");
     }
+
     else
     {
         // position the label on the center of the screen
@@ -103,10 +106,12 @@ bool HelloWorld::init()
 
     // add "HelloWorld" splash screen"
     auto sprite = Sprite::create("HelloWorld.png");
+
     if (sprite == nullptr)
     {
         problemLoading("'HelloWorld.png'");
     }
+
     else
     {
         // position the sprite on the center of the screen
@@ -115,6 +120,7 @@ bool HelloWorld::init()
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
     }
+
     return true;
 }
 
@@ -128,6 +134,4 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }

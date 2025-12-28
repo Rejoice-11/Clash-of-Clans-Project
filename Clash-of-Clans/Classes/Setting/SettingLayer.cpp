@@ -2,7 +2,8 @@
 
 bool SettingLayer::init()
 {
-    if (!Layer::init()) {
+    if (!Layer::init())
+    {
         return false;
     }
 
@@ -27,8 +28,6 @@ bool SettingLayer::init()
     // 加载音频设置
     loadAudioSettings();
 
-    
-
     // 默认隐藏
     this->setVisible(false);
 
@@ -41,12 +40,14 @@ void SettingLayer::initUI()
 
     // 创建设置面板背景
     _panelBg = Sprite::create("ui/setting_bg.png");
-    if (!_panelBg) {
+    if (!_panelBg)
+    {
         _panelBg = Sprite::create();
         _panelBg->setTextureRect(Rect(0, 0, 400, 350));
         _panelBg->setColor(Color3B(50, 50, 100));
         _panelBg->setOpacity(220);
     }
+
     _panelBg->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     this->addChild(_panelBg);
 
@@ -54,6 +55,7 @@ void SettingLayer::initUI()
     auto title = Label::createWithSystemFont(u8"设置", "Arial", 36);
     title->setPosition(Vec2(_panelBg->getContentSize().width / 2,
         _panelBg->getContentSize().height - 40));
+
     _panelBg->addChild(title);
 
     // 退出游戏按钮
@@ -61,6 +63,7 @@ void SettingLayer::initUI()
 	auto exitBtn = MenuItemImage::create(
         "exit_button.png", "exit_button.png",
 		CC_CALLBACK_1(SettingLayer::onExitButtonClicked, this));
+
 	exitBtn->setScale(0.1);
 	exitBtn->setPosition(Vec2(_panelBg->getContentSize().width / 2, 150));
 
@@ -69,8 +72,10 @@ void SettingLayer::initUI()
     auto closeBtn = MenuItemImage::create(
         "out_of_now.png", "out_of_now.png",
         CC_CALLBACK_1(SettingLayer::onCloseButtonClicked, this));
+
 	closeBtn->setPosition(Vec2(_panelBg->getContentSize().width - 50,
         _panelBg->getContentSize().height - 30));
+
 	auto closeMenu = Menu::create(closeBtn,exitBtn, nullptr);
 	closeMenu->setPosition(Vec2::ZERO);
 	_panelBg->addChild(closeMenu,200);
@@ -79,7 +84,9 @@ void SettingLayer::initUI()
 void SettingLayer::createSimpleButton(Button*& button, const std::string& text, const Vec2& position, const std::function<void()>& callback)
 {
     button = Button::create("ui/button_normal.png", "ui/button_pressed.png");
-    if (!button) {
+    if (!button)
+    
+    {
         button = Button::create();
         button->setContentSize(Size(120, 40));
         button->setTitleText(text);
@@ -87,20 +94,26 @@ void SettingLayer::createSimpleButton(Button*& button, const std::string& text, 
         button->setTitleColor(Color3B::WHITE);
         button->setColor(Color3B(80, 80, 160));
     }
-    else {
+
+    else 
+    {
         button->setTitleText(text);
         button->setTitleFontSize(20);
     }
+
     button->setPosition(position);
-    button->addClickEventListener([callback](Ref* sender) {
+    button->addClickEventListener([callback](Ref* sender) 
+    {
         callback();
-        });
+    });
+
     _panelBg->addChild(button,101);
 }
 
 void SettingLayer::onBackgroundMusicSliderChanged(Ref* sender, Slider::EventType type)
 {
-    if (type == Slider::EventType::ON_PERCENTAGE_CHANGED) {
+    if (type == Slider::EventType::ON_PERCENTAGE_CHANGED)
+    {
         _bgMusicVolume = _bgMusicSlider->getPercent() / 100.0f;
         setBackgroundMusicVolume(_bgMusicVolume);
     }
@@ -108,7 +121,8 @@ void SettingLayer::onBackgroundMusicSliderChanged(Ref* sender, Slider::EventType
 
 void SettingLayer::onSoundEffectSliderChanged(Ref* sender, Slider::EventType type)
 {
-    if (type == Slider::EventType::ON_PERCENTAGE_CHANGED) {
+    if (type == Slider::EventType::ON_PERCENTAGE_CHANGED) 
+    {
         _soundEffectVolume = _soundEffectSlider->getPercent() / 100.0f;
         setSoundEffectVolume(_soundEffectVolume);
 
@@ -137,7 +151,8 @@ void SettingLayer::show()
 void SettingLayer::hide()
 {
     saveAudioSettings();
-    if (_closeCallback) {
+    if (_closeCallback) 
+    {
         _closeCallback();
     }
     this->setVisible(false);
@@ -149,10 +164,13 @@ void SettingLayer::loadAudioSettings()
     _soundEffectVolume = UserDefault::getInstance()->getFloatForKey("effect_volume", 0.8f);
 
     // 更新UI滑块
-    if (_bgMusicSlider) {
+    if (_bgMusicSlider)
+    {
         _bgMusicSlider->setPercent(_bgMusicVolume * 100);
     }
-    if (_soundEffectSlider) {
+
+    if (_soundEffectSlider) 
+    {
         _soundEffectSlider->setPercent(_soundEffectVolume * 100);
     }
 

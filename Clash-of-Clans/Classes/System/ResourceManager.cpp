@@ -121,7 +121,10 @@ void ResourceManager::updateMaxGoldStorage(int totalCapacity)
     std::lock_guard<std::mutex> lock(_mutex);
     _maxGoldStorage = totalCapacity;
     // 自动裁剪超限资源（可选）
-    if (_gold > _maxGoldStorage) _gold = _maxGoldStorage;
+
+    if (_gold > _maxGoldStorage) 
+        _gold = _maxGoldStorage;
+
     notifyResourceChange(); // ← 关键！触发 HUD 刷新
 }
 
@@ -129,7 +132,10 @@ void ResourceManager::updateMaxElixirStorage(int totalCapacity)
 {
     std::lock_guard<std::mutex> lock(_mutex);
     _maxElixirStorage = totalCapacity;
-    if (_elixir > _maxElixirStorage) _elixir = _maxElixirStorage;
+
+    if (_elixir > _maxElixirStorage)
+        _elixir = _maxElixirStorage;
+
     notifyResourceChange();
 }
 

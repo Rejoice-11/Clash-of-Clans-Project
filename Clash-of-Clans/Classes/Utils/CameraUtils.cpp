@@ -14,10 +14,13 @@ void CameraUtils::shakeScreen(Node* target, float duration, float strength)
 
     // 1. 核心逻辑：如果当前没有在震动，才记录原点
     // 如果正在震动，说明当前的 target->getPosition() 是歪的，不能记录！
-    if (target->getActionByTag(SHAKE_ACTION_TAG) == nullptr) {
+    if (target->getActionByTag(SHAKE_ACTION_TAG) == nullptr)
+    {
         s_actualOriginalPos = target->getPosition();
     }
-    else {
+
+    else 
+    {
         // 如果正在震动，先停止旧的震动，准备开始新的（叠加感）
         target->stopActionByTag(SHAKE_ACTION_TAG);
     }

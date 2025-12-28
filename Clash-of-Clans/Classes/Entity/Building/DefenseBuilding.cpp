@@ -8,7 +8,8 @@ int countofCanonsInVillage = 0;
 
 // 建筑数据定义（与 ResourceBuilding 风格一致）
 
-BuildingData ArcherTowerBuildingData = {
+BuildingData ArcherTowerBuildingData = 
+{
     7, // id
     BuildingType::ARCHER_TOWER,
     1,
@@ -23,7 +24,8 @@ BuildingData ArcherTowerBuildingData = {
     {20.0f, 30.0f, 45.0f, 65.0f, 90.0f} // damagePerSecond (新增字段！)
 };
 
-BuildingData CanonBuildingData = {
+BuildingData CanonBuildingData = 
+{
     8, // id
     BuildingType::CANNON,
     1,
@@ -41,17 +43,21 @@ BuildingData CanonBuildingData = {
 // 构造函数
 DefenseBuilding::DefenseBuilding(const BuildingData& data, int instanceId, DefenseType type)
     : Building(data, instanceId)
-    , _defenseType(type) {
-    if (instanceId == -1) {
+    , _defenseType(type) 
+{
+    if (instanceId == -1) 
+    {
         static int nextId = 4001; // 从4001开始（避免ID冲突）
         setId(nextId++);
     }
 
     // 分别计数
-    if (_defenseType == DefenseType::ARCHER_TOWER) {
+    if (_defenseType == DefenseType::ARCHER_TOWER)
+    {
         countofArcherTowersInVillage++;
     }
-    else {
+    else 
+    {
         countofCanonsInVillage++;
     }
 }
@@ -87,6 +93,7 @@ std::string DefenseBuilding::getSpriteFrameName() const
     {
         return "archer_tower_lv" + std::to_string(_currentLevel);
     }
+
     else 
     {
         return "canon_lv" + std::to_string(_currentLevel);
