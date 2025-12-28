@@ -30,7 +30,10 @@ public:
     int getUsedCapacity() const;
 
     void setUsedCapacity(int capacity);
-
+    //计算剩余兵力
+    void getRemainingCapacity();
+	// 计算进入时有的兵力
+	void initializeArmyForBattle();
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;

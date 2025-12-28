@@ -50,7 +50,7 @@ void BattleScene::battleOver()
 		}
     }
 	//如果摧毁建筑数量达到一定比例，判定为胜利
-    if (countdestroyed >= 5) // 假设摧毁5个建筑算胜利
+    if (countdestroyed >= 9) // 摧毁9个建筑(超过一半)算胜利
     {
         _iswin = true;
     }
@@ -132,6 +132,7 @@ void BattleScene::onBtn_ConfirmClicked(Ref* sender)
         this->removeAllChildren();
         resultUIContainer = nullptr;
     }
+	void getRemainingCapacity(); // 获取剩余兵力
     // 停止背景音乐（双重保障，防止跳转时未停止）
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->popScene();
@@ -271,7 +272,7 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 
 void BattleScene::refreshUI() {
 	for (auto const& [type, btn] : _unitButtons) {//我这里用了C++17的结构化绑定，现代特性
-        int count = ArmyManager::getInstance()->getRemainingCount(type);
+        int count = ArmyManager::getInstance()->getRemainingCount(type)/2;
 
         // 更新数字显示
         if (_unitLabels.count(type)) {
@@ -333,6 +334,7 @@ void BattleScene::closeBattleScene(Ref* sender)
     // 使用popScene返回上一个场景（VillageScene），而非replaceScene
     // 这样会保留VillageScene的实例及其所有状态（包括已放置的建筑）
     // 停止背景音乐（双重保障，防止跳转时未停止）
+    ArmyManager::getInstance()->getRemainingCapacity(); // 获取剩余兵力
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->popScene();
 }
@@ -442,7 +444,7 @@ MenuItemImage* BattleScene::createSoldierButton(const Vec2& btnPos, const std::s
     }
 
     // 数量标签
-    int count = ArmyManager::getInstance()->getRemainingCount(type);
+    int count = ArmyManager::getInstance()->getRemainingCount(type)/2;
     auto countLabel = Label::createWithTTF(std::to_string(count), "fonts/Marker Felt.ttf", 22);
     countLabel->setPosition(Vec2(soldierBtn->getContentSize().width / 2, 20));
     soldierBtn->addChild(countLabel);
@@ -467,12 +469,9 @@ bool BattleScene::init()
     // 加载配置与初始化兵力 
     ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
 
-	// 模拟从村庄带来的兵力,到时候改成从VillageManager获取
-    ArmyManager::getInstance()->setUnitCount(UnitType::MELEE, 50);
-    ArmyManager::getInstance()->setUnitCount(UnitType::RANGED, 40);
-    ArmyManager::getInstance()->setUnitCount(UnitType::TANK, 36);
-    ArmyManager::getInstance()->setUnitCount(UnitType::WALL_BREAKER, 22);
-
+	// 拿到从村庄带来的兵力
+    ArmyManager::getInstance()->initializeArmyForBattle();
+    
     //  战斗背景（全屏铺开）
     auto background = Sprite::create("battle_background.jpg");
     if (background) {
