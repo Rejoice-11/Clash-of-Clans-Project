@@ -45,7 +45,7 @@ int MilitaryBuilding::getTotalTroopCapacity() const
     {
         return 0;
     }
-    return MilitaryBuildingBuildingData.capacity[_currentLevel + 1]; // troopCapacity[0] = Lv1 ÈÝÁ¿
+    return MilitaryBuildingBuildingData.capacity[_currentLevel - 1]; // troopCapacity[0] = Lv1 ÈÝÁ¿
 }
 
 cocos2d::Sprite* MilitaryBuilding::createSprite()
