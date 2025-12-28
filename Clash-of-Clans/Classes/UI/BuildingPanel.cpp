@@ -250,6 +250,11 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
         addStat("hit_point.png", std::to_string(WorkerHomeBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
     }
 
+    else if (dynamic_cast<TownHall*>(_building)) 
+    {
+        addStat("hit_point.png", std::to_string(TownHallBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
+	}
+
     // Éı¼¶°´Å¥£¨ÓÒÏÂ£©
     int upgradeCost = 0;
     bool isGold = true;
