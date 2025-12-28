@@ -183,13 +183,13 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         case 6:
         {
             realSprite = Sprite::create("archer_tower_lv2.png");
-            initgridinfo(x, y, 3); // 防御建筑类型为3
+            initgridinfo(x, y, 4); // 箭塔为4
             break;
         }
         case 7:
         {
             realSprite = Sprite::create("canon_lv2.png");
-            initgridinfo(x, y, 3); // 防御建筑类型为3
+            initgridinfo(x, y, 3); // 加农炮为3
             break;
         }
         case 8:
@@ -603,15 +603,95 @@ bool BattleScene::init()
         spawnBuilding(Vec2(3, 20), 8);    // 建筑工人小屋1（左区核心旁，操作便捷）
     }
 
+    // 初始化防御计时器为 0
+    for (int i = 0; i < 41; ++i)
+        for (int j = 0; j < 41; ++j)
+            _defenseTimers[i][j] = 0.0f;
+
+
 
     // 开启帧更新（后续战斗逻辑靠这个）
     this->scheduleUpdate();
     return true;
 }
 
+//控制建筑攻击逻辑
+void BattleScene::updateDefenseBuildings(float dt) 
+{
+    // 定义防御建筑的数值（为了简单直接写死，也可以去查 BuildingData）
+    float cannonRange = 250.0f;    // 加农炮射程
+    float cannonDamage = 20.0f;    // 每次伤害
+    float cannonInterval = 1.5f;   // 攻击间隔
+
+    float archerRange = 350.0f;    // 箭塔射程更远
+    float archerDamage = 12.0f;    // 伤害稍低
+    float archerInterval = 0.8f;   // 攻速更快
+
+    for (int i = 1; i <= 40; i++) {
+        for (int j = 1; j <= 40; j++) {
+            int type = grid[i][j].buildingtype;
+            if ((type == 3 || type == 4) && grid[i][j].now_health > 0) {
+
+                // 1. 更新冷却时间
+                _defenseTimers[i][j] += dt;
+
+                float interval = (type == 3) ? cannonInterval : archerInterval;
+                if (_defenseTimers[i][j] >= interval) {
+
+                    // 2. 寻找最近的敌人
+                    Vec2 buildPos = GridUtils::gridToWorld(Vec2(i, j));
+                    Unit* targetUnit = nullptr;
+                    float minDistance = (type == 3) ? cannonRange : archerRange;
+
+                    for (auto unit : _liveUnits) {
+                        if (!unit->isDead()) {
+                            float d = buildPos.distance(unit->getPosition());
+                            if (d < minDistance) {
+                                minDistance = d;
+                                targetUnit = unit;
+                            }
+                        }
+                    }
+
+                    // 3. 如果找到敌人，发射子弹
+                    if (targetUnit) {
+                        _defenseTimers[i][j] = 0.0f; // 重置冷却
+
+                        std::string img = (type == 3) ? "cannon_ball.png" : "arrow.png";
+                        float damage = (type == 3) ? cannonDamage : archerDamage;
+
+                        // 创建子弹表现
+                        auto bullet = Sprite::create(img);
+                        bullet->setPosition(buildPos);
+                        this->addChild(bullet, GameConfig::Z_EFFECT);
+
+                        // 子弹飞行并造成伤害
+                        float flyTime = buildPos.distance(targetUnit->getPosition()) / 600.0f;
+                        auto moveTo = MoveTo::create(flyTime, targetUnit->getPosition());
+                        auto hit = CallFunc::create([targetUnit, damage, bullet]() {
+                            if (targetUnit && !targetUnit->isDead()) {
+                                targetUnit->takeDamage(damage);
+                            }
+                            bullet->removeFromParent();
+                            });
+                        bullet->runAction(Sequence::create(moveTo, hit, nullptr));
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
 // 实现 update 帧更新函数
 void BattleScene::update(float dt)
 {
+
+    // 启动防御建筑逻辑
+    updateDefenseBuildings(dt);
+
     // 遍历所有活着的兵
     for (auto it = _liveUnits.begin(); it != _liveUnits.end(); ) {
         Unit* unit = *it;

@@ -81,6 +81,9 @@ private:
 	cocos2d::MenuItemImage* _selectedSoldierBtn = nullptr; // 新增：记录当前选中的士兵按钮
     UnitType _selectedType = UnitType::NONE; // 当前选中的兵种
 
+    float _defenseTimers[41][41]; // 记录每个格子的建筑攻击冷却时间
+    void updateDefenseBuildings(float dt); // 防御建筑逻辑核心
+
     // UI 映射表：通过兵种类型直接找到对应的 按钮 和 数字标签
     std::map<UnitType, cocos2d::MenuItemImage*> _unitButtons;
     std::map<UnitType, cocos2d::Label*> _unitLabels;

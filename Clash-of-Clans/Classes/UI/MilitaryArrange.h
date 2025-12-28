@@ -26,6 +26,10 @@ public:
 
     void setCloseCallback(const std::function<void()>& callback);
 
+    std::string getIconPathForType(UnitType type); // ← 工具函数
+
+    void onExistingTroopClicked(UnitType type);
+
 private:
     std::function<void()> _closeCallback = nullptr;
 
@@ -36,6 +40,7 @@ private:
 
     std::vector<TroopButton> _troopButtons;
 
+    Label* _usedCapacityLabel = nullptr;
     Label* _capacityLabel = nullptr;
 
     MilitaryArrange() = default; // 私有构造

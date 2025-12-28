@@ -34,7 +34,7 @@ bool MilitaryArrange::init() {
         "out_of_now.png", "out_of_now.png",
         CC_CALLBACK_1(MilitaryArrange::onCloseButtonClicked, this)
     );
-    closeBtn->setPosition(Vec2(visibleSize.width - 40, visibleSize.height - 40));
+    closeBtn->setPosition(Vec2(visibleSize.width - 220, visibleSize.height - 150));
     auto menu = Menu::create(closeBtn, nullptr);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 10);
@@ -42,15 +42,24 @@ bool MilitaryArrange::init() {
     // 总兵力显示
     int totalCapacity = ArmyManager::getInstance()->getTotalCapacity();
     _capacityLabel = Label::createWithSystemFont(
-        "Total: " + std::to_string(totalCapacity), "Arial", 24
+        u8"最大数量 " + std::to_string(totalCapacity), "Arial", 24
     );
     _capacityLabel->setTextColor(Color4B::WHITE);
-    _capacityLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 80));
+    _capacityLabel->setPosition(Vec2(visibleSize.width / 2 - 280, visibleSize.height - 190));
     this->addChild(_capacityLabel);
+
+	int usedCapacity = ArmyManager::getInstance()->getUsedCapacity();
+    _usedCapacityLabel = Label::createWithSystemFont(
+        u8"已用数量 " + std::to_string(usedCapacity), "Arial", 24
+	);
+	_usedCapacityLabel->setTextColor(Color4B::WHITE);
+	_usedCapacityLabel->setPosition(Vec2(visibleSize.width / 2 - 100, visibleSize.height - 190));
+	this->addChild(_usedCapacityLabel);
+  
 
     // 已配置军队条
     _troopBar = Node::create();
-    _troopBar->setPosition(Vec2(50, visibleSize.height - 150));
+    _troopBar->setPosition(Vec2(375, visibleSize.height - 300));
     this->addChild(_troopBar);
 
     // 兵种按钮
@@ -61,9 +70,9 @@ bool MilitaryArrange::init() {
         {UnitType::WALL_BREAKER, "boomer_affordable.png", 2}
     };
 
-    float startX = 100;
-    float startY = 200;
-    float spacing = 120;
+    float startX = 350;
+    float startY = 240;
+    float spacing = 175;
 
     for (size_t i = 0; i < troopInfo.size(); ++i) {
         auto [type, iconPath, cost] = troopInfo[i];
@@ -126,32 +135,64 @@ void MilitaryArrange::refreshTroopBar()
 
     // 获取当前配置
     auto& pool = ArmyManager::getInstance()->getArmyPool(); // 注意：需将 _armyPool 设为 public 或提供 getter
+
+    // === 新增：计算并更新已用兵力 ===
+    int usedCapacity = ArmyManager::getInstance()->getUsedCapacity();
+    if (!_usedCapacityLabel) 
+    {
+        // 首次创建标签
+        _usedCapacityLabel = Label::createWithSystemFont(
+            u8"已使用兵量:" + std::to_string(usedCapacity), "Arial", 24
+               );
+        _usedCapacityLabel->setTextColor(Color4B::WHITE);
+        _usedCapacityLabel->setPosition(Vec2(
+            Director::getInstance()->getVisibleSize().width / 2 + 100,
+            Director::getInstance()->getVisibleSize().height - 80
+            ));
+        this->addChild(_usedCapacityLabel);
+
+    }
+    else
+    {
+        // 更新现有标签
+        _usedCapacityLabel->setString(u8"已使用兵量:" + std::to_string(usedCapacity));
+    }
+    // ==============================
+
     float x = 0;
-    for (const auto& [type, count] : pool) {
+    for (const auto& [type, count] : pool)
+    {
         if (count <= 0) continue;
 
         // 加载图标
-        std::string iconPath;
-        switch (type) {
-        case UnitType::MELEE: iconPath = "berserker_affordable.png"; break;
-        case UnitType::RANGED: iconPath = "archer_affordable.png"; break;
-        case UnitType::TANK: iconPath = "tank_affordable.png"; break;
-        case UnitType::WALL_BREAKER: iconPath = "boomer_affordable.png"; break;
-        default: continue;
-        }
-
+        // 创建图标（可点击！）
+        std::string iconPath = getIconPathForType(type);
         auto icon = Sprite::create(iconPath);
         icon->setScale(0.8f);
         icon->setPosition(Vec2(x, 0));
+
+        UnitType capturedType = type;
+
+        // === 关键：添加点击事件 ===
+        auto listener = EventListenerTouchOneByOne::create();
+        listener->setSwallowTouches(true);
+        listener->onTouchBegan = [this, capturedType](Touch* touch, Event* event) {
+            this->onExistingTroopClicked(capturedType);
+            return true;
+        };
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, icon);
+        // ========================
+
         _troopBar->addChild(icon);
 
-        auto label = Label::createWithSystemFont(std::to_string(count), "Arial", 20);
-        label->setTextColor(Color4B::WHITE);
-        label->setPosition(Vec2(x, -30));
+		std::string labelStr = std::string(u8"已有:") + std::to_string(count);
+        auto label = Label::createWithSystemFont(labelStr, "Arial", 20);
+        label->setTextColor(Color4B::BLACK);
+        label->setPosition(Vec2(x, 80));
         _troopBar->addChild(label);
 
         _troopDisplays.emplace_back(icon, label);
-        x += 80; // 间距
+        x += 175; // 间距
     }
 }
 
@@ -224,6 +265,8 @@ void MilitaryArrange::updateButtonStates()
         used += count * cost;
     }
 
+    ArmyManager::getInstance()->setUsedCapacity(used);
+
     int totalCapacity = 0;
     totalCapacity = ArmyManager::getInstance()->getTotalCapacity();
 
@@ -232,5 +275,39 @@ void MilitaryArrange::updateButtonStates()
     {
         bool canAdd = (used + btn.cost <= totalCapacity);
         btn.button->setEnabled(canAdd);
+    }
+}
+
+// MilitaryArrange.cpp
+std::string MilitaryArrange::getIconPathForType(UnitType type)
+{
+    switch (type) {
+    case UnitType::MELEE: return "berserker_affordable.png";
+    case UnitType::RANGED: return "archer_affordable.png";
+    case UnitType::TANK: return "tank_affordable.png";
+    case UnitType::WALL_BREAKER: return "boomer_affordable.png";
+    default: return "default_troop.png";
+    }
+}
+
+// MilitaryArrange.cpp
+void MilitaryArrange::onExistingTroopClicked(UnitType type) 
+{
+    auto& pool = ArmyManager::getInstance()->getArmyPool();
+    auto it = pool.find(type);
+
+    if (it != pool.end() && it->second > 0) 
+    {
+        // 减少一个单位
+        it->second--;
+
+        // 如果数量为0，从map中移除（可选）
+        if (it->second == 0) {
+            pool.erase(it);
+        }
+
+        // 刷新显示
+        refreshTroopBar();
+        updateButtonStates(); // 重新启用可能被禁用的按钮
     }
 }
