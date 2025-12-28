@@ -628,172 +628,171 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
         switch (_pendingBuildingType)
         {
-        case StoreWindow::BuildingType::TOWN_HALL:
-        {
-			cost = TownHallBuildingData.goldCost[0];
+            case StoreWindow::BuildingType::TOWN_HALL:
+            {
+		    	cost = TownHallBuildingData.goldCost[0];
 
-            auto th = std::make_unique<TownHall>(TownHallBuildingData);
-            th->setGridPosition(gridPos);
-            _townHalls.push_back(std::move(th));
+                auto th = std::make_unique<TownHall>(TownHallBuildingData);
+                th->setGridPosition(gridPos);
+                _townHalls.push_back(std::move(th));
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_townHalls.back().get()); // .get() 返回裸指针
-            break;
-        }
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_townHalls.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-        case StoreWindow::BuildingType::GOLD_MINE:
-        {
-            cost = GoldMineBuildingData.elixirCost[0];
+            case StoreWindow::BuildingType::GOLD_MINE:
+            {
+                cost = GoldMineBuildingData.elixirCost[0];
 
-			isGold = false;
+		    	isGold = false;
 
-            auto mine = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
-            mine->setGridPosition(gridPos);
-            _goldMines.push_back(std::move(mine));
+                auto mine = std::make_unique<ResourceBuilding>(GoldMineBuildingData, -1, ResourceBuilding::ResourceType::GOLD);
+                mine->setGridPosition(gridPos);
+                _goldMines.push_back(std::move(mine));
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_goldMines.back().get()); // .get() 返回裸指针
-            break;
-        }
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_goldMines.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-        case StoreWindow::BuildingType::ELIXIR_COLLECTOR:
-        {
-            cost = ElixirCollectorBuildingData.goldCost[0];
+            case StoreWindow::BuildingType::ELIXIR_COLLECTOR:
+            {
+                cost = ElixirCollectorBuildingData.goldCost[0];
 
-            auto collector = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
-            collector->setGridPosition(gridPos);
-            _elixirCollectors.push_back(std::move(collector));
+                auto collector = std::make_unique<ResourceBuilding>(ElixirCollectorBuildingData, -1, ResourceBuilding::ResourceType::ELIXIR);
+                collector->setGridPosition(gridPos);
+                _elixirCollectors.push_back(std::move(collector));
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_elixirCollectors.back().get()); // .get() 返回裸指针
-            break;
-        }
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_elixirCollectors.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-        case StoreWindow::BuildingType::GOLD_STORAGE:
-        {
-            cost = GoldStorageBuildingData.elixirCost[0];
+            case StoreWindow::BuildingType::GOLD_STORAGE:
+            {
+                cost = GoldStorageBuildingData.elixirCost[0];
 
-			isGold = false;
+		    	isGold = false;
 
-            auto storage = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
-            storage->setGridPosition(gridPos);
-            _goldStorages.push_back(std::move(storage));
+                auto storage = std::make_unique<StorageBuilding>(GoldStorageBuildingData, -1, StorageBuilding::StorageType::GOLD_STORAGE);
+                storage->setGridPosition(gridPos);
+                _goldStorages.push_back(std::move(storage));
 
-            recalculateMaxStorage();
+                recalculateMaxStorage();
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_goldStorages.back().get()); // .get() 返回裸指针
-            break;
-        }
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_goldStorages.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-        case StoreWindow::BuildingType::ARCHER_TOWER:
-        {
-            cost = ArcherTowerBuildingData.goldCost[0];
+            case StoreWindow::BuildingType::ARCHER_TOWER:
+            {
+                cost = ArcherTowerBuildingData.goldCost[0];
 
-            auto tower = std::make_unique<DefenseBuilding>(
-                ArcherTowerBuildingData,
-                -1,
-                DefenseBuilding::DefenseType::ARCHER_TOWER
-            );
-            tower->setGridPosition(gridPos);
-            _archerTowers.push_back(std::move(tower));
+                auto tower = std::make_unique<DefenseBuilding>(
+                    ArcherTowerBuildingData,
+                    -1,
+                    DefenseBuilding::DefenseType::ARCHER_TOWER
+                );
+                tower->setGridPosition(gridPos);
+                _archerTowers.push_back(std::move(tower));
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_archerTowers.back().get()); // .get() 返回裸指针
-            break;
-        }
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_archerTowers.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-        case StoreWindow::BuildingType::ELIXIR_STORAGE:
-        {
-            cost = ElixirStorageBuildingData.goldCost[0];
+            case StoreWindow::BuildingType::ELIXIR_STORAGE:
+            {
+                cost = ElixirStorageBuildingData.goldCost[0];
 
-            auto storage = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
-            storage->setGridPosition(gridPos);
-            _elixirStorages.push_back(std::move(storage));
-            // 放置后重新计算总容量
-             recalculateMaxStorage();
+                auto storage = std::make_unique<StorageBuilding>(ElixirStorageBuildingData, -1, StorageBuilding::StorageType::ELIXIR_STORAGE);
+                storage->setGridPosition(gridPos);
+                _elixirStorages.push_back(std::move(storage));
+                // 放置后重新计算总容量
+                 recalculateMaxStorage();
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_elixirStorages.back().get()); // .get() 返回裸指针
-            break;
-        }
-        case StoreWindow::BuildingType::MILITARY_CAMP:
-        {
-            cost = MilitaryBuildingBuildingData.goldCost[0];
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_elixirStorages.back().get()); // .get() 返回裸指针
+                break;
+            }
+            case StoreWindow::BuildingType::MILITARY_CAMP:
+            {
+                cost = MilitaryBuildingBuildingData.goldCost[0];
 
-            auto camp = std::make_unique<MilitaryBuilding>(MilitaryBuildingBuildingData, -1);
-            camp->setGridPosition(gridPos);
-            _militaryCamps.push_back(std::move(camp));
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                auto camp = std::make_unique<MilitaryBuilding>(MilitaryBuildingBuildingData, -1);
+                camp->setGridPosition(gridPos);
+                _militaryCamps.push_back(std::move(camp));
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            recalculateArmyCapacity(); // ← 新增
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_militaryCamps.back().get()); // .get() 返回裸指针
-            break;
-        }
+                recalculateArmyCapacity(); // ← 新增
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_militaryCamps.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-        case StoreWindow::BuildingType::CANNON:
-        {
-            cost = CanonBuildingData.elixirCost[0];
+            case StoreWindow::BuildingType::CANNON:
+            {
+                cost = CanonBuildingData.elixirCost[0];
 
-			isGold = false;
+		    	isGold = false;
 
-            auto cannon = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
-            cannon->setGridPosition(gridPos);
-            _cannons.push_back(std::move(cannon));
+                auto cannon = std::make_unique<DefenseBuilding>(CanonBuildingData, -1, DefenseBuilding::DefenseType::CANON);
+                cannon->setGridPosition(gridPos);
+                _cannons.push_back(std::move(cannon));
 
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_cannons.back().get()); // .get() 返回裸指针
-            break;
-        }
-        /*unfinished
-        case StoreWindow::BuildingType::WORKER_HOME:
-        {
-            cost = WorkerHomeBuildingData.goldCost[0];
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_cannons.back().get()); // .get() 返回裸指针
+                break;
+            }
 
-            auto home = std::make_unique<WorkerHome>(WorkerHomeBuildingData);
-            home->setGridPosition(gridPos);
+            case StoreWindow::BuildingType::WORKER_HOME:
+            {
+                cost = WorkerHomeBuildingData.goldCost[0];
 
-            _workerHomes.push_back(std::move(home));
-            // 创建精灵
-            std::string spriteName = getGhostSpriteName(_pendingBuildingType);
-            realSprite = Sprite::create(spriteName);
+                auto home = std::make_unique<WorkerHome>(WorkerHomeBuildingData);
+                home->setGridPosition(gridPos);
 
-            // 直接绑定建筑指针！
-            realSprite->setUserObject(_workerHomes.back().get()); // .get() 返回裸指针
-            break;
-        }
-        */
+                _workerHomes.push_back(std::move(home));
+                // 创建精灵
+                std::string spriteName = getGhostSpriteName(_pendingBuildingType);
+                realSprite = Sprite::create(spriteName);
+
+                // 直接绑定建筑指针！
+                realSprite->setUserObject(_workerHomes.back().get()); // .get() 返回裸指针
+                break;
+            }
         }
 
 
@@ -1022,15 +1021,15 @@ std::string VillageScene::getGhostSpriteName(StoreWindow::BuildingType type)
 {
     switch (type)
     {
-    case StoreWindow::BuildingType::TOWN_HALL: return "town_hall_lv1.png";
-    case StoreWindow::BuildingType::GOLD_MINE: return "gold_mine_lv1.png";
-    case StoreWindow::BuildingType::ELIXIR_COLLECTOR: return "elixir_collector_lv1.png";
-    case StoreWindow::BuildingType::GOLD_STORAGE: return "gold_storage_lv1.png";
-    case StoreWindow::BuildingType::ELIXIR_STORAGE: return "elixir_storage_lv1.png";
-    case StoreWindow::BuildingType::MILITARY_CAMP: return "military_camp_lv1.png";
-    case StoreWindow::BuildingType::ARCHER_TOWER: return "archer_tower_lv1.png";
-    case StoreWindow::BuildingType::CANNON: return "canon_lv1.png";
-    case StoreWindow::BuildingType::WORKER_HOME: return "worker_home.png";
+        case StoreWindow::BuildingType::TOWN_HALL: return "town_hall_lv1.png";
+        case StoreWindow::BuildingType::GOLD_MINE: return "gold_mine_lv1.png";
+        case StoreWindow::BuildingType::ELIXIR_COLLECTOR: return "elixir_collector_lv1.png";
+        case StoreWindow::BuildingType::GOLD_STORAGE: return "gold_storage_lv1.png";
+        case StoreWindow::BuildingType::ELIXIR_STORAGE: return "elixir_storage_lv1.png";
+        case StoreWindow::BuildingType::MILITARY_CAMP: return "military_camp_lv1.png";
+        case StoreWindow::BuildingType::ARCHER_TOWER: return "archer_tower_lv1.png";
+        case StoreWindow::BuildingType::CANNON: return "canon_lv1.png";
+        case StoreWindow::BuildingType::WORKER_HOME: return "worker_home_lv1.png";
 
     }
 }
@@ -1155,8 +1154,9 @@ std::map<StoreWindow::BuildingType, int> VillageScene::getCurrentBuildingCounts(
 
     for (const auto& mc : _militaryCamps) 
         counts[StoreWindow::BuildingType::MILITARY_CAMP]++;
-	//for (const auto& wh : _workerHomes)
-	//        counts[StoreWindow::BuildingType::WORKER_HOME]++;
+
+	for (const auto& wh : _workerHomes)
+	        counts[StoreWindow::BuildingType::WORKER_HOME]++;
 
     // ... 其他建筑类型 ...
 

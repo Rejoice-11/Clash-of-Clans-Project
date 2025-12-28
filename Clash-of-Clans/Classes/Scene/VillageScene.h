@@ -104,6 +104,7 @@ private:
     std::vector<std::unique_ptr<DefenseBuilding>> _archerTowers;
     std::vector<std::unique_ptr<DefenseBuilding>> _cannons;
 	std::vector<std::unique_ptr<MilitaryBuilding>> _militaryCamps;
+    std::vector<std::unique_ptr<WorkerHome>> _workerHomes;
 
     // 当前选中的建筑
     Sprite* _selectedBuildingSprite = nullptr;

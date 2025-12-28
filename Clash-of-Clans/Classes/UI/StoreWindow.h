@@ -5,6 +5,7 @@
 #include "Classes/Entity/Building/StorageBuilding.h"
 #include "Classes/Entity/Building/MilitaryBuilding.h"
 #include "Classes/Entity/Building/DefenseBuilding.h"
+#include "Classes/Entity/Building/WorkerHome.h"
 #include <functional>
 
 USING_NS_CC;

@@ -164,6 +164,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Entity\Building\ResourceBuilding.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\StorageBuilding.cpp" />
     <ClCompile Include="..\Classes\Entity\Building\TownHall.cpp" />
+    <ClCompile Include="..\Classes\Entity\Building\WorkerHome.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\MeleeUnit.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\RangedUnit.cpp" />
     <ClCompile Include="..\Classes\Entity\Unit\TankUnit.cpp" />
@@ -197,6 +198,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Entity\Building\ResourceBuilding.h" />
     <ClInclude Include="..\Classes\Entity\Building\StorageBuilding.h" />
     <ClInclude Include="..\Classes\Entity\Building\TownHall.h" />
+    <ClInclude Include="..\Classes\Entity\Building\WorkerHome.h" />
     <ClInclude Include="..\Classes\Entity\GameObject.h" />
     <ClInclude Include="..\Classes\Entity\Unit\MeleeUnit.h" />
     <ClInclude Include="..\Classes\Entity\Unit\RangedUnit.h" />

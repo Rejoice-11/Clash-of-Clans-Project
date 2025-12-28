@@ -145,8 +145,7 @@ bool StoreWindow::initWithPlaceCallback(const std::function<void(BuildingType)>&
                 }
 
                 else if (type == BuildingType::WORKER_HOME) {
-                                     // 假设 WorkerHome 只花金币（按你项目设定调整）
-                    goldCost = 500;  // ← 替换为你的实际数据
+                    goldCost = WorkerHomeBuildingData.goldCost[0];
                 }
 
                 // 创建花费文本
@@ -356,8 +355,7 @@ void StoreWindow::rebuildMenu()
             }
 
             else if (type == BuildingType::WORKER_HOME) {
-                // 假设 WorkerHome 只花金币（按你项目设定调整）
-                goldCost = 500;  // ← 替换为你的实际数据
+                goldCost = WorkerHomeBuildingData.goldCost[0];
             }
 
             // 创建花费文本
@@ -461,7 +459,7 @@ int StoreWindow::getCurrentCount(BuildingType type)
     if (type == BuildingType::MILITARY_CAMP) return rm->getBuildingCount(StoreWindow::BuildingType::MILITARY_CAMP);
     if (type == BuildingType::ARCHER_TOWER) return rm->getBuildingCount(StoreWindow::BuildingType::ARCHER_TOWER);
     if (type == BuildingType::CANNON) return rm->getBuildingCount(StoreWindow::BuildingType::CANNON);
-    //if (type == BuildingType::WORKER_HOME) return rm->getBuildingCount(StoreWindow::BuildingType::WORKER_HOME);
+    if (type == BuildingType::WORKER_HOME) return rm->getBuildingCount(StoreWindow::BuildingType::WORKER_HOME);
 
 	return 0;  // 默认0
 }
@@ -503,8 +501,8 @@ int StoreWindow::getMaxCount(BuildingType type, int thLevel)
     }
     else if (type == BuildingType::WORKER_HOME)
     {
-        return 3;
+        return WorkerHomeBuildingData.maxBuildCount[thLevel - 1];
     }
     
-    return 5;  // 其他建筑默认5个
+    return 0;  // 其他建筑默认5个
 }

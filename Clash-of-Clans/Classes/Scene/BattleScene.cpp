@@ -468,10 +468,6 @@ bool BattleScene::init()
     ConfigManagerUnit::getInstance()->loadConfigs("data/units.json");
 
 	// 模拟从村庄带来的兵力,到时候改成从VillageManager获取
-    ArmyManager::getInstance()->setUnitCount(UnitType::MELEE, 50);
-    ArmyManager::getInstance()->setUnitCount(UnitType::RANGED, 40);
-    ArmyManager::getInstance()->setUnitCount(UnitType::TANK, 36);
-    ArmyManager::getInstance()->setUnitCount(UnitType::WALL_BREAKER, 22);
 
     //  战斗背景（全屏铺开）
     auto background = Sprite::create("battle_background.jpg");
@@ -681,9 +677,6 @@ void BattleScene::updateDefenseBuildings(float dt)
         }
     }
 }
-
-
-
 
 // 实现 update 帧更新函数
 void BattleScene::update(float dt)

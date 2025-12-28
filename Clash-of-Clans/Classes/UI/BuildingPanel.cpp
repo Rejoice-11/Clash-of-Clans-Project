@@ -92,6 +92,13 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
             );
 			break;
 
+        case BuildingType::WORKER_HOME:
+            spriteName = "worker_home_lv" + std::to_string(_building->getCurrentLevel()) + "_sub.png";
+            _upgradeTimeLabel = Label::createWithSystemFont(
+                std::to_string(WorkerHomeBuildingData.buildTime[building->getCurrentLevel() - 1]) + "s", "arial", 20
+            );
+			break;
+
         default: spriteName = "worker_home_lv0.png";
     }
 
@@ -128,6 +135,9 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
             break;
 
 		case BuildingType::MILITARY_CAMP: typeName = u8"兵营";
+			break;
+
+        case BuildingType::WORKER_HOME: typeName = u8"建筑者小屋";
 			break;
 
         default: typeName = u8"建筑者小屋";
@@ -218,9 +228,9 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
 		addStat("troop_capacity.PNG", std::to_string(static_cast<MilitaryBuilding*>(_building)->getTotalTroopCapacity()), statIndex++);
 	}
 
-    else if (dynamic_cast<TownHall*>(_building)) 
+    else if (dynamic_cast<WorkerHome*>(_building)) 
     {
-        addStat("hit_point.png", std::to_string(ArcherTowerBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
+        addStat("hit_point.png", std::to_string(WorkerHomeBuildingData.hitPoints[_building->getCurrentLevel() - 1]), statIndex++);
     }
 
     // 升级按钮（右下）
@@ -289,7 +299,7 @@ bool BuildingPanel::init(Building* building, const std::function<void()>& onClos
     else
     {
         // 默认处理
-        upgradeCost = 100; // 示例默认值unfinished
+        upgradeCost = WorkerHomeBuildingData.goldCost[_building->getCurrentLevel() - 1];
 	}
 
     // 创建升级按钮
@@ -399,7 +409,7 @@ void BuildingPanel::onUpdateButtonClicked(Ref* sender)
     else 
     {
         // 默认处理
-        cost = 100; // 示例默认值unfinished
+		cost = WorkerHomeBuildingData.goldCost[_building->getCurrentLevel() - 1];
 	}
 
     // 扣除资源
@@ -446,6 +456,9 @@ void BuildingPanel::refreshPanel()
 		case BuildingType::MILITARY_CAMP: typeName = u8"兵营";
 			break;
 
+		case BuildingType::WORKER_HOME: typeName = u8"建筑者小屋";
+			break;
+
             // ... 其他类型 ...unfinished
         default: typeName = "Building";
     }
@@ -486,6 +499,9 @@ void BuildingPanel::refreshPanel()
 		case BuildingType::MILITARY_CAMP:
             spriteName = "military_camp_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
 			break;
+
+        case BuildingType::WORKER_HOME:
+			spriteName = "worker_home_lv" + std::to_string(_building->getCurrentLevel()) + ".png";
 
 		default: spriteName = "";
     }

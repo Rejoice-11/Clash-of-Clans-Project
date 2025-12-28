@@ -76,6 +76,8 @@ public:
 	void onBtn_ConfirmClicked(Ref* sender);
 
 private:
+
+
 	cocos2d::Node* resultUIContainer = Node::create();// 战斗结果UI容器
 	cocos2d::Sprite* _arrowIndicator = nullptr; // 新增：箭头指示器
 	cocos2d::MenuItemImage* _selectedSoldierBtn = nullptr; // 新增：记录当前选中的士兵按钮
