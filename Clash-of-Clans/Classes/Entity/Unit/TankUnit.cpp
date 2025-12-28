@@ -28,7 +28,7 @@ void TankUnit::findBestTarget() {
                 float d = myGridPos.distance(Vec2(i, j));
 
                 // 优先寻找防御建筑 (假设 buildingtype == 3 是防御)
-                if (grid[i][j].buildingtype == 3) {
+                if (grid[i][j].buildingtype == 3|| grid[i][j].buildingtype == 4) {
                     if (d < minSourceDist) {
                         minSourceDist = d;
                         bestDefense = Vec2(i, j);
