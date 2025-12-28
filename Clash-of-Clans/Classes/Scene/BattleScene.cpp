@@ -226,6 +226,8 @@ void BattleScene::updateArrowPosition(cocos2d::MenuItemImage* targetBtn) {
 // 士兵生成实现（预留，后续完善具体逻辑）
 void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 {
+    if (!_isBattleStart)
+        return;
     if (_selectedType == UnitType::NONE) {
         CCLOG("Spawn Failed: No soldier selected!");
         return;
@@ -331,6 +333,7 @@ void BattleScene::closeBattleScene(Ref* sender)
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 先关闭返回确认窗口
     closeReturnWindow(sender);
+	_isBattleStart = false;// 标记战斗未开始
     // 使用popScene返回上一个场景（VillageScene），而非replaceScene
     // 这样会保留VillageScene的实例及其所有状态（包括已放置的建筑）
     // 停止背景音乐（双重保障，防止跳转时未停止）
@@ -341,6 +344,7 @@ void BattleScene::closeBattleScene(Ref* sender)
 // 关闭确认窗口按钮点击回调实现
 void BattleScene::closeReturnWindow(Ref* sender)
 {
+    _isBattleStart = true;
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 删除菜单（包含Cancel/Confirm按钮）
     if (_returnMenu)
@@ -359,8 +363,7 @@ void BattleScene::closeReturnWindow(Ref* sender)
 // 结束战斗按钮点击回调实现
 void BattleScene::onReturnButtonClicked(Ref* sender)
 {
-    if (_isBattleStart)
-        return;
+    _isBattleStart = false;
 	// 已经存在弹窗则不重复创建
     if (_returnPanel || _returnMenu)
         return;
@@ -397,6 +400,7 @@ void BattleScene::onSoldierSelectButtonClicked(Ref* sender)
 {
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 1. 转换点击的按钮对象
+    _isBattleStart = true;
     auto clickedBtn = dynamic_cast<MenuItemImage*>(sender);
     if (!clickedBtn) 
         return;
