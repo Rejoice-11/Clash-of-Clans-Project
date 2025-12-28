@@ -110,7 +110,7 @@ private:
     cocos2d::Sprite* realSprite = nullptr;    // 创建建筑对象便于生成建筑
     // 用 "x_y" 格式的字符串作为键（唯一标识），存储建筑精灵指针
     std::map<std::string, cocos2d::Sprite*> _buildingSprites;
-
+    void clearBuildingSprites();
     // 声明删除建筑的函数（后续调用）
     void removeBuilding(int x, int y);
     /* 所有建筑的容器（按类型分类）

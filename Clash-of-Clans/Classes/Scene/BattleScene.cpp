@@ -14,6 +14,23 @@ void initializeGrid() {
         }
     }
 }
+// 清空建筑精灵map的完整方法
+void BattleScene::clearBuildingSprites() {
+    // 1. 遍历map，释放每个Sprite对象（核心步骤）
+    for (auto& pair : _buildingSprites) {
+        cocos2d::Sprite* sprite = pair.second;
+        if (sprite) { // 判空，避免空指针操作
+            // 从父节点移除并清理内存（推荐方式）
+            // true 表示同时清理精灵的所有动作和回调
+            sprite->removeFromParentAndCleanup(true);
+            // 也可以直接调用release()，但removeFromParentAndCleanup更彻底
+            // sprite->release();
+        }
+    }
+
+    // 2. 清空map容器本身
+    _buildingSprites.clear();
+}
 //将建筑信息存入gridinfo二维数组(还没实现血量写入)
 void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
 {
@@ -143,7 +160,7 @@ void BattleScene::onBtn_ConfirmClicked(Ref* sender)
 {
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
 
-	void getRemainingCapacity(); // 获取剩余兵力
+    ArmyManager::getInstance()->getRemainingCapacity(); // 获取剩余兵力
     // 停止背景音乐（双重保障，防止跳转时未停止）
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
     Director::getInstance()->popScene();
@@ -205,7 +222,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
             break;
         }
         case 8:
-            realSprite = Sprite::create("worker_home.png");
+            realSprite = Sprite::create("worker_home_lv2.png");
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         default:
@@ -244,7 +261,8 @@ void BattleScene::removeBuilding(int x, int y)
             buildingSprite->removeFromParentAndCleanup(true);
         }
         // 从管理容器中删除该条目，避免野指针
-        _buildingSprites.erase(it);
+        _buildingSprites.erase(it); 
+        CCLOG("Yes building found at position (%d, %d)", x, y);
     }
     else
     {
@@ -274,6 +292,8 @@ void BattleScene::spawnSoldierAtPosition(const Vec2& position)
 {
     if (!_isBattleStart)
         return;
+    if(_isover)
+		return;
     if (_selectedType == UnitType::NONE) {
         CCLOG("Spawn Failed: No soldier selected!");
         return;
@@ -576,7 +596,8 @@ bool BattleScene::init()
 
     // 注册事件
     registerMouseEvents2();
-
+    // 清空建筑精灵map，确保初始状态干净
+	clearBuildingSprites(); 
 	//先删除背景音乐
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
 	// 播放战斗背景音乐
@@ -763,9 +784,8 @@ void BattleScene::update(float dt)
         for (int j = 1; j <= 40; j++) {
             if (grid[i][j].buildingtype > 0 && grid[i][j].now_health > 0) {
                 hasBuildingAlive = true;
-                break;
             }
-            if(grid[i][j].now_health == -1)
+            if(grid[i][j].now_health <= -1)
             {
                 removeBuilding(i, j); // 删除建筑精灵
                 grid[i][j].buildingtype = 0; // 标记为空地
@@ -776,7 +796,7 @@ void BattleScene::update(float dt)
     // 检查 B：玩家是否还能出兵 (遍历四种兵种)
     bool canStillSpawn = false;
     for (int typeID = 0; typeID <= 3; typeID++) {
-        if (ArmyManager::getInstance()->getRemainingCount(static_cast<UnitType>(typeID)) > 0) {
+        if (ArmyManager::getInstance()->getRemainingCount(static_cast<UnitType>(typeID))-1 > 0) {
             canStillSpawn = true;
             break;
         }

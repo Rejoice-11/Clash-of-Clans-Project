@@ -1,7 +1,7 @@
 #include "RangedUnit.h"
 
 USING_NS_CC;
-
+const int arrow_damage = 30;
 Sprite* RangedUnit::createSprite() {
     // 默认图：弓箭手站立
     auto sprite = Sprite::create("AQ_Japan_Neutral_Shadow_01.png");
@@ -27,7 +27,7 @@ void RangedUnit::executeAttack(int x, int y) {
     auto onHit = cocos2d::CallFunc::create([x, y, this, arrow]() {
         // 箭到了，才真正改网格里的血量
         if (grid[x][y].now_health > 0) {
-            grid[x][y].now_health -= this->getDamage();
+            grid[x][y].now_health -= arrow_damage;
             if (grid[x][y].now_health <= 0) grid[x][y].now_health = -1;
         }
         arrow->removeFromParent();
