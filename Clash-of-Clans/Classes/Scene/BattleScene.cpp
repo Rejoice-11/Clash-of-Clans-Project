@@ -32,6 +32,11 @@ void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
 // 战斗结束实现(战斗结束后调用)
 void BattleScene::battleOver()
 {
+    // 如果已经显示了，或者正在显示中，就不要再 addChild 了
+    if (_isBattleOver || resultUIContainer->getParent() != nullptr) {
+        return;
+    }
+
 	int countdestroyed = 0;
 	//遍历gridinfo二维数组，检查建筑状态,判断胜负
     for (int i = 1; i <= 40; i++)
@@ -707,6 +712,48 @@ void BattleScene::update(float dt)
             ++it;
         }
     }
+
+    // 检查 A：是否还有活着的建筑
+    bool hasBuildingAlive = false;
+    for (int i = 1; i <= 40; i++) {
+        for (int j = 1; j <= 40; j++) {
+            if (grid[i][j].buildingtype > 0 && grid[i][j].now_health > 0) {
+                hasBuildingAlive = true;
+                break;
+            }
+        }
+        if (hasBuildingAlive) break;
+    }
+
+    // 检查 B：玩家是否还能出兵 (遍历四种兵种)
+    bool canStillSpawn = false;
+    for (int typeID = 0; typeID <= 3; typeID++) {
+        if (ArmyManager::getInstance()->getRemainingCount(static_cast<UnitType>(typeID)) > 0) {
+            canStillSpawn = true;
+            break;
+        }
+    }
+
+    // --- 决定是否吹哨 ---
+
+    // 情况 1: 100% 拆迁完成
+    if (!hasBuildingAlive) {
+        _isBattleOver = true; // 防止重复调用
+        this->battleOver();   // 交给原本的函数去处理结算和 UI
+        return;
+    }
+
+    // 情况 2: 场上没兵了 且 手里也没兵了
+    if (_liveUnits.empty() && !canStillSpawn) {
+        // 稍微给一点延迟（比如1秒），让最后一发炮弹飞一会儿，视觉上更自然
+        _isBattleOver = true;
+        this->runAction(Sequence::create(
+            DelayTime::create(1.0f),
+            CallFunc::create([this]() { this->battleOver(); }),
+            nullptr
+        ));
+    }
+
 }
 
 // 未实现的按钮回调（保持代码完整性）
