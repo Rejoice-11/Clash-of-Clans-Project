@@ -84,6 +84,9 @@ void BattleScene::battleOver()
 		elixirlabel->setColor(Color3B::BLACK);
 		elixirlabel->setPosition(600, 370);
         resultUIContainer->addChild(elixirlabel, 101);
+
+
+
         CCLOG("Battle Won!");
         // ´¦ÀíÊ¤ÀûÂß¼­
     }

@@ -399,7 +399,7 @@ void VillageScene::clampScrollNodeScale(float targetScale)
 // 攻击按钮点击回调实现
 void VillageScene::onAttackButtonClicked(Ref* sender)
 {
-    if (_attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
+    if (_militaryLayer || _attackPanel || (_storeWindow && _storeWindow->isVisible())) return;
     if (_settingLayer) {
         _settingLayer->playButtonClickSound(); // 添加音效
     }
@@ -450,7 +450,7 @@ void VillageScene::closeAttackPanel(Ref*)
 
 void VillageScene::onMarketButtonClicked(Ref* sender)
 {
-    if (_attackPanel || _isPlacementMode) return;  // 放置,攻击中不能开商店
+    if (_militaryLayer || _attackPanel || _isPlacementMode) return;  // 放置,攻击中不能开商店
     if (_settingLayer) {
         _settingLayer->playButtonClickSound(); // 添加音效
     }
@@ -832,7 +832,7 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
 
 void VillageScene::onBuildingClicked(Sprite* sprite)
 {
-    if (_isInAttackPanel || (_storeWindow && _storeWindow->isVisible()) || _isPlacementMode) 
+    if (_militaryLayer || _isInAttackPanel || (_storeWindow && _storeWindow->isVisible()) || _isPlacementMode) 
     {
         return;
     }
@@ -1253,6 +1253,9 @@ void VillageScene::onElixirCollectClicked(Ref* sender)
 
 void VillageScene::onArmyButtonClicked(Ref* sender) {
     if (_militaryLayer) return;
+    if (_settingLayer) {
+        _settingLayer->playButtonClickSound(); // 添加音效
+	}
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
     // 创建 Layer（无参！）
     _militaryLayer = MilitaryArrange::create();
