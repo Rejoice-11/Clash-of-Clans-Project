@@ -64,15 +64,11 @@
     <ClInclude Include="..\Classes\Core\ConfigManagerUnit.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Core\EventDispatcher.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Core\GameDirector.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate\AppDelegate.h" />
     <ClInclude Include="..\Classes\Data\BuildingData.h" />
-    <ClInclude Include="..\Classes\Data\MapData.h" />
     <ClInclude Include="..\Classes\Data\UnitData.h" />
     <ClInclude Include="..\Classes\Entity\Building\Building.h" />
     <ClInclude Include="..\Classes\Entity\Building\DefenseBuilding.h" />
@@ -90,16 +86,12 @@
     <ClInclude Include="..\Classes\Scene\MenuScene.h" />
     <ClInclude Include="..\Classes\Scene\VillageScene.h" />
     <ClInclude Include="..\Classes\System\ArmyManager.h" />
-    <ClInclude Include="..\Classes\System\BuilderManager.h" />
-    <ClInclude Include="..\Classes\System\CombatSystem.h" />
-    <ClInclude Include="..\Classes\System\PathfindingSystem.h" />
     <ClInclude Include="..\Classes\System\ResourceManager.h" />
     <ClInclude Include="..\Classes\UI\BuildingPanel.h" />
     <ClInclude Include="..\Classes\UI\HUDLayer.h" />
     <ClInclude Include="..\Classes\UI\StoreWindow.h" />
     <ClInclude Include="..\Classes\Utils\Constants.h" />
     <ClInclude Include="..\Classes\Utils\GridUtils.h" />
-    <ClInclude Include="..\Classes\Utils\TimerUtils.h" />
     <ClInclude Include="..\Classes\Utils\CameraUtils.h" />
     <ClInclude Include="..\Classes\Setting\SettingLayer.h" />
     <ClInclude Include="..\Classes\Entity\Unit\UnitFactory.h" />

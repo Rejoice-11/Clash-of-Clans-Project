@@ -78,7 +78,7 @@ public:
 private:
 
 
-	cocos2d::Node* resultUIContainer = Node::create();// 战斗结果UI容器
+
 	cocos2d::Sprite* _arrowIndicator = nullptr; // 新增：箭头指示器
 	cocos2d::MenuItemImage* _selectedSoldierBtn = nullptr; // 新增：记录当前选中的士兵按钮
     UnitType _selectedType = UnitType::NONE; // 当前选中的兵种
@@ -102,11 +102,17 @@ private:
 	bool _isBattleOver = false;         // 战斗是否结束
 	bool _isTownHallDestroyed = false; // 大本营是否被摧毁
 	bool _iswin = false;// 战斗胜利标志
+    bool _isover = false;//结算界面是否出现
     // 新增：保存弹窗面板和菜单（用于后续删除）
     cocos2d::Sprite* _returnPanel = nullptr;
     cocos2d::Menu* _returnMenu = nullptr;
 
     cocos2d::Sprite* realSprite = nullptr;    // 创建建筑对象便于生成建筑
+    // 用 "x_y" 格式的字符串作为键（唯一标识），存储建筑精灵指针
+    std::map<std::string, cocos2d::Sprite*> _buildingSprites;
+
+    // 声明删除建筑的函数（后续调用）
+    void removeBuilding(int x, int y);
     /* 所有建筑的容器（按类型分类）
     std::vector<std::unique_ptr<TownHall>> _townHalls;
     std::vector<std::unique_ptr<ResourceBuilding>> _goldMines;

@@ -33,11 +33,15 @@ void BattleScene::initgridinfo(const int x, const int y, int buildingtype)
 // 战斗结束实现(战斗结束后调用)
 void BattleScene::battleOver()
 {
+    CCLOG("Battle Over Triggered");
     // 如果已经显示了，或者正在显示中，就不要再 addChild 了
-    if (_isBattleOver || resultUIContainer->getParent() != nullptr) {
+    if (!_isBattleOver ) {
         return;
     }
-
+    if (_isover)
+    {
+        return;
+    }
 	int countdestroyed = 0;
 	//遍历gridinfo二维数组，检查建筑状态,判断胜负
     for (int i = 1; i <= 40; i++)
@@ -60,65 +64,67 @@ void BattleScene::battleOver()
     {
         _iswin = true;
     }
-    this->addChild(resultUIContainer, 100); // 战斗结果UI添加到场景
     auto bg = Sprite::create();
-    bg->setTextureRect(Rect(0, 0, 1280,720));
+    bg->setTextureRect(Rect(0, 0, 640,360));
     bg->setColor(Color3B::GRAY);
     bg->setOpacity(220);
     bg->setPosition(640, 360);
-    resultUIContainer->addChild(bg,100);
+    this->addChild(bg,200);
     // 显示战斗结果UI等
     if (_iswin)
     {
+        _isover = true;
+        SimpleAudioEngine::getInstance()->playEffect("audio/Victory.mp3");// 播放胜利音效
         auto victory = Sprite::create("victory.png");
         victory->setScale(0.8);
         victory->setPosition(640, 550);
-        resultUIContainer->addChild(victory, 101);
+        this->addChild(victory, 201);
 		auto goldpic = Sprite::create("coin.png");
         goldpic->setScale(0.2);
         goldpic->setPosition(700, 420);
-        resultUIContainer->addChild(goldpic, 101);
+        this->addChild(goldpic, 201);
 		auto goldlabel = Label::createWithTTF("+1000", "fonts/Marker Felt.ttf", 30);
 		goldlabel->setColor(Color3B::BLACK);
 		goldlabel->setPosition(600, 420);
-        resultUIContainer->addChild(goldlabel, 101);
+        this->addChild(goldlabel, 201);
 		auto elixirpic = Sprite::create("elixir.png");
 		elixirpic->setScale(0.2);
 		elixirpic->setPosition(700, 370);
-        resultUIContainer->addChild(elixirpic, 101);
+        this->addChild(elixirpic, 201);
 		auto elixirlabel = Label::createWithTTF("+1000", "fonts/Marker Felt.ttf", 30);
 		elixirlabel->setColor(Color3B::BLACK);
 		elixirlabel->setPosition(600, 370);
-        resultUIContainer->addChild(elixirlabel, 101);
+        this->addChild(elixirlabel, 201);
 
         ResourceManager::getInstance()->addElixir(1000);
 		ResourceManager::getInstance()->addGold(1000);
-
         CCLOG("Battle Won!");
         // 处理胜利逻辑
     }
     else
     {
+        _isover = true;
+        SimpleAudioEngine::getInstance()->playEffect("audio/Defeat.mp3");// 播放失败音效
 		auto defeat = Sprite::create("defeat.png");
         defeat->setScale(0.8);
 		defeat->setPosition(640, 550);
-        resultUIContainer->addChild(defeat, 101);
+        this->addChild(defeat, 201);
         auto goldpic = Sprite::create("coin.png");
         goldpic->setScale(0.2);
         goldpic->setPosition(700, 420);
-        resultUIContainer->addChild(goldpic, 101);
+        this->addChild(goldpic, 201);
         auto goldlabel = Label::createWithTTF("+0", "fonts/Marker Felt.ttf", 30);
         goldlabel->setColor(Color3B::BLACK);
         goldlabel->setPosition(600, 420);
-        resultUIContainer->addChild(goldlabel, 101);
+        this->addChild(goldlabel, 201);
         auto elixirpic = Sprite::create("elixir.png");
         elixirpic->setScale(0.2);
         elixirpic->setPosition(700, 370);
-        resultUIContainer->addChild(elixirpic, 101);
+        this->addChild(elixirpic, 201);
         auto elixirlabel = Label::createWithTTF("+0", "fonts/Marker Felt.ttf", 30);
         elixirlabel->setColor(Color3B::BLACK);
         elixirlabel->setPosition(600, 370);
-        resultUIContainer->addChild(elixirlabel, 101);
+        this->addChild(elixirlabel, 201);
         CCLOG("Battle Lost!");
         // 处理失败逻辑
     }
@@ -130,18 +136,13 @@ void BattleScene::battleOver()
     Btn_Confirm->setPosition(Vec2(640, 250));
     auto menu = Menu::create(Btn_Confirm, nullptr);
     menu->setPosition(Vec2::ZERO);
-    resultUIContainer->addChild(menu, 101);
+    this->addChild(menu, 201);
 }
 //实现确认按钮点击回调
 void BattleScene::onBtn_ConfirmClicked(Ref* sender)
 {
     SimpleAudioEngine::getInstance()->playEffect("audio/button_click.mp3");
-    // 清理战斗场景，返回村庄场景
-    if(resultUIContainer)
-    {
-        this->removeAllChildren();
-        resultUIContainer = nullptr;
-    }
+
 	void getRemainingCapacity(); // 获取剩余兵力
     // 停止背景音乐（双重保障，防止跳转时未停止）
     SimpleAudioEngine::getInstance()->stopBackgroundMusic();
@@ -211,10 +212,45 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
             break;
             // 实现建筑初始化
     }
-    Vec2 finalPos = GridUtils::gridToWorld(gridPos);
-    realSprite->setAnchorPoint(Vec2(0.5, 0.5));
-    realSprite->setPosition(finalPos);
-    this->addChild(realSprite, 5);
+    // 关键修改1：仅当精灵创建成功时，才添加到场景并存入管理容器
+    if (realSprite != nullptr)
+    {
+        cocos2d::Vec2 finalPos = GridUtils::gridToWorld(gridPos);
+        realSprite->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
+        realSprite->setPosition(finalPos);
+        this->addChild(realSprite, 5);
+    
+        // 生成唯一标识（x和y拼接，比如x=2,y=3则键为"2_3"）
+        std::string key = cocos2d::StringUtils::format("%d_%d", x, y);
+        // 将精灵存入map，方便后续查找删除
+        _buildingSprites[key] = realSprite;
+    }
+}
+
+// 删除指定坐标的建筑精灵
+void BattleScene::removeBuilding(int x, int y)
+{
+    // 生成唯一标识，和创建时保持一致
+    std::string key = cocos2d::StringUtils::format("%d_%d", x, y);
+
+    // 查找该建筑是否存在
+    auto it = _buildingSprites.find(key);
+    if (it != _buildingSprites.end())
+    {
+        cocos2d::Sprite* buildingSprite = it->second;
+        if (buildingSprite != nullptr)
+        {
+            // 从父节点移除并清理内存（cleanup=true 会释放精灵的所有资源）
+            buildingSprite->removeFromParentAndCleanup(true);
+        }
+        // 从管理容器中删除该条目，避免野指针
+        _buildingSprites.erase(it);
+    }
+    else
+    {
+        // 可选：打印日志，提示该位置无建筑
+        CCLOG("No building found at position (%d, %d)", x, y);
+    }
 }
 
 
@@ -672,7 +708,10 @@ void BattleScene::updateDefenseBuildings(float dt)
 
                         std::string img = (type == 3) ? "cannon_ball.png" : "arrow.png";
                         float damage = (type == 3) ? cannonDamage : archerDamage;
-
+                        if(type==3)
+                            SimpleAudioEngine::getInstance()->playEffect("audio/CannonFire.mp3");// 播放攻击音效
+						else
+                            SimpleAudioEngine::getInstance()->playEffect("audio/RangedUnit.mp3");// 播放攻击音效
                         // 创建子弹表现
                         auto bullet = Sprite::create(img);
                         bullet->setPosition(buildPos);
@@ -718,7 +757,7 @@ void BattleScene::update(float dt)
         }
     }
 
-    // 检查 A：是否还有活着的建筑
+	// 检查 A：是否还有活着的建筑,并将血量为-1的建筑视为已摧毁(删除)
     bool hasBuildingAlive = false;
     for (int i = 1; i <= 40; i++) {
         for (int j = 1; j <= 40; j++) {
@@ -726,8 +765,12 @@ void BattleScene::update(float dt)
                 hasBuildingAlive = true;
                 break;
             }
+            if(grid[i][j].now_health == -1)
+            {
+                removeBuilding(i, j); // 删除建筑精灵
+                grid[i][j].buildingtype = 0; // 标记为空地
+			}
         }
-        if (hasBuildingAlive) break;
     }
 
     // 检查 B：玩家是否还能出兵 (遍历四种兵种)
