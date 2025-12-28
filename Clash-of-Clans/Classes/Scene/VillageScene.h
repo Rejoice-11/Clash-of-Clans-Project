@@ -4,7 +4,7 @@
 #include "Classes/Core/GameDirector.h"
 #include "Classes/Scene/BattleScene.h"
 #include "Classes/System/ResourceManager.h"
-#include "Classes/UI/MilitaryArrange.h"
+#include "Classes/System/ArmyManager.h"
 #include "Classes/UI/HUDLayer.h"
 // 引入商店弹窗头文件
 #include "Classes/UI/StoreWindow.h"
@@ -13,6 +13,8 @@
 // 引入设置层
 #include "Classes/Setting/SettingLayer.h"
 USING_NS_CC;
+
+class MilitaryArrange;
 
 class VillageScene : public Scene
 {
@@ -34,6 +36,9 @@ public:
     void onGoldCollectClicked(Ref* sender);    // 收集金币
     void onElixirCollectClicked(Ref* sender);  // 收集圣水
     float calculateTotalProduction(ResourceBuilding::ResourceType type); // 计算总生产率
+	int getArmyCapacity(); // 获取最大存储容量
+
+    void recalculateArmyCapacity();
 
 private:
     Layer* _backgroundLayer;
@@ -41,6 +46,7 @@ private:
     Layer* _uiLayer;
     LayerColor* _grayMask = nullptr;
     Node* _attackPanel = nullptr;
+    MilitaryArrange* _militaryLayer;// ← 新增
 
     // 新增：商店弹窗实例（替代原_marketPanel）
     StoreWindow* _storeWindow = nullptr;

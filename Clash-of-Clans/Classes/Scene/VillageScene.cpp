@@ -1,5 +1,6 @@
 // 必须包含对应的头文件//unfinished
 #include "VillageScene.h"
+#include "Classes/UI/MilitaryArrange.h"
 
 // 场景创建函数实现
 Scene* VillageScene::createScene()
@@ -53,14 +54,14 @@ bool VillageScene::init()
         "attack_button.png", "attack_button.png",
         CC_CALLBACK_1(VillageScene::onAttackButtonClicked, this));
     attackBtn->setPosition(Vec2(100 + origin.x, 100 + origin.y));
-    /*
+
     auto armyBtn = MenuItemImage::create(
         "army_arrangement_btn.png", "army_arrangement_btn.png",
         CC_CALLBACK_1(VillageScene::onArmyButtonClicked, this)
         );
 
     armyBtn->setPosition(Vec2(_visibleSize.width - 100, _visibleSize.height / 2));
-    */
+
 
     // 右下角 商店按钮
     auto marketBtn = MenuItemImage::create(
@@ -68,7 +69,7 @@ bool VillageScene::init()
         CC_CALLBACK_1(VillageScene::onMarketButtonClicked, this));
     marketBtn->setPosition(Vec2(_visibleSize.width - 100 + origin.x, 100 + origin.y));
 
-    auto menu = Menu::create(attackBtn, marketBtn, nullptr);
+    auto menu = Menu::create(armyBtn, attackBtn, marketBtn, nullptr);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 10); // UI层级高于背景
 
@@ -751,6 +752,7 @@ void VillageScene::confirmPlacement(const Vec2& worldPos)
             std::string spriteName = getGhostSpriteName(_pendingBuildingType);
             realSprite = Sprite::create(spriteName);
 
+            recalculateArmyCapacity(); // ← 新增
             // 直接绑定建筑指针！
             realSprite->setUserObject(_militaryCamps.back().get()); // .get() 返回裸指针
             break;
@@ -1089,12 +1091,18 @@ void VillageScene::onBuildingPanelClosed()
 
     }
 
-    if (_selectedBuilding && 
+    else if (_selectedBuilding && 
         (_selectedBuilding->getBuildingType() == GOLD_STORAGE || 
          _selectedBuilding->getBuildingType() == ELIXIR_STORAGE)) 
     {
         recalculateMaxStorage();
 	}
+
+    else if(_selectedBuilding && _selectedBuilding->getBuildingType() == MILITARY_CAMP) 
+    {
+        recalculateArmyCapacity(); // ← 新增
+
+    }
 
     // 2. 加载新纹理
     auto texture = Director::getInstance()->getTextureCache()->addImage(newSpriteName);
@@ -1243,18 +1251,37 @@ void VillageScene::onElixirCollectClicked(Ref* sender)
     }
 }
 
-/*void VillageScene::onArmyButtonClicked(Ref* sender)
-{
-    auto layer = MilitaryArrang::create(this);
-    this->addChild(layer, 100);
+void VillageScene::onArmyButtonClicked(Ref* sender) {
+    if (_militaryLayer) return;
 
-}unfinished*/
+    // 创建 Layer（无参！）
+    _militaryLayer = MilitaryArrange::create();
+    if (_militaryLayer) {
+        // 设置关闭回调（仿 StoreWindow 的 setPlaceCallback）
+        _militaryLayer->setCloseCallback([this]() {
+            _militaryLayer = nullptr; // 清理指针
+        });
+        this->addChild(_militaryLayer, 100);
+
+    }
+}
 
 // 当玩家升级 Storage 时调用（比如在 StoreWindow 放置后）
 void VillageScene::onStorageUpgraded(StorageBuilding* storage)
 {
     recalculateMaxStorage();
 }
+
+void VillageScene::recalculateArmyCapacity()
+{
+    int totalCapacity = 0;
+    for (const auto& camp : _militaryCamps) 
+    {
+        totalCapacity += camp->getTotalTroopCapacity();
+    }
+    ArmyManager::getInstance()->setTotalCapacity(totalCapacity);
+}
+
 
 // 未实现的空函数（保持代码完整性）
 void VillageScene::onShopButtonClicked(Ref* sender) {}

@@ -16,10 +16,22 @@ public:
     // 尝试部署一个（如果够扣就扣一个，并返回true）
     bool tryDeploy(UnitType id);
 
+    /** @brief 获取军队池（用于修改） */
+    std::map<UnitType, int>& getArmyPool() { return _armyPool; }
+
     const std::map<UnitType, int>& getArmyPool() const { return _armyPool; } // ← 新增 getter
+
+    void setTotalCapacity(int capacity);
+
+    /** @brief 获取当前总兵力上限 */
+    int getTotalCapacity() const;
+
+    /** @brief 计算已使用的兵力 */
+    int getUsedCapacity() const;
 
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;
     std::map<UnitType, int> _armyPool;
+    int _totalCapacity = 0; //  新增成员
 };

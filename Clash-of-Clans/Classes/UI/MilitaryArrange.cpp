@@ -1,23 +1,30 @@
-// MilitaryArrang.cpp
-/*#include "MilitaryArrange.h"
-#include "SimpleAudioEngine.h"
+// MilitaryArrange.cpp
+#include "MilitaryArrange.h"
+#include "Classes/System/ArmyManager.h"
 
 USING_NS_CC;
-using namespace CocosDenshion;
 
-bool MilitaryArrang::init(VillageScene* villageScene)
-{
-    if (!Layer::init()) 
-        return false;
+// 无参 create（和 StoreWindow 完全一致！）
+MilitaryArrange* MilitaryArrange::create() {
+    MilitaryArrange* layer = new (std::nothrow) MilitaryArrange();
+    if (layer && layer->init()) {
+        layer->autorelease();
+        return layer;
+    }
+    CC_SAFE_DELETE(layer);
+    return nullptr;
+}
 
-    _villageScene = villageScene;
+// 无参 init（关键！）
+bool MilitaryArrange::init() {
+    if (!Layer::init()) return false;
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
     // 背景
     _background = Sprite::create("army_arrangement_bg.png");
     if (!_background) {
-        _background = LayerColor::create(Color4B(30, 30, 50, 220));
-        _background->setContentSize(visibleSize);
+		return false;
     }
     _background->setPosition(visibleSize / 2);
     this->addChild(_background);
@@ -25,7 +32,7 @@ bool MilitaryArrang::init(VillageScene* villageScene)
     // 返回按钮
     auto closeBtn = MenuItemImage::create(
         "out_of_now.png", "out_of_now.png",
-        CC_CALLBACK_1(MilitaryArrang::onCloseButtonClicked, this)
+        CC_CALLBACK_1(MilitaryArrange::onCloseButtonClicked, this)
     );
     closeBtn->setPosition(Vec2(visibleSize.width - 40, visibleSize.height - 40));
     auto menu = Menu::create(closeBtn, nullptr);
@@ -33,10 +40,7 @@ bool MilitaryArrang::init(VillageScene* villageScene)
     this->addChild(menu, 10);
 
     // 总兵力显示
-    int totalCapacity = 0;
-    if (!_villageScene->_militaryCamps.empty()) {
-        totalCapacity = _villageScene->_militaryCamps[0]->getTotalTroopCapacity();
-    }
+    int totalCapacity = ArmyManager::getInstance()->getTotalCapacity();
     _capacityLabel = Label::createWithSystemFont(
         "Total: " + std::to_string(totalCapacity), "Arial", 24
     );
@@ -44,25 +48,26 @@ bool MilitaryArrang::init(VillageScene* villageScene)
     _capacityLabel->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - 80));
     this->addChild(_capacityLabel);
 
-    // 已配置军队条（横杠）
+    // 已配置军队条
     _troopBar = Node::create();
     _troopBar->setPosition(Vec2(50, visibleSize.height - 150));
     this->addChild(_troopBar);
 
-    // 兵种按钮（假设4种兵种）
+    // 兵种按钮
     std::vector<std::tuple<UnitType, const char*, int>> troopInfo = {
-        {UnitType::BARBARIAN, "barbarian_icon.png", 1},
-        {UnitType::ARCHER, "archer_icon.png", 1},
-        {UnitType::GIANT, "giant_icon.png", 5},
-        {UnitType::GOBLIN, "goblin_icon.png", 1}
+        {UnitType::MELEE, "berserker_affordable.png", 1},
+        {UnitType::RANGED, "archer_affordable.png", 1},
+        {UnitType::TANK, "tank_affordable.png", 5},
+        {UnitType::WALL_BREAKER, "boomer_affordable.png", 2}
     };
 
     float startX = 100;
     float startY = 200;
     float spacing = 120;
 
-    for (int i = 0; i < troopInfo.size(); ++i) {
+    for (size_t i = 0; i < troopInfo.size(); ++i) {
         auto [type, iconPath, cost] = troopInfo[i];
+
         auto normalIcon = Sprite::create(iconPath);
         auto disabledIcon = Sprite::create(iconPath);
         disabledIcon->setColor(Color3B::GRAY);
@@ -70,7 +75,6 @@ bool MilitaryArrang::init(VillageScene* villageScene)
         auto button = MenuItemSprite::create(
             normalIcon, normalIcon, disabledIcon,
             [this, type, cost](Ref* sender) {
-                // 找到对应的按钮
                 for (auto& btn : _troopButtons) {
                     if (btn.type == type) {
                         onTroopButtonClicked(&btn);
@@ -79,26 +83,38 @@ bool MilitaryArrang::init(VillageScene* villageScene)
                 }
             }
         );
-        button->setPosition(Vec2(startX + i * spacing, startY));
-
+        button->setPosition(Vec2(startX + static_cast<float>(i) * spacing, startY));
         _troopButtons.push_back({ button, type, cost });
     }
 
     auto troopMenu = Menu::create();
-    for (auto& btn : _troopButtons) {
+    for (auto& btn : _troopButtons)
+    {
         troopMenu->addChild(btn.button);
     }
     troopMenu->setPosition(Vec2::ZERO);
     this->addChild(troopMenu, 5);
 
-    // 初始刷新
     refreshTroopBar();
     updateButtonStates();
 
     return true;
 }
 
-void MilitaryArrang::refreshTroopBar()
+// 关闭处理（触发回调）
+void MilitaryArrange::onCloseButtonClicked(Ref* sender) {
+    if (_closeCallback) {
+        _closeCallback(); // 通知 VillageScene 清理指针
+    }
+    this->removeFromParent();
+}
+
+void MilitaryArrange::setCloseCallback(const std::function<void()>& callback) 
+{
+    _closeCallback = callback;
+}
+
+void MilitaryArrange::refreshTroopBar()
 {
     // 清空旧显示
     for (auto& pair : _troopDisplays)
@@ -109,7 +125,7 @@ void MilitaryArrang::refreshTroopBar()
     _troopDisplays.clear();
 
     // 获取当前配置
-    auto& pool = ArmyManager::getInstance()->_armyPool; // 注意：需将 _armyPool 设为 public 或提供 getter
+    auto& pool = ArmyManager::getInstance()->getArmyPool(); // 注意：需将 _armyPool 设为 public 或提供 getter
     float x = 0;
     for (const auto& [type, count] : pool) {
         if (count <= 0) continue;
@@ -117,10 +133,10 @@ void MilitaryArrang::refreshTroopBar()
         // 加载图标
         std::string iconPath;
         switch (type) {
-        case UnitType::MELEE: iconPath = "barbarian_icon.png"; break;
-        case UnitType::RANGED: iconPath = "archer_icon.png"; break;
-        case UnitType::TANK: iconPath = "giant_icon.png"; break;
-        case UnitType::WALL_BREAKER: iconPath = "goblin_icon.png"; break;
+        case UnitType::MELEE: iconPath = "berserker_affordable.png"; break;
+        case UnitType::RANGED: iconPath = "archer_affordable.png"; break;
+        case UnitType::TANK: iconPath = "tank_affordable.png"; break;
+        case UnitType::WALL_BREAKER: iconPath = "boomer_affordable.png"; break;
         default: continue;
         }
 
@@ -139,55 +155,82 @@ void MilitaryArrang::refreshTroopBar()
     }
 }
 
-void MilitaryArrang::onTroopButtonClicked(TroopButton* btn) {
+void MilitaryArrange::onTroopButtonClicked(TroopButton* btn)
+{
     // 计算总已用兵力
     int used = 0;
-    auto& pool = ArmyManager::getInstance()->_armyPool;
-    for (const auto& [type, count] : pool) {
+    auto& pool = ArmyManager::getInstance()->getArmyPool();
+
+    for (const auto& [type, count] : pool) 
+    {
         // 假设每个兵种有固定 cost（需统一管理）
         int cost = 1;
-        if (type == UnitType::GIANT) cost = 5;
+        if (type == UnitType::TANK) 
+            cost = 5;
+
+        else if (type == UnitType::WALL_BREAKER) 
+            cost = 2;
+
+        else 
+            cost = 1;
+
         used += count * cost;
     }
 
     // 获取总容量
     int totalCapacity = 0;
-    if (!_villageScene->_militaryCamps.empty()) {
-        totalCapacity = _villageScene->_militaryCamps[0]->getTotalTroopCapacity();
-    }
+    totalCapacity = ArmyManager::getInstance()->getTotalCapacity();
 
     // 检查是否可添加
-    if (used + btn->cost <= totalCapacity) {
-        ArmyManager::getInstance()->setUnitCount(
-            btn->type,
-            pool[btn->type] + 1
-        );
+    if (used + btn->cost <= totalCapacity)
+    {
+        auto& pool = ArmyManager::getInstance()->getArmyPool(); // ← 获取非 const 引用
+        auto it = pool.find(btn->type);
+
+        if (it == pool.end()) 
+        {
+            // 该兵种不存在，新增
+            pool[btn->type] = 1; // 现在可以了，因为 pool 是非 const
+        }
+
+        else 
+        {
+            // 已存在，+1
+            it->second += 1;
+        }
         refreshTroopBar();
         updateButtonStates();
     }
 }
 
-void MilitaryArrang::updateButtonStates() {
+void MilitaryArrange::updateButtonStates()
+{
     // 计算已用兵力
     int used = 0;
-    auto& pool = ArmyManager::getInstance()->_armyPool;
-    for (const auto& [type, count] : pool) {
-        int cost = (type == UnitType::GIANT) ? 5 : 1;
+    auto& pool = ArmyManager::getInstance()->getArmyPool();
+    for (const auto& [type, count] : pool) 
+    {
+        int cost = 1;
+
+        if (type == UnitType::TANK)
+            cost = 5;
+
+        else if (type == UnitType::WALL_BREAKER)
+            cost = 2;
+
+        else
+            cost = 1;
+
         used += count * cost;
     }
 
     int totalCapacity = 0;
-    if (!_villageScene->_militaryCamps.empty()) {
-        totalCapacity = _villageScene->_militaryCamps[0]->getTotalTroopCapacity();
-    }
+    totalCapacity = ArmyManager::getInstance()->getTotalCapacity();
 
     // 更新按钮状态
-    for (auto& btn : _troopButtons) {
+    for (auto& btn : _troopButtons) 
+    {
         bool canAdd = (used + btn.cost <= totalCapacity);
         btn.button->setEnabled(canAdd);
     }
 }
-
-void MilitaryArrang::onCloseButtonClicked(Ref* sender) {
-    this->removeFromParent();
-}*/

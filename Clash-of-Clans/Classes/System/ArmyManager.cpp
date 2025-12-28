@@ -25,3 +25,37 @@ bool ArmyManager::tryDeploy(UnitType id) {
     }
     return false;
 }
+
+void ArmyManager::setTotalCapacity(int capacity) 
+{
+    _totalCapacity = capacity;
+}
+
+int ArmyManager::getTotalCapacity() const 
+{
+    return _totalCapacity;
+}
+
+int ArmyManager::getUsedCapacity() const {
+    int used = 0;
+    for (const auto& [type, count] : _armyPool) {
+        int cost = 1;
+        if (type == UnitType::TANK) 
+            cost = 5; // ¼ò»¯Ó²±àÂë
+
+        else if (type == UnitType::WALL_BREAKER) 
+			cost = 2;
+
+		else if (type == UnitType::RANGED)
+			cost = 1;
+
+        else if (type == UnitType::MELEE)
+			cost = 1;
+
+        else
+            cost = 0;
+
+        used += count * cost;
+    }
+    return used;
+}

@@ -1,35 +1,47 @@
-// MilitaryArrang.h
+// MilitaryArrange.h
 #pragma once
 #include "cocos2d.h"
-#include "Classes/System/ArmyManager.h"
-#include "Classes/Scene/VillageScene.h"
-/*
-class MilitaryArrang : public cocos2d::Layer {
+#include <Data/UnitData.h>
+#include <2d/CCMenuItem.h>
+
+USING_NS_CC;
+
+class MilitaryArrange : public cocos2d::Layer
+{
 public:
-    static MilitaryArrang* create(VillageScene* villageScene);
+    // 标准无参 create（和 StoreWindow 一模一样！）
+    static MilitaryArrange* create();
 
-    bool init(VillageScene* villageScene);
+    // 初始化函数（无参！）
+    bool init();
 
-private:
-    VillageScene* _villageScene = nullptr;
-    Sprite* _background = nullptr;
-    Node* _troopBar = nullptr; // 已配置军队显示区
-    std::vector<std::pair<Sprite*, Label*>> _troopDisplays; // <图标, 数量标签>
+    // 设置回调（仿 StoreWindow 的 setPlaceCallback）
 
-    // 兵种按钮和数据
-    struct TroopButton {
+    struct TroopButton
+    {
         MenuItemSprite* button;
         UnitType type;
-        int cost; // 每个单位消耗的兵力
+        int cost;
     };
+
+    void setCloseCallback(const std::function<void()>& callback);
+
+private:
+    std::function<void()> _closeCallback = nullptr;
+
+    // UI 元素（和之前一样）
+    Sprite* _background = nullptr;
+    Node* _troopBar = nullptr;
+    std::vector<std::pair<Sprite*, Label*>> _troopDisplays;
+
     std::vector<TroopButton> _troopButtons;
 
-    Label* _capacityLabel = nullptr; // 总兵力显示
+    Label* _capacityLabel = nullptr;
 
-    void refreshTroopBar();      // 刷新已配置军队显示
+    MilitaryArrange() = default; // 私有构造
+
+    void refreshTroopBar();
     void onTroopButtonClicked(TroopButton* btn);
     void onCloseButtonClicked(Ref* sender);
-    void updateButtonStates();   // 更新按钮灰显状态
-
-    CREATE_FUNC_PARAM(MilitaryArrang, VillageScene*, villageScene);
-};*/
+    void updateButtonStates();
+};
