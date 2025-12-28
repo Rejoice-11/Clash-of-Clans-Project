@@ -24,7 +24,7 @@ bool MilitaryArrange::init() {
     // 背景
     _background = Sprite::create("army_arrangement_bg.png");
     if (!_background) {
-		return false;
+        return false;
     }
     _background->setPosition(visibleSize / 2);
     this->addChild(_background);
@@ -48,14 +48,14 @@ bool MilitaryArrange::init() {
     _capacityLabel->setPosition(Vec2(visibleSize.width / 2 - 280, visibleSize.height - 190));
     this->addChild(_capacityLabel);
 
-	int usedCapacity = ArmyManager::getInstance()->getUsedCapacity();
+    int usedCapacity = ArmyManager::getInstance()->getUsedCapacity();
     _usedCapacityLabel = Label::createWithSystemFont(
         u8"已用数量 " + std::to_string(usedCapacity), "Arial", 24
-	);
-	_usedCapacityLabel->setTextColor(Color4B::WHITE);
-	_usedCapacityLabel->setPosition(Vec2(visibleSize.width / 2 - 100, visibleSize.height - 190));
-	this->addChild(_usedCapacityLabel);
-  
+    );
+    _usedCapacityLabel->setTextColor(Color4B::WHITE);
+    _usedCapacityLabel->setPosition(Vec2(visibleSize.width / 2 - 100, visibleSize.height - 190));
+    this->addChild(_usedCapacityLabel);
+
 
     // 已配置军队条
     _troopBar = Node::create();
@@ -118,7 +118,7 @@ void MilitaryArrange::onCloseButtonClicked(Ref* sender) {
     this->removeFromParent();
 }
 
-void MilitaryArrange::setCloseCallback(const std::function<void()>& callback) 
+void MilitaryArrange::setCloseCallback(const std::function<void()>& callback)
 {
     _closeCallback = callback;
 }
@@ -138,17 +138,17 @@ void MilitaryArrange::refreshTroopBar()
 
     // === 新增：计算并更新已用兵力 ===
     int usedCapacity = ArmyManager::getInstance()->getUsedCapacity();
-    if (!_usedCapacityLabel) 
+    if (!_usedCapacityLabel)
     {
         // 首次创建标签
         _usedCapacityLabel = Label::createWithSystemFont(
             u8"已使用兵量:" + std::to_string(usedCapacity), "Arial", 24
-               );
+        );
         _usedCapacityLabel->setTextColor(Color4B::WHITE);
         _usedCapacityLabel->setPosition(Vec2(
             Director::getInstance()->getVisibleSize().width / 2 + 100,
             Director::getInstance()->getVisibleSize().height - 80
-            ));
+        ));
         this->addChild(_usedCapacityLabel);
 
     }
@@ -179,13 +179,13 @@ void MilitaryArrange::refreshTroopBar()
         listener->onTouchBegan = [this, capturedType](Touch* touch, Event* event) {
             this->onExistingTroopClicked(capturedType);
             return true;
-        };
+            };
         _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, icon);
         // ========================
 
         _troopBar->addChild(icon);
 
-		std::string labelStr = std::string(u8"已有:") + std::to_string(count);
+        std::string labelStr = std::string(u8"已有:") + std::to_string(count);
         auto label = Label::createWithSystemFont(labelStr, "Arial", 20);
         label->setTextColor(Color4B::BLACK);
         label->setPosition(Vec2(x, 80));
@@ -201,19 +201,18 @@ void MilitaryArrange::onTroopButtonClicked(TroopButton* btn)
     // 计算总已用兵力
     int used = 0;
     auto& pool = ArmyManager::getInstance()->getArmyPool();
-    
 
-    for (const auto& [type, count] : pool) 
+    for (const auto& [type, count] : pool)
     {
         // 假设每个兵种有固定 cost（需统一管理）
         int cost = 1;
-        if (type == UnitType::TANK) 
+        if (type == UnitType::TANK)
             cost = 5;
 
-        else if (type == UnitType::WALL_BREAKER) 
+        else if (type == UnitType::WALL_BREAKER)
             cost = 2;
 
-        else 
+        else
             cost = 1;
 
         used += count * cost;
@@ -229,18 +228,17 @@ void MilitaryArrange::onTroopButtonClicked(TroopButton* btn)
         auto& pool = ArmyManager::getInstance()->getArmyPool(); // ← 获取非 const 引用
         auto it = pool.find(btn->type);
 
-        if (it == pool.end()) 
+        if (it == pool.end())
         {
             // 该兵种不存在，新增
             pool[btn->type] = 1; // 现在可以了，因为 pool 是非 const
         }
 
-        else 
+        else
         {
             // 已存在，+1
             it->second += 1;
         }
-        
         refreshTroopBar();
         updateButtonStates();
     }
@@ -251,7 +249,7 @@ void MilitaryArrange::updateButtonStates()
     // 计算已用兵力
     int used = 0;
     auto& pool = ArmyManager::getInstance()->getArmyPool();
-    for (const auto& [type, count] : pool) 
+    for (const auto& [type, count] : pool)
     {
         int cost = 1;
 
@@ -273,12 +271,11 @@ void MilitaryArrange::updateButtonStates()
     totalCapacity = ArmyManager::getInstance()->getTotalCapacity();
 
     // 更新按钮状态
-    for (auto& btn : _troopButtons) 
+    for (auto& btn : _troopButtons)
     {
         bool canAdd = (used + btn.cost <= totalCapacity);
         btn.button->setEnabled(canAdd);
     }
-    
 }
 
 // MilitaryArrange.cpp
@@ -294,12 +291,12 @@ std::string MilitaryArrange::getIconPathForType(UnitType type)
 }
 
 // MilitaryArrange.cpp
-void MilitaryArrange::onExistingTroopClicked(UnitType type) 
+void MilitaryArrange::onExistingTroopClicked(UnitType type)
 {
     auto& pool = ArmyManager::getInstance()->getArmyPool();
     auto it = pool.find(type);
 
-    if (it != pool.end() && it->second > 0) 
+    if (it != pool.end() && it->second > 0)
     {
         // 减少一个单位
         it->second--;

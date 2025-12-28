@@ -30,7 +30,7 @@ void ArmyManager::getRemainingCapacity()
 {
     for (int i = 0; i < 4; i++)
     {
-		_armyPool[(UnitType)i]= _armyPool[(UnitType)i]/2;
+        _armyPool[(UnitType)i] = _armyPool[(UnitType)i] / 2;
     }
 }
 
@@ -40,16 +40,16 @@ void ArmyManager::initializeArmyForBattle()
     // 目前假设已经在其他地方设置好了兵力
     for (int i = 0; i < 4; i++)
     {
-        _armyPool[(UnitType)i] = _armyPool[(UnitType)i] *2;
+        _armyPool[(UnitType)i] = _armyPool[(UnitType)i] * 2;
     }
 }
 
-void ArmyManager::setTotalCapacity(int capacity) 
+void ArmyManager::setTotalCapacity(int capacity)
 {
     _totalCapacity = capacity;
 }
 
-int ArmyManager::getTotalCapacity() const 
+int ArmyManager::getTotalCapacity() const
 {
     return _totalCapacity;
 }
@@ -59,8 +59,26 @@ void ArmyManager::setUsedCapacity(int capacity)
     _usedCapacity = capacity;
 }
 
-int ArmyManager::getUsedCapacity() const 
-{
-    
-    return _usedCapacity;
+int ArmyManager::getUsedCapacity() const {
+    int used = 0;
+    for (const auto& [type, count] : _armyPool) {
+        int cost = 1;
+        if (type == UnitType::TANK)
+            cost = 5; // 简化硬编码
+
+        else if (type == UnitType::WALL_BREAKER)
+            cost = 2;
+
+        else if (type == UnitType::RANGED)
+            cost = 1;
+
+        else if (type == UnitType::MELEE)
+            cost = 1;
+
+        else
+            cost = 0;
+
+        used += count * cost;
+    }
+    return used;
 }

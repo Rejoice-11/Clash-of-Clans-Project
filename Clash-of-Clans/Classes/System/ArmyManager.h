@@ -32,12 +32,12 @@ public:
     void setUsedCapacity(int capacity);
     //计算剩余兵力
     void getRemainingCapacity();
-	// 计算进入时有的兵力
-	void initializeArmyForBattle();
+    // 计算进入时有的兵力
+    void initializeArmyForBattle();
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;
     std::map<UnitType, int> _armyPool;
     int _totalCapacity = 0; //  新增成员
-	int _usedCapacity = 0;  //  新增成员
+    int _usedCapacity = 0;  //  新增成员
 };
