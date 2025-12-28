@@ -135,7 +135,6 @@ void MilitaryArrange::refreshTroopBar()
 
     // 获取当前配置
     auto& pool = ArmyManager::getInstance()->getArmyPool(); // 注意：需将 _armyPool 设为 public 或提供 getter
-    ArmyManager::getInstance()->setArmyPool(pool);
 
     // === 新增：计算并更新已用兵力 ===
     int usedCapacity = ArmyManager::getInstance()->getUsedCapacity();
@@ -279,8 +278,6 @@ void MilitaryArrange::updateButtonStates()
         bool canAdd = (used + btn.cost <= totalCapacity);
         btn.button->setEnabled(canAdd);
     }
-
-    ArmyManager::getInstance()->setArmyPool(pool);
     
 }
 
