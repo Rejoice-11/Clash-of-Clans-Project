@@ -170,7 +170,7 @@ void BattleScene::spawnBuilding(Vec2 gridPos, int Buildingname)
         }
         case 4:
         {
-            realSprite = Sprite::create("elixir_storage_lv2.png");
+            realSprite = Sprite::create("elixir_storage_lv3.png");
             initgridinfo(x, y, 2); // 普通建筑类型为2
             break;
         }
@@ -565,15 +565,71 @@ bool BattleScene::init()
     //初始化生成建筑
     /*0:大本营 1:金矿 2:圣水收集器 3:金库 4:圣水库 5:军营 6:箭塔 7:加农炮 8:建筑工人
     */
-    spawnBuilding(Vec2(20, 20), 0);
-    spawnBuilding(Vec2(23, 20), 1);
-    spawnBuilding(Vec2(16, 20), 2);
-    spawnBuilding(Vec2(23, 23), 3);
-    spawnBuilding(Vec2(17, 17), 4);
-	spawnBuilding(Vec2(15, 13), 5);
-    spawnBuilding(Vec2(20, 23), 6);
-    spawnBuilding(Vec2(20, 17), 7);
-	spawnBuilding(Vec2(10, 23), 8);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(0, 1);
+	const int mode = dis(gen); //随机选择一种布局模式
+    if(mode==0)
+    {
+        // 核心：大本营（唯一，3x3，中心位置）
+        spawnBuilding(Vec2(20, 20), 0);
+
+        // 资源生产（多个，紧邻大本营，对称分布）
+        spawnBuilding(Vec2(16, 20), 1); // 金矿1（大本营左侧）
+        spawnBuilding(Vec2(24, 20), 1); // 金矿2（大本营右侧）
+        spawnBuilding(Vec2(20, 16), 2); // 圣水收集器1（大本营下侧）
+        spawnBuilding(Vec2(20, 24), 2); // 圣水收集器2（大本营上侧）
+
+        // 资源存储（多个，紧邻生产建筑，防御圈内）
+        spawnBuilding(Vec2(16, 16), 3); // 金库1（金矿1+圣水收集器1旁）
+        spawnBuilding(Vec2(24, 24), 3); // 金库2（金矿2+圣水收集器2旁）
+        spawnBuilding(Vec2(16, 24), 4); // 圣水库1（金矿1+圣水收集器2旁）
+        spawnBuilding(Vec2(24, 16), 4); // 圣水库2（金矿2+圣水收集器1旁）
+
+        // 军事生产（多个，核心外侧，方便造兵）
+        spawnBuilding(Vec2(13, 20), 5); // 军营1（左侧外围）
+        spawnBuilding(Vec2(27, 20), 5); // 军营2（右侧外围）
+
+        // 防御建筑（对称分布，覆盖核心+资源）
+        spawnBuilding(Vec2(13, 13), 6); // 箭塔1（左下防御，覆盖金库1）
+        spawnBuilding(Vec2(27, 27), 6); // 箭塔2（右上防御，覆盖金库2）
+        spawnBuilding(Vec2(13, 27), 7); // 加农炮1（左上防御，覆盖圣水库1）
+        spawnBuilding(Vec2(27, 13), 7); // 加农炮2（右下防御，覆盖圣水库2）
+
+        // 功能建筑（最外侧，不占用核心）
+        spawnBuilding(Vec2(10, 20), 8); // 建筑工人小屋1（最左侧）
+        spawnBuilding(Vec2(30, 20), 8); // 建筑工人小屋2（最右侧）
+    }
+    else
+    {
+        // 核心：大本营（唯一，偏右但不极端，x=24更合理，核心区x=12~30）
+        spawnBuilding(Vec2(24, 20), 0);
+
+        // 资源生产（3金+3水，分布松散不拥挤，左区x=8~18，避免极端边缘）
+        spawnBuilding(Vec2(12, 20), 1);  // 金矿1（左区核心，大本营正左）
+        spawnBuilding(Vec2(12, 16), 1);  // 金矿2（左区下侧，不重叠）
+        spawnBuilding(Vec2(12, 24), 1);  // 金矿3（左区上侧，对称）
+        spawnBuilding(Vec2(18, 20), 2);  // 圣水收集器1（金矿1右侧，近大本营）
+        spawnBuilding(Vec2(18, 16), 2);  // 圣水收集器2（金矿2右侧，对称）
+        spawnBuilding(Vec2(18, 24), 2);  // 圣水收集器3（金矿3右侧，对称）
+
+        // 资源存储（2金+2水，数量适配产出，精准贴靠生产建筑）
+        spawnBuilding(Vec2(8, 20), 3);   // 金库1（金矿1左侧，左区边缘）
+        spawnBuilding(Vec2(8, 16), 3);   // 金库2（金矿2左侧，对称）
+        spawnBuilding(Vec2(8, 24), 4);   // 圣水库1（金矿3左侧，对称）
+
+        // 军事生产（仅1个，大本营正下侧，核心防御区）
+        spawnBuilding(Vec2(24, 16), 5);  // 军营1（大本营下，造兵后快速支援）
+
+        // 防御建筑（精准覆盖，不浪费边缘，每个防御至少覆盖2个资源+大本营）
+        spawnBuilding(Vec2(8, 12), 6);    // 箭塔1（左下，覆盖金库2+金矿2）
+        spawnBuilding(Vec2(8, 28), 6);    // 箭塔2（左上，覆盖圣水库1+金矿3）
+        spawnBuilding(Vec2(30, 16), 7);   // 加农炮1（右下，覆盖军营+大本营右侧）
+        spawnBuilding(Vec2(30, 24), 7);   // 加农炮2（右上，覆盖大本营上侧+圣水收集器3）
+
+        // 功能建筑（仅1个，左区资源旁，方便升级资源建筑，不极端）
+        spawnBuilding(Vec2(3, 20), 8);    // 建筑工人小屋1（左区核心旁，操作便捷）
+    }
 
 
     // 开启帧更新（后续战斗逻辑靠这个）

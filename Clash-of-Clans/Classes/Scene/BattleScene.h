@@ -16,6 +16,7 @@
 #include "SimpleAudioEngine.h"
 #include <map>
 #include <vector>
+#include <random>
 
 class Unit; // Ç°ÏòÉùÃ÷
 
