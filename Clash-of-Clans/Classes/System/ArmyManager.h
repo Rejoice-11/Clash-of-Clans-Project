@@ -29,9 +29,12 @@ public:
     /** @brief 计算已使用的兵力 */
     int getUsedCapacity() const;
 
+    void setUsedCapacity(int capacity);
+
 private:
     ArmyManager() = default;
     static ArmyManager* _instance;
     std::map<UnitType, int> _armyPool;
     int _totalCapacity = 0; //  新增成员
+	int _usedCapacity = 0;  //  新增成员
 };

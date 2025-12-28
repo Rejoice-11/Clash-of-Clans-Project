@@ -36,6 +36,11 @@ int ArmyManager::getTotalCapacity() const
     return _totalCapacity;
 }
 
+void ArmyManager::setUsedCapacity(int capacity)
+{
+    _usedCapacity = capacity;
+}
+
 int ArmyManager::getUsedCapacity() const {
     int used = 0;
     for (const auto& [type, count] : _armyPool) {
