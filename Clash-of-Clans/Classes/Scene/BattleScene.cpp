@@ -2,6 +2,7 @@
 #include "BattleScene.h"
 #include "Classes/System/ArmyManager.h"
 #include "Classes/Entity/Unit/UnitFactory.h"
+#include "Classes/System/ResourceManager.h"
 
 
 gridinfo grid[41][41]; // 定义网格信息二维数组
@@ -90,7 +91,8 @@ void BattleScene::battleOver()
 		elixirlabel->setPosition(600, 370);
         resultUIContainer->addChild(elixirlabel, 101);
 
-
+        ResourceManager::getInstance()->addElixir(1000);
+		ResourceManager::getInstance()->addGold(1000);
 
         CCLOG("Battle Won!");
         // 处理胜利逻辑
