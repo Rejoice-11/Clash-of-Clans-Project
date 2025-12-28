@@ -56,48 +56,13 @@ void SettingLayer::initUI()
         _panelBg->getContentSize().height - 40));
     _panelBg->addChild(title);
 
-    // ±³¾°ÒôÀÖÒôÁ¿±êÇ©
-    auto bgMusicLabel = Label::createWithSystemFont(u8"±³¾°ÒôÀÖ:", "Arial", 24);
-    bgMusicLabel->setPosition(Vec2(30, 200));
-    bgMusicLabel->setAnchorPoint(Vec2(0, 0.5));
-    _panelBg->addChild(bgMusicLabel);
-
-    // ±³¾°ÒôÀÖ»¬¿é
-    _bgMusicSlider = Slider::create();
-    _bgMusicSlider->loadBarTexture("slider_track.png");
-    _bgMusicSlider->loadSlidBallTextures("slider_thumb_normal.png",
-        "slider_thumb_normal.png",
-        "slider_thumb_normal.png");
-    _bgMusicSlider->loadProgressBarTexture("slider_progress.png");
-    _bgMusicSlider->setPosition(Vec2(250, 200));
-    _bgMusicSlider->setPercent(_bgMusicVolume * 100);
-    _bgMusicSlider->addEventListener(CC_CALLBACK_2(SettingLayer::onBackgroundMusicSliderChanged, this));
-    _panelBg->addChild(_bgMusicSlider);
-
-    // ÒôÐ§ÒôÁ¿±êÇ©
-    auto soundEffectLabel = Label::createWithSystemFont(u8"ÒôÐ§ÒôÁ¿:", "Arial", 24);
-    soundEffectLabel->setPosition(Vec2(30, 150));
-    soundEffectLabel->setAnchorPoint(Vec2(0, 0.5));
-    _panelBg->addChild(soundEffectLabel);
-
-    // ÒôÐ§»¬¿é
-    _soundEffectSlider = Slider::create();
-    _soundEffectSlider->loadBarTexture("slider_track.png");
-    _soundEffectSlider->loadSlidBallTextures("slider_thumb_normal.png",
-        "slider_thumb_normal.png",
-        "slider_thumb_normal.png");
-    _soundEffectSlider->loadProgressBarTexture("slider_progress.png");
-    _soundEffectSlider->setPosition(Vec2(250, 150));
-    _soundEffectSlider->setPercent(_soundEffectVolume * 100);
-    _soundEffectSlider->addEventListener(CC_CALLBACK_2(SettingLayer::onSoundEffectSliderChanged, this));
-    _panelBg->addChild(_soundEffectSlider);
-
     // ÍË³öÓÎÏ·°´Å¥
     Button* exitButton = nullptr;
 	auto exitBtn = MenuItemImage::create(
         "exit_button.png", "exit_button.png",
 		CC_CALLBACK_1(SettingLayer::onExitButtonClicked, this));
-	exitBtn->setPosition(Vec2(_panelBg->getContentSize().width / 2, 70));
+	exitBtn->setScale(0.1);
+	exitBtn->setPosition(Vec2(_panelBg->getContentSize().width / 2, 150));
 
     // ¹Ø±Õ°´Å¥
     Button* closeButton = nullptr;
