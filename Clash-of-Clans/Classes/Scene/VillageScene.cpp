@@ -1252,6 +1252,10 @@ void VillageScene::onElixirCollectClicked(Ref* sender)
 }
 
 void VillageScene::onArmyButtonClicked(Ref* sender) {
+
+    if(_attackPanel || _buildingLayer)
+		return;
+
     if (_militaryLayer) return;
     if (_settingLayer) {
         _settingLayer->playButtonClickSound(); // Ìí¼ÓÒôĞ§
